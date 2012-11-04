@@ -11,7 +11,7 @@
  * SPEEDBOAT mesh stored in index 0
  *
  ***********************************/
-#define N_MODELS 1
+#define N_MODELS 2
 #define SPEEDBOAT 0
 
 
@@ -22,7 +22,7 @@ private:
     std::vector<ngl::Obj*> m_models;
 
 public:
-    Models() {};
+    Models();
     ~Models();
     void addModel(const int _index, const std::string _modelPath);
     void addModel(const int _index, const std::string _meshPath, const std::string _texturePath);

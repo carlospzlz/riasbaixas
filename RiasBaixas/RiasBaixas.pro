@@ -1,14 +1,17 @@
 TARGET = RiasBaixas
 QMAKE_CXX=clang++ -fdiagnostics-fixit-info
 
+INCLUDEPATH += include
 HEADERS += \
     include/Models.h \
-    include/Window.h
+    include/Renderer.h \
+    include/SpeedBoat.h
 
 SOURCES += \
     src/Models.cpp \
-    src/main.cpp \
-    src/Window.cpp
+    src/SpeedBoat.cpp \
+    src/Renderer.cpp \
+    src/GameManager.cpp
 
 OBJECTS_DIR = bin
 
