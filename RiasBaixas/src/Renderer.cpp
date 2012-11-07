@@ -48,17 +48,19 @@ bool Renderer::initGLContext()
     // and make it active ready to load values
     (*shader)["Phong"]->use();
     // the shader will use the currently active material and light0 so set them
-    ngl::Material m(ngl::GOLD);
+    //ngl::Material m(ngl::GOLD);
     // load our material values to the shader into the structure material (see Vertex shader)
-    m.loadToShader("material");
+    //m.loadToShader("material");
 
     //For removal or hidden surfaces
     glEnable(GL_DEPTH_TEST);
 
+    SDL_GL_SwapBuffers();
+
     return true;
 }
 
-void Renderer::setWorld(SpeedBoat &_sp)
+void Renderer::setWorld(SpeedBoat *_sp)
 {
     m_speedBoat = _sp;
 }
@@ -66,6 +68,8 @@ void Renderer::setWorld(SpeedBoat &_sp)
 void Renderer::render(ngl::Camera &_cam)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 
     ngl::ShaderLib *shader=ngl::ShaderLib::instance();
     shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
@@ -78,17 +82,30 @@ void Renderer::render(ngl::Camera &_cam)
     m_light->setTransform(iv);
     // load these values to the shader as well
     m_light->loadToShader("light");
+    ngl::Material m(ngl::GOLD);
+    m.loadToShader("material");
 
-    m_speedBoat.draw();
-
-    ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-    // draw
-    ngl::TransformStack m_transformStack;
     loadMatricesToShader(m_transformStack,_cam);
-    m_speedBoat.draw();
-    prim->draw("teapot");
 
-    std::cout << "Rendering..." << std::endl;
+
+/*
+    ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
+    m_transformStack.pushTransform();
+    {
+      m_transformStack.setPosition(1.0,0.35,1.0);
+      m_transformStack.setScale(1.5,1.5,1.5);
+      loadMatricesToShader(m_transformStack,_cam);
+      prim->draw("troll");
+    } // and before a pop
+    m_transformStack.popTransform();
+*/
+
+    //DRAWING
+
+    m_speedBoat->draw("Phong", &_cam);
+
+
+    //std::cout << "Rendering..." << std::endl;
     SDL_GL_SwapBuffers();
 }
 

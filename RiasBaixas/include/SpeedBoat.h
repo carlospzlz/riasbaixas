@@ -5,6 +5,11 @@
 #include <ngl/Transformation.h>
 #include <ngl/Vec3.h>
 #include <ngl/ShaderLib.h>
+#include <ngl/Camera.h>
+#include <ngl/VAOPrimitives.h>
+#include <ngl/TransformStack.h>
+#include <ngl/Material.h>
+#include <ngl/Light.h>
 
 #define MAX_LOAD 300;
 
@@ -13,14 +18,16 @@ class SpeedBoat
 private:
     ngl::Obj *m_model;
     ngl::Vec3 m_position;
-    ngl::Vec3 m_rotation;
+    ngl::Vec4 m_rotation;
     ngl::Transformation m_transform;
     int m_load;
 
 public:
     SpeedBoat() { };
     SpeedBoat(ngl::Obj *_model);
-    void draw();
+    void draw(const std::string &_shader, ngl::Camera *_cam);
+    void moveRight();
+    void moveLeft();
 };
 
 #endif // SPEEDBOAT_H
