@@ -9,13 +9,15 @@
 
 int main()
 {
-    SDL_Event event;
+
 
     Renderer myRenderer;
     myRenderer.initGLContext();
 
+    //sleep(3);
+
     //Loading cameras
-    ngl::Camera aerialCamera(ngl::Vec3(0,1,1),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
+    ngl::Camera aerialCamera(ngl::Vec3(0,15,15),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
     // set the shape using FOV 45 Aspect Ratio based on Width and Height
     // The final two are near and far clipping planes of 0.5 and 10
     aerialCamera.setShape(45,(float)720.0/576.0,0.05,350,ngl::PERSPECTIVE);
@@ -29,34 +31,48 @@ int main()
     //std::vector<StaticSeaElements> myStaticSeaElements;
     //std::vector<DynamicSeaElements> myDynamicSeaElements;
 
-    SpeedBoat mySpeedBoat(myModels.getModel(SPEEDBOAT));
+    SpeedBoat mySpeedBoat(myModels.getModel(1));
 
-    myRenderer.setWorld(mySpeedBoat);
+    myRenderer.setWorld(&mySpeedBoat);
 
-    myRenderer.render(aerialCamera);
+    //myRenderer.render(aerialCamera);
 
 
     std::cout << "Testing..." << std::endl;
 
 
+    bool running = true;
+    SDL_Event event;
 
-    //std::cout << myModels.getModelName(SPEEDBOAT) << std::endl;
-    //myModels.draw(SPEEDBOAT);
-    //myModels.draw(1);
-    //ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-    //ngl::ShaderLib *shader = ngl::ShaderLib::instance();
-    //shader->setShaderParam4f("Colour",1,1,1,1);
-    //ngl::TransformStack tstack;
-    //tstack.pushTransform();
-    //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-    //tstack.setPosition(ngl::Vec3(0,0,0));
-    //tstack.setScale(20,20,20);
-    //loadMatricesToShader(tstack);
-    //prim->draw("sphere");
-
-
-    while (event.type!=SDL_QUIT && event.key.keysym.sym!=SDLK_ESCAPE)
+    while (running)
+    {
         SDL_PollEvent(&event);
+        switch (event.type)
+        {
+            case SDL_KEYDOWN:
+            switch (event.key.keysym.sym)
+            {
+                case SDLK_ESCAPE:
+                running = false;
+                break;
+
+                case SDLK_RIGHT:
+                mySpeedBoat.moveRight();
+                break;
+
+                case SDLK_LEFT:
+                mySpeedBoat.moveLeft();
+                break;
+
+            }
+            break;
+
+            case SDL_QUIT:
+                running = false;
+            break;
+        }
+        myRenderer.render(aerialCamera);
+    }
 
     std::cout << "Tested" << std::endl;
 

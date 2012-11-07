@@ -13,12 +13,13 @@ class Renderer
 
 private:
     ngl::Light *m_light;
-    SpeedBoat m_speedBoat;
+    ngl::TransformStack m_transformStack;
+    SpeedBoat *m_speedBoat;
 
 public:
     Renderer() { };
     bool initGLContext();
-    void setWorld(SpeedBoat &_sp);
+    void setWorld(SpeedBoat *_sp);
     void render(ngl::Camera &_cam);
     void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera m_cam);
 
