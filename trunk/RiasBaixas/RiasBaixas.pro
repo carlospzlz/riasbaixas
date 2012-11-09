@@ -5,13 +5,19 @@ INCLUDEPATH += include
 HEADERS += \
     include/Models.h \
     include/Renderer.h \
-    include/SpeedBoat.h
+    include/SpeedBoat.h \
+    include/Sea.h \
+    include/StaticSeaElement.h \
+    include/MusselFarm.h
 
 SOURCES += \
     src/Models.cpp \
     src/SpeedBoat.cpp \
     src/Renderer.cpp \
-    src/GameManager.cpp
+    src/GameManager.cpp \
+    src/Sea.cpp \
+    src/StaticSeaElement.cpp \
+    src/MusselFarm.cpp
 
 OBJECTS_DIR = bin
 

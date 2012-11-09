@@ -60,8 +60,9 @@ bool Renderer::initGLContext()
     return true;
 }
 
-void Renderer::setWorld(SpeedBoat *_sp)
+void Renderer::setWorld(Sea *_sea, SpeedBoat *_sp)
 {
+    m_sea = _sea;
     m_speedBoat = _sp;
 }
 
@@ -82,7 +83,7 @@ void Renderer::render(ngl::Camera &_cam)
     m_light->setTransform(iv);
     // load these values to the shader as well
     m_light->loadToShader("light");
-    ngl::Material m(ngl::GOLD);
+    ngl::Material m(ngl::PEWTER);
     m.loadToShader("material");
 
     loadMatricesToShader(m_transformStack,_cam);
@@ -102,7 +103,31 @@ void Renderer::render(ngl::Camera &_cam)
 
     //DRAWING
 
+    ngl::TransformStack ts;
+    ts.pushTransform();
+
+    ts.pushTransform();
+    loadMatricesToShader(m_transformStack,_cam);
+    m_sea->draw("Phong", &_cam);
+    ts.popTransform();
+
+    //ngl::Material m(ngl::GOLD);
+    m.change(ngl::GOLD);
+    m.loadToShader("material");
+
+    loadMatricesToShader(m_transformStack,_cam);
+
+
+
     m_speedBoat->draw("Phong", &_cam);
+
+    ts.popTransform();
+
+    ts.pushTransform();
+    m_transformStack.setPosition(0,4,0);
+    loadMatricesToShader(m_transformStack,_cam);
+    m_sea->draw("Phong", &_cam);
+    ts.popTransform();
 
 
     //std::cout << "Rendering..." << std::endl;
