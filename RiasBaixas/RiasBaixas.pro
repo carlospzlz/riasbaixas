@@ -8,7 +8,13 @@ HEADERS += \
     include/SpeedBoat.h \
     include/Sea.h \
     include/StaticSeaElement.h \
-    include/MusselFarm.h
+    include/MusselFarm.h \
+    include/DynamicSeaElement.h \
+    include/Controller.h \
+    include/Floating.h \
+    include/Stream.h \
+    include/Rock.h \
+    include/Ramp.h
 
 SOURCES += \
     src/Models.cpp \
@@ -17,7 +23,10 @@ SOURCES += \
     src/GameManager.cpp \
     src/Sea.cpp \
     src/StaticSeaElement.cpp \
-    src/MusselFarm.cpp
+    src/MusselFarm.cpp \
+    src/Controller.cpp \
+    src/Floating.cpp \
+    src/DynamicSeaElement.cpp
 
 OBJECTS_DIR = bin
 
