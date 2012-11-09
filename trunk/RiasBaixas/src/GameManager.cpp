@@ -9,6 +9,7 @@
 #include "Sea.h"
 #include "StaticSeaElement.h"
 #include "MusselFarm.h"
+#include "Controller.h"
 
 
 void doMusselFarm(MusselFarm mf)
@@ -43,10 +44,13 @@ int main()
     Sea mySea;
     SpeedBoat mySpeedBoat(myModels.getModel(1));
     MusselFarm mf1 = MusselFarm(ngl::Vec3(2,0,2));
+    Controller myController;
 
 
     std::vector<StaticSeaElement> myStaticSeaElements;
     myStaticSeaElements.push_back(mf1);
+
+    std::vector<DynamicSeaElement> myDynamicSeaElements;
 
     //doMusselFarm(myStaticSeaElements.pop_back());
 
