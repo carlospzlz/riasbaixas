@@ -21,6 +21,7 @@ private:
     ngl::Vec4 m_rotation;
     ngl::Transformation m_transform;
     int m_load;
+    int ticks;
 
 public:
     SpeedBoat() { };
@@ -28,6 +29,12 @@ public:
     void draw(const std::string &_shader, ngl::Camera *_cam);
     void moveRight();
     void moveLeft();
+    void moveUp();
+    void moveDown();
+    void rotateInY();
+    void rotateInX();
+    void rotateInZ();
+    void floating();
 };
 
 #endif // SPEEDBOAT_H

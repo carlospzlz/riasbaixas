@@ -5,7 +5,16 @@
 #include <ngl/TransformStack.h>
 #include "include/Renderer.h"
 #include "include/Models.h"
+#include "SpeedBoat.h"
+#include "Sea.h"
+#include "StaticSeaElement.h"
+#include "MusselFarm.h"
 
+
+void doMusselFarm(MusselFarm mf)
+{
+
+}
 
 int main()
 {
@@ -17,7 +26,7 @@ int main()
     //sleep(3);
 
     //Loading cameras
-    ngl::Camera aerialCamera(ngl::Vec3(0,15,15),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
+    ngl::Camera aerialCamera(ngl::Vec3(0,6,6),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
     // set the shape using FOV 45 Aspect Ratio based on Width and Height
     // The final two are near and far clipping planes of 0.5 and 10
     aerialCamera.setShape(45,(float)720.0/576.0,0.05,350,ngl::PERSPECTIVE);
@@ -31,9 +40,17 @@ int main()
     //std::vector<StaticSeaElements> myStaticSeaElements;
     //std::vector<DynamicSeaElements> myDynamicSeaElements;
 
+    Sea mySea;
     SpeedBoat mySpeedBoat(myModels.getModel(1));
+    MusselFarm mf1 = MusselFarm(ngl::Vec3(2,0,2));
 
-    myRenderer.setWorld(&mySpeedBoat);
+
+    std::vector<StaticSeaElement> myStaticSeaElements;
+    myStaticSeaElements.push_back(mf1);
+
+    //doMusselFarm(myStaticSeaElements.pop_back());
+
+    myRenderer.setWorld(&mySea, &mySpeedBoat);
 
     //myRenderer.render(aerialCamera);
 
@@ -64,6 +81,26 @@ int main()
                 mySpeedBoat.moveLeft();
                 break;
 
+                case SDLK_UP:
+                mySpeedBoat.moveUp();
+                break;
+
+                case SDLK_DOWN:
+                mySpeedBoat.moveDown();
+                break;
+
+                case SDLK_x:
+                mySpeedBoat.rotateInX();
+                break;
+
+                case SDLK_y:
+                mySpeedBoat.rotateInY();
+                break;
+
+                case SDLK_z:
+                mySpeedBoat.rotateInZ();
+                break;
+
             }
             break;
 
@@ -71,6 +108,8 @@ int main()
                 running = false;
             break;
         }
+        //mySpeedBoat.rotateInY();
+        mySpeedBoat.floating();
         myRenderer.render(aerialCamera);
     }
 
