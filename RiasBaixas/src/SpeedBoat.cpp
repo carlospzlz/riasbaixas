@@ -3,22 +3,21 @@
 #include <SDL/SDL.h>
 #include <math.h>
 
-SpeedBoat::SpeedBoat(ngl::Obj *_model)
+SpeedBoat::SpeedBoat(Controller *_controller, ngl::Obj *_model) :
+    DynamicSeaElement(ngl::Vec3(0,0,0), ngl::Vec4(0,90,0,1), ngl::Vec4(.25,.25,.25,1), _controller, _model)
 {
-    m_model = _model;
-    m_position = ngl::Vec3(0,0,0);
-    m_rotation = ngl::Vec4(0,90,0,0);
     m_load = MAX_LOAD;
     std::cout << "SpeedBoat created and ready to rock" << std::endl;
 }
 
-void SpeedBoat::draw(const std::string &_shader, ngl::Camera *_cam)
+void SpeedBoat::draw(const std::string &_shader, ngl::Camera *_cam, int _debugMode)
 {   
     ngl::ShaderLib *shader = ngl::ShaderLib::instance();
     (*shader)[_shader]->use();
 
     m_transform.setPosition(m_position);
     m_transform.setRotation(m_rotation);
+    m_transform.setScale(m_scale);
 
     //ngl::Material m(ngl::GOLD);
     //m.loadToShader("material");
@@ -26,9 +25,16 @@ void SpeedBoat::draw(const std::string &_shader, ngl::Camera *_cam)
     ngl::Mat4 MVP=m_transform.getMatrix()*_cam->getVPMatrix();
 
     shader->setShaderParamFromMat4("MVP",MVP);
-    //m_model->draw();
-    ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-    prim->draw("teapot");
+
+    switch (_debugMode)
+    {
+    case 1:
+        ngl::VAOPrimitives::instance()->draw("teapot");
+        break;
+    case 2:
+        m_model->drawBBox();
+        break;
+    }
 
 }
 
@@ -76,4 +82,9 @@ void SpeedBoat::floating()
 {
     m_position.m_y = 0.1*std::sin(M_PI/150*ticks);
     ++ticks;
+}
+
+void SpeedBoat::move()
+{
+    m_controller->move(m_position,m_velocity);
 }

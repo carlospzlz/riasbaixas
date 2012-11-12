@@ -8,8 +8,10 @@
 #include "SpeedBoat.h"
 #include "Sea.h"
 #include "StaticSeaElement.h"
+#include "DynamicSeaElement.h"
 #include "MusselFarm.h"
 #include "Controller.h"
+#include "Floating.h"
 
 
 void doMusselFarm(MusselFarm mf)
@@ -42,9 +44,9 @@ int main()
     //std::vector<DynamicSeaElements> myDynamicSeaElements;
 
     Sea mySea;
-    SpeedBoat mySpeedBoat(myModels.getModel(1));
+    Controller myFloating= Floating();
+    SpeedBoat mySpeedBoat(&myFloating,myModels.getModel(1));
     MusselFarm mf1 = MusselFarm(ngl::Vec3(2,0,2));
-    Controller myController;
 
 
     std::vector<StaticSeaElement> myStaticSeaElements;
@@ -113,8 +115,8 @@ int main()
             break;
         }
         //mySpeedBoat.rotateInY();
-        mySpeedBoat.floating();
-        myRenderer.render(aerialCamera);
+        mySpeedBoat.move();
+        myRenderer.render(aerialCamera,2);
     }
 
     std::cout << "Tested" << std::endl;
