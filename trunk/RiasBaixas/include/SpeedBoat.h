@@ -11,22 +11,25 @@
 #include <ngl/Material.h>
 #include <ngl/Light.h>
 
+#include "DynamicSeaElement.h"
+
+
 #define MAX_LOAD 300;
 
-class SpeedBoat
+class SpeedBoat : public DynamicSeaElement
 {
 private:
-    ngl::Obj *m_model;
     ngl::Vec3 m_position;
     ngl::Vec4 m_rotation;
+    ngl::Vec4 m_scale;
     ngl::Transformation m_transform;
     int m_load;
     int ticks;
 
 public:
-    SpeedBoat() { };
-    SpeedBoat(ngl::Obj *_model);
-    void draw(const std::string &_shader, ngl::Camera *_cam);
+    SpeedBoat(Controller *_controller, ngl::Obj *_model);
+    void draw(const std::string &_shader, ngl::Camera *_cam, int _debugMode);
+    void move();
     void moveRight();
     void moveLeft();
     void moveUp();

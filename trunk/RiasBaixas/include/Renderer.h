@@ -23,6 +23,7 @@ public:
     bool initGLContext();
     void setWorld(Sea *_sea, SpeedBoat *_sp);
     void render(ngl::Camera &_cam);
+    void render(ngl::Camera &_cam, int debugMode);
     void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera m_cam);
 
 };

@@ -1,15 +1,15 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "DynamicSeaElement.h"
-
+#include <ngl/Vec3.h>
 
 class Controller
 {
 
 public:
-    void handleMovement(DynamicSeaElement &_dse);
-    void handleCollision(DynamicSeaElement &_dse);
+    void move(ngl::Vec3 _position, ngl::Vec3 _velocity) { };
+    //void virtual handleCollision(ngl::Vec3 _position, ngl::Vec3 _velocity, ngl::Vec3 _obstaclePosition,
+      //                   int _obsXSize, int _obsYSize, int _obsZSize) { };
 
 };
 

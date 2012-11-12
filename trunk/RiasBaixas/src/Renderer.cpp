@@ -68,6 +68,11 @@ void Renderer::setWorld(Sea *_sea, SpeedBoat *_sp)
 
 void Renderer::render(ngl::Camera &_cam)
 {
+    Renderer::render(_cam,0);
+}
+
+void Renderer::render(ngl::Camera &_cam, int debugMode)
+{
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
@@ -119,7 +124,7 @@ void Renderer::render(ngl::Camera &_cam)
 
 
 
-    m_speedBoat->draw("Phong", &_cam);
+    m_speedBoat->draw("Phong", &_cam, debugMode);
 
     ts.popTransform();
 

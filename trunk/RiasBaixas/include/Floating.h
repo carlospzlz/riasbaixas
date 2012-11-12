@@ -5,7 +5,7 @@
 #include "Controller.h"
 #include "SpeedBoat.h"
 
-#define AMPLITUDE 1
+#define AMPLITUDE 3
 #define FRECUENCY M_PI/150
 
 class Floating : public Controller
@@ -13,11 +13,11 @@ class Floating : public Controller
 
 private:
     int m_ticks;
+    int m_push;
 
 public:
     Floating();
-    void handleMovement(DynamicSeaElement _dse);
-    void handleCollision(DynamicSeaElement _dse, SpeedBoat _sp);
+    void move(ngl::Vec3 _p, ngl::Vec3 _v);
 
 };
 
