@@ -1,16 +1,13 @@
 #include <MusselFarm.h>
 
-MusselFarm::MusselFarm(ngl::Obj *_model, ngl::Vec3 _pos) : StaticSeaElement(_model, "cube", _pos)
+MusselFarm::MusselFarm(ngl::Obj *_model, ngl::Vec3 _pos) : StaticSeaElement(_model, "cube", _pos, ngl::Vec4(0,0,0,1), ngl::Vec4(0,0,0,1))
 {
     m_damage = DAMAGE;
+    std::cout << "MusselFarm created." << std::endl;
 }
 
-MusselFarm::MusselFarm(ngl::Vec3 _pos) : StaticSeaElement(NULL, "cube", _pos)
+MusselFarm::MusselFarm(ngl::Vec3 _pos) : StaticSeaElement(NULL, "cube" _pos, ngl::Vec4(0,0,0,1), ngl::Vec4(0,0,0,1))
 {
     m_damage = DAMAGE;
-}
-
-int inline MusselFarm::getDamage()
-{
-    return m_damage;
+    std::cout << "MusselFarm created." << std::endl;
 }

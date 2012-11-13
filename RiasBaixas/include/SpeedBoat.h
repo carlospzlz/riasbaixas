@@ -19,16 +19,12 @@
 class SpeedBoat : public DynamicSeaElement
 {
 private:
-    ngl::Vec3 m_position;
-    ngl::Vec4 m_rotation;
-    ngl::Vec4 m_scale;
-    ngl::Transformation m_transform;
     int m_load;
     int ticks;
 
 public:
     SpeedBoat(Controller *_controller, ngl::Obj *_model);
-    void draw(const std::string &_shader, ngl::Camera *_cam, int _debugMode);
+    void draw(const std::string &_shader, ngl::Camera &_cam, int _debugMode);
     void move();
     void moveRight();
     void moveLeft();

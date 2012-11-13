@@ -10,7 +10,7 @@ class Sea
     //private *ngl::Obj model
 public:
     Sea();
-    void draw(const std::string &_shader, ngl::Camera *_cam);
+    void draw(const std::string &_shader, ngl::Camera &_cam);
 };
 
 #endif // SEA_H

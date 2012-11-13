@@ -60,10 +60,12 @@ bool Renderer::initGLContext()
     return true;
 }
 
-void Renderer::setWorld(Sea *_sea, SpeedBoat *_sp)
+void Renderer::setWorld(Sea *_sea, SpeedBoat *_sp, std::vector<StaticSeaElement> *_staticSeaElements)
 {
     m_sea = _sea;
     m_speedBoat = _sp;
+    m_staticSeaElements = _staticSeaElements;
+    std::cout << "The renderer was told the world" << std::endl;
 }
 
 void Renderer::render(ngl::Camera &_cam)
@@ -73,6 +75,8 @@ void Renderer::render(ngl::Camera &_cam)
 
 void Renderer::render(ngl::Camera &_cam, int debugMode)
 {
+    std::cout << "Rendering..." << std::endl;
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
@@ -108,35 +112,56 @@ void Renderer::render(ngl::Camera &_cam, int debugMode)
 
     //DRAWING
 
-    ngl::TransformStack ts;
-    ts.pushTransform();
 
-    ts.pushTransform();
-    loadMatricesToShader(m_transformStack,_cam);
-    m_sea->draw("Phong", &_cam);
-    ts.popTransform();
+    //ngl::TransformStack ts;
+    //ts.pushTransform();
+
+    //ts.pushTransform();
+    //loadMatricesToShader(m_transformStack,_cam);
+    m_sea->draw("Phong", _cam);
+    //ts.popTransform();
 
     //ngl::Material m(ngl::GOLD);
+/*
     m.change(ngl::GOLD);
     m.loadToShader("material");
-
-    loadMatricesToShader(m_transformStack,_cam);
-
-
-
-    m_speedBoat->draw("Phong", &_cam, debugMode);
-
-    ts.popTransform();
-
-    ts.pushTransform();
-    m_transformStack.setPosition(0,4,0);
-    loadMatricesToShader(m_transformStack,_cam);
-    m_sea->draw("Phong", &_cam);
-    ts.popTransform();
+*/
+    m_transformStack.pushTransform();
+    //loadMatricesToShader(m_transformStack,_cam);
+    //m_speedBoat->draw("Phong", _cam, debugMode);
+    m_transformStack.popTransform();
 
 
-    //std::cout << "Rendering..." << std::endl;
-    SDL_GL_SwapBuffers();
+
+    std::vector<StaticSeaElement>::iterator lastSse = m_staticSeaElements->end();
+    for(std::vector<StaticSeaElement>::iterator currentSse = m_staticSeaElements->begin(); currentSse!=lastSse; ++currentSse)
+    {
+        m_transformStack.pushTransform();
+        loadMatricesToShader(m_transformStack,_cam);
+        currentSse->draw("Phong", _cam, debugMode);
+        m_transformStack.popTransform();
+        std::cout << "Renderer: SSE drawn" << std::endl;
+        currentSse->info();
+    }
+/*
+    std::vector<DynamicSeaElement>::iterator lastDse = m_dynamicSeaElements->end();
+    for(std::vector<DynamicSeaElement>::iterator currentDse = m_dynamicSeaElements->begin(); currentDse!=lastDse; ++currentDse)
+    {
+        m_transformStack.pushTransform();
+        loadMatricesToShader(m_transformStack,_cam);
+        currentDse->draw("Phong", _cam, debugMode);
+        m_transformStack.popTransform();
+    }*/
+
+    //ts.popTransform();
+
+    //ts.pushTransform();
+    //m_transformStack.setPosition(0,4,0);
+    //loadMatricesToShader(m_transformStack,_cam);
+    //m_sea->draw("Phong", _cam);
+    //ts.popTransform();
+
+    SDL_GL_SwapBuffers(); //DO NOOOTT COMMENT THIS FUCKING LINE!!!!!!
 }
 
 void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera m_cam)

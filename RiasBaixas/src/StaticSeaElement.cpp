@@ -1,29 +1,20 @@
 #include "StaticSeaElement.h"
 
-StaticSeaElement::StaticSeaElement(ngl::Obj *_model,  std::string _prim,  ngl::Vec3 _pos)
+StaticSeaElement::StaticSeaElement(ngl::Obj *_model, std::string _primName, ngl::Vec3 _pos, ngl::Vec4 _rot, ngl::Vec4 _sca)
+    : SeaElement(_model, _primName, _pos, _rot, _sca)
 {
-    m_model = _model;
-    m_primForDebugging = _prim;
-    m_position = _pos;
+    std::cout << "SSE created : ";
 }
 
-void StaticSeaElement::draw(bool _debuggingMode)
+void StaticSeaElement::info()
 {
-    if (_debuggingMode || !m_model)
-    {
-        ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-        prim->draw(m_primForDebugging);
-    }
-    else
-    {
-        //ngl::ShaderLib *shader = ngl::ShaderLib::instance();
-        //(*shader)[_shader]->use();
+    std::cout << "SSE info:" << std::endl;
+    std::cout << "P-> " << m_position << std::endl;
+    std::cout << "R-> " << m_rotation << std::endl;
+    std::cout << "S-> " << m_scale << std::endl << std::endl;
+}
 
-        //m_transform.setPosition(m_position);
+void interactsWith(DynamicSeaElement _dse)
+{
 
-        //ngl::Mat4 MVP=m_transform.getMatrix()*_cam->getVPMatrix();
-
-        //shader->setShaderParamFromMat4("MVP",MVP);
-        //m_model->draw();
-    }
 }
