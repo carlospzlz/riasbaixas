@@ -14,7 +14,8 @@ HEADERS += \
     include/Floating.h \
     include/Stream.h \
     include/Rock.h \
-    include/Ramp.h
+    include/Ramp.h \
+    include/SeaElement.h
 
 SOURCES += \
     src/Models.cpp \
@@ -26,7 +27,8 @@ SOURCES += \
     src/MusselFarm.cpp \
     src/Controller.cpp \
     src/Floating.cpp \
-    src/DynamicSeaElement.cpp
+    src/DynamicSeaElement.cpp \
+    src/SeaElement.cpp
 
 OBJECTS_DIR = bin
 

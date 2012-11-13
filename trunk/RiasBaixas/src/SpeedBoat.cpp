@@ -4,13 +4,13 @@
 #include <math.h>
 
 SpeedBoat::SpeedBoat(Controller *_controller, ngl::Obj *_model) :
-    DynamicSeaElement(ngl::Vec3(0,0,0), ngl::Vec4(0,90,0,1), ngl::Vec4(.25,.25,.25,1), _controller, _model)
+    DynamicSeaElement(ngl::Vec3(0,0,0), ngl::Vec4(0,90,0,1), ngl::Vec4(1,1,1,1), _controller, _model)
 {
     m_load = MAX_LOAD;
-    std::cout << "SpeedBoat created and ready to rock" << std::endl;
+    std::cout << "SpeedBoat created and ready to rock." << std::endl;
 }
 
-void SpeedBoat::draw(const std::string &_shader, ngl::Camera *_cam, int _debugMode)
+void SpeedBoat::draw(const std::string &_shader, ngl::Camera &_cam, int _debugMode)
 {   
     ngl::ShaderLib *shader = ngl::ShaderLib::instance();
     (*shader)[_shader]->use();
@@ -22,7 +22,7 @@ void SpeedBoat::draw(const std::string &_shader, ngl::Camera *_cam, int _debugMo
     //ngl::Material m(ngl::GOLD);
     //m.loadToShader("material");
 
-    ngl::Mat4 MVP=m_transform.getMatrix()*_cam->getVPMatrix();
+    ngl::Mat4 MVP=m_transform.getMatrix()*_cam.getVPMatrix();
 
     shader->setShaderParamFromMat4("MVP",MVP);
 
@@ -34,6 +34,8 @@ void SpeedBoat::draw(const std::string &_shader, ngl::Camera *_cam, int _debugMo
     case 2:
         m_model->drawBBox();
         break;
+    default:
+        m_model->draw();
     }
 
 }

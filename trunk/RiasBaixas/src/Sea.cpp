@@ -7,7 +7,7 @@ Sea::Sea()
     prim->createLineGrid("sea",10,10,40);
 }
 
-void Sea::draw(const std::string &_shader, ngl::Camera *_cam)
+void Sea::draw(const std::string &_shader, ngl::Camera &_cam)
 {
     //ngl::ShaderLib *shader = ngl::ShaderLib::instance();
     //(*shader)[_shader]->use();

@@ -13,11 +13,11 @@ class Floating : public Controller
 
 private:
     int m_ticks;
-    int m_push;
+    //write it with the velocity vector
 
 public:
     Floating();
-    void move(ngl::Vec3 _p, ngl::Vec3 _v);
+    void move(ngl::Vec3 &_p, ngl::Vec3 &_v);
 
 };
 

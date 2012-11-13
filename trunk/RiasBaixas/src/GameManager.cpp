@@ -46,7 +46,7 @@ int main()
     Sea mySea;
     Controller myFloating= Floating();
     SpeedBoat mySpeedBoat(&myFloating,myModels.getModel(1));
-    MusselFarm mf1 = MusselFarm(ngl::Vec3(2,0,2));
+    MusselFarm mf1(ngl::Vec3(0,0,0));
 
 
     std::vector<StaticSeaElement> myStaticSeaElements;
@@ -56,9 +56,11 @@ int main()
 
     //doMusselFarm(myStaticSeaElements.pop_back());
 
-    myRenderer.setWorld(&mySea, &mySpeedBoat);
+    myRenderer.setWorld(&mySea, &mySpeedBoat, &myStaticSeaElements);
 
     //myRenderer.render(aerialCamera);
+
+
 
 
     std::cout << "Testing..." << std::endl;
@@ -115,8 +117,13 @@ int main()
             break;
         }
         //mySpeedBoat.rotateInY();
-        mySpeedBoat.move();
-        myRenderer.render(aerialCamera,2);
+        //mySpeedBoat.floating();
+        //mySpeedBoat.info();
+        myRenderer.render(aerialCamera,0);
+        //mf1.info();
+        //mySpeedBoat.draw("Phong",aerialCamera,2);
+        //mySea.draw("Phong",&aerialCamera);
+        //mf1.draw("Phong",aerialCamera,1);
     }
 
     std::cout << "Tested" << std::endl;
