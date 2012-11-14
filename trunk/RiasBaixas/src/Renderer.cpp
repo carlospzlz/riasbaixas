@@ -13,7 +13,7 @@ bool Renderer::initGLContext()
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
         return false;
 
-    SDL_SetVideoMode(720, 720, 32, SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
+    SDL_SetVideoMode(1024, 1024, 32, SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
 
     ngl::NGLInit *Init = ngl::NGLInit::instance();
     Init->initGlew();

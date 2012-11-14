@@ -4,7 +4,7 @@
 #include <math.h>
 
 SpeedBoat::SpeedBoat(Controller *_controller, ngl::Obj *_model) :
-    DynamicSeaElement(ngl::Vec3(0,0,0), ngl::Vec4(0,90,0,1), ngl::Vec4(1,1,1,1), _controller, _model)
+    DynamicSeaElement(set_speedBoat, _model, "teapot", ngl::Vec3(0,0,0), ngl::Vec4(0,90,0,1), ngl::Vec4(1,1,1,1), _controller)
 {
     m_load = MAX_LOAD;
     std::cout << "SpeedBoat created and ready to rock." << std::endl;
