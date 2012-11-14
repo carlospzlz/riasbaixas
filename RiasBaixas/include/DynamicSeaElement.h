@@ -8,21 +8,18 @@
 #include <ngl/Camera.h>
 
 #include "SeaElement.h"
-#include "StaticSeaElement.h"
 #include "Controller.h"
 
-class DynamicSeaElement : SeaElement
+class DynamicSeaElement : public SeaElement
 {
 
 protected:
     ngl::Vec3 m_velocity;
     Controller *m_controller;
-    DynamicSeaElement(ngl::Vec3 _pos, ngl::Vec4 _rot, ngl::Vec4 _sca, Controller *_controller, ngl::Obj *_model);
+    DynamicSeaElement(SeaElementType _type, ngl::Obj *_model, std::string _primName, ngl::Vec3 _pos, ngl::Vec4 _rot, ngl::Vec4 _sca, Controller *_controller);
 
 public:
     virtual void move();
-    virtual void checkCollisionWith(StaticSeaElement _sse);
-    virtual void checkCollisionWith(DynamicSeaElement _dse);
     void info();
 
 };
