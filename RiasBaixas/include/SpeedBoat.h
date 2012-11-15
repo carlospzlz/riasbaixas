@@ -24,6 +24,7 @@ private:
 
 public:
     SpeedBoat(Controller *_controller, ngl::Obj *_model);
+    SpeedBoat(Controller *_controller);
     void draw(const std::string &_shader, ngl::Camera &_cam, int _debugMode);
     void move();
     void moveRight();
