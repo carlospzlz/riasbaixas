@@ -19,7 +19,7 @@ protected:
     DynamicSeaElement(SeaElementType _type, ngl::Obj *_model, std::string _primName, ngl::Vec3 _pos, ngl::Vec4 _rot, ngl::Vec4 _sca, Controller *_controller);
 
 public:
-    virtual void move();
+    void move();
     void info();
 
 };

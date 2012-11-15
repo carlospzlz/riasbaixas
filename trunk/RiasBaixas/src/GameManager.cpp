@@ -39,20 +39,21 @@ int main()
     myModels.addModel(1,"models/SpaceShip.obj");
 
     //World elements
-    //Sea mySea;
-    //std::vector<StaticSeaElements> myStaticSeaElements;
-    //std::vector<DynamicSeaElements> myDynamicSeaElements;
-
     Sea mySea;
+    std::vector<StaticSeaElement> myStaticSeaElements;
+    std::vector<DynamicSeaElement> myDynamicSeaElements;
+
+    //SPEEDBOAT
     Controller myFloating= Floating();
     SpeedBoat mySpeedBoat(&myFloating,myModels.getModel(1));
-    MusselFarm mf1(ngl::Vec3(0,0,0));
+    myDynamicSeaElements.push_back(mySpeedBoat);
 
-
-    std::vector<StaticSeaElement> myStaticSeaElements;
+    //MUSSELFARMS
+    MusselFarm mf1(ngl::Vec3(2,0,2));
     myStaticSeaElements.push_back(mf1);
+    MusselFarm mf2(ngl::Vec3(-2,0,2));
+    myStaticSeaElements.push_back(mf2);
 
-    std::vector<DynamicSeaElement> myDynamicSeaElements;
 
     //doMusselFarm(myStaticSeaElements.pop_back());
 
@@ -123,7 +124,8 @@ int main()
         //mf1.info();
         //mySpeedBoat.draw("Phong",aerialCamera,2);
         //mySea.draw("Phong",&aerialCamera);
-        //mf1.draw("Phong",aerialCamera,1);
+        mf1.draw("Phong",aerialCamera,1);
+        mySpeedBoat.draw("Phong",aerialCamera,0);
     }
 
     std::cout << "Tested" << std::endl;

@@ -10,6 +10,13 @@ SpeedBoat::SpeedBoat(Controller *_controller, ngl::Obj *_model) :
     std::cout << "SpeedBoat created and ready to rock." << std::endl;
 }
 
+SpeedBoat::SpeedBoat(Controller *_controller) :
+    DynamicSeaElement(set_speedBoat, NULL, "teapot", ngl::Vec3(0,0,0), ngl::Vec4(0,90,0,1), ngl::Vec4(1,1,1,1), _controller)
+{
+    m_load = MAX_LOAD;
+    std::cout << "SpeedBoat created and ready to rock." << std::endl;
+}
+
 void SpeedBoat::draw(const std::string &_shader, ngl::Camera &_cam, int _debugMode)
 {   
     ngl::ShaderLib *shader = ngl::ShaderLib::instance();

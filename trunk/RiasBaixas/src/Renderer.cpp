@@ -75,7 +75,7 @@ void Renderer::render(ngl::Camera &_cam)
 
 void Renderer::render(ngl::Camera &_cam, int debugMode)
 {
-    std::cout << "Rendering..." << std::endl;
+    std::cout << "RENDERING..." << std::endl;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -95,7 +95,10 @@ void Renderer::render(ngl::Camera &_cam, int debugMode)
     ngl::Material m(ngl::PEWTER);
     m.loadToShader("material");
 
+    std::cin.ignore();
     loadMatricesToShader(m_transformStack,_cam);
+
+    std::cin.ignore();
 
 
 /*
@@ -111,25 +114,19 @@ void Renderer::render(ngl::Camera &_cam, int debugMode)
 */
 
     //DRAWING
-
-
-    //ngl::TransformStack ts;
-    //ts.pushTransform();
-
-    //ts.pushTransform();
-    //loadMatricesToShader(m_transformStack,_cam);
-    m_sea->draw("Phong", _cam);
-    //ts.popTransform();
-
-    //ngl::Material m(ngl::GOLD);
-/*
-    m.change(ngl::GOLD);
-    m.loadToShader("material");
-*/
     m_transformStack.pushTransform();
-    //loadMatricesToShader(m_transformStack,_cam);
-    //m_speedBoat->draw("Phong", _cam, debugMode);
+    loadMatricesToShader(m_transformStack,_cam);
+    m_sea->draw("Phong", _cam);
     m_transformStack.popTransform();
+    std::cin.ignore();
+
+    /*
+    m_transformStack.pushTransform();
+    loadMatricesToShader(m_transformStack,_cam);
+    m_speedBoat->draw("Phong", _cam, debugMode);
+    m_transformStack.popTransform();
+    std::cin.ignore();
+    */
 
 
 
@@ -142,8 +139,10 @@ void Renderer::render(ngl::Camera &_cam, int debugMode)
         m_transformStack.popTransform();
         std::cout << "Renderer: SSE drawn" << std::endl;
         currentSse->info();
+        std::cin.ignore();
     }
-/*
+
+    /*
     std::vector<DynamicSeaElement>::iterator lastDse = m_dynamicSeaElements->end();
     for(std::vector<DynamicSeaElement>::iterator currentDse = m_dynamicSeaElements->begin(); currentDse!=lastDse; ++currentDse)
     {
@@ -151,8 +150,8 @@ void Renderer::render(ngl::Camera &_cam, int debugMode)
         loadMatricesToShader(m_transformStack,_cam);
         currentDse->draw("Phong", _cam, debugMode);
         m_transformStack.popTransform();
-    }*/
-
+    }
+    */
     //ts.popTransform();
 
     //ts.pushTransform();
@@ -164,7 +163,7 @@ void Renderer::render(ngl::Camera &_cam, int debugMode)
     SDL_GL_SwapBuffers(); //DO NOOOTT COMMENT THIS FUCKING LINE!!!!!!
 }
 
-void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera m_cam)
+void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera _cam)
 {
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
 
@@ -173,8 +172,8 @@ void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera m_cam)
   ngl::Mat3 normalMatrix;
   ngl::Mat4 M;
   M=_tx.getCurrAndGlobal().getMatrix();
-  MV=  _tx.getCurrAndGlobal().getMatrix()*m_cam.getViewMatrix();
-  MVP= M*m_cam.getVPMatrix();
+  MV=  _tx.getCurrAndGlobal().getMatrix()*_cam.getViewMatrix();
+  MVP= M*_cam.getVPMatrix();
   normalMatrix=MV;
   normalMatrix.inverse();
   shader->setShaderParamFromMat4("MV",MV);
