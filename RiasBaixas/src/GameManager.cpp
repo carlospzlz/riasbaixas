@@ -48,38 +48,33 @@ int main()
 
     //World elements
     Sea mySea;
-    std::vector<StaticSeaElement> myStaticSeaElements;
-    std::vector<DynamicSeaElement> myDynamicSeaElements;
+    std::vector<StaticSeaElement*> myStaticSeaElements;
+    std::vector<DynamicSeaElement*> myDynamicSeaElements;
     //Parser myParser;
 
 
 
     //DYNAMIC
-    myDynamicSeaElements.push_back(SpeedBoat(&myPlayerControls,myModels.getModel(1)));
+    SpeedBoat mySpeedBoat(&myPlayerControls,myModels.getModel(1));
+    myDynamicSeaElements.push_back(&mySpeedBoat);
 
     //MUSSELFARMS
-    myStaticSeaElements.push_back(MusselFarm(ngl::Vec3(2,0,2)));
-    myStaticSeaElements.push_back(MusselFarm(ngl::Vec3(-2,0,2)));
+    myStaticSeaElements.push_back(new MusselFarm(ngl::Vec3(2,0,2)));
+    myStaticSeaElements.push_back(new MusselFarm(ngl::Vec3(-2,0,2)));
 
 
     //Tell the world to the renderer
     std::vector<SeaElement*> allElements;
 
-    std::vector<StaticSeaElement>::iterator lastSse = myStaticSeaElements.end();
-    for(std::vector<StaticSeaElement>::iterator currentSse = myStaticSeaElements.begin(); currentSse!=lastSse; ++currentSse)
-    {
-        allElements.push_back(&(*currentSse));
-        std::cout << (&(*currentSse)) << std::endl;
-        currentSse->info();
-    }
+    std::vector<StaticSeaElement*>::iterator lastSse = myStaticSeaElements.end();
+    for(std::vector<StaticSeaElement*>::iterator currentSse = myStaticSeaElements.begin(); currentSse!=lastSse; ++currentSse)
+        allElements.push_back(*currentSse);
 
-    std::vector<DynamicSeaElement>::iterator lastDse = myDynamicSeaElements.end();
-    for(std::vector<DynamicSeaElement>::iterator currentDse = myDynamicSeaElements.begin(); currentDse!=lastDse; ++currentDse)
-        allElements.push_back(&(*currentDse));
 
-    std::vector<SeaElement*>::iterator lastSe = allElements.end();
-    for(std::vector<SeaElement*>::iterator currentSe = allElements.begin(); currentSe!=lastSe; ++currentSe)
-        std::cout << (*currentSe) << std::endl;
+    std::vector<DynamicSeaElement*>::iterator lastDse = myDynamicSeaElements.end();
+    for(std::vector<DynamicSeaElement*>::iterator currentDse = myDynamicSeaElements.begin(); currentDse!=lastDse; ++currentDse)
+        allElements.push_back(*currentDse);
+
 
     myRenderer.setWorld(&mySea, &allElements);
 
@@ -90,14 +85,18 @@ int main()
     std::cout << "Testing..." << std::endl;
 
 
+    //GAME LOOP
     while (myPlayerOptions.running)
     {
 
         readPlayerInput(myPlayerControls, myPlayerOptions);
 
 
-        myDynamicSeaElements.at(0).move();
-        //myDynamicSeaElements.at(0).info();
+        myDynamicSeaElements[0]->info();
+        myDynamicSeaElements[0]->move();
+
+        aerialCamera.setEye(ngl::Vec4(0,12,12+mySpeedBoat.getZ(),1));
+
         myRenderer.render(aerialCamera,1);
 
         //std::cin.ignore();

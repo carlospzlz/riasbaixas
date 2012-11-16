@@ -4,14 +4,16 @@
 #include <math.h>
 
 SpeedBoat::SpeedBoat(Controller *_controller, ngl::Obj *_model) :
-    DynamicSeaElement(set_speedBoat, _model, "teapot", ngl::Vec3(0,0,0), ngl::Vec4(0,90,0,1), ngl::Vec4(1,1,1,1), _controller)
+    DynamicSeaElement(set_speedBoat, _model, "teapot", ngl::Vec3(0,0,0), ngl::Vec4(0,90,0,1), ngl::Vec4(1,1,1,1),
+                      ngl::Vec3(SPEEDBOAT_SPEED,0,SPEEDBOAT_SPEED), _controller)
 {
     m_load = MAX_LOAD;
     std::cout << "SpeedBoat created and ready to rock." << std::endl;
 }
 
 SpeedBoat::SpeedBoat(Controller *_controller) :
-    DynamicSeaElement(set_speedBoat, NULL, "teapot", ngl::Vec3(0,0,0), ngl::Vec4(0,90,0,1), ngl::Vec4(1,1,1,1), _controller)
+    DynamicSeaElement(set_speedBoat, NULL, "teapot", ngl::Vec3(0,0,0), ngl::Vec4(0,90,0,1), ngl::Vec4(1,1,1,1),
+                      ngl::Vec3(SPEEDBOAT_SPEED,0,SPEEDBOAT_SPEED), _controller)
 {
     m_load = MAX_LOAD;
     std::cout << "SpeedBoat created and ready to rock." << std::endl;
@@ -96,5 +98,12 @@ void SpeedBoat::floating()
 
 void SpeedBoat::move()
 {
-    m_controller->move(m_position,m_velocity);
+    std::cout << "SpeedBoat moving!" << std::endl;
+    m_controller->move(m_position, m_rotation, m_velocity, SPEEDBOAT_SPEED_FACTOR, SPEEDBOAT_COMBER_STEP, SPEEDBOAT_COMBER_MAX);
 }
+
+/*
+void SpeedBoat::info()
+{
+    std::cout << "this is a SpeedBoat" << std::endl;
+}*/

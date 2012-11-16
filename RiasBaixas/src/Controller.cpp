@@ -1,6 +1,6 @@
 #include <Controller.h>
 
-//void virtual Controller::move(ngl::Vec3 _position, ngl::Vec3 _velocity);
-
-//void Controller::handleCollision(ngl::Vec3 _position, ngl::Vec3 _velocity, ngl::Vec3 _obstaclePosition,
-//                                 int _obsXSize, int _obsYSize, int _obsZSize) { };
+void Controller::move(ngl::Vec3 &_pos, ngl::Vec4 &_rot, const ngl::Vec3 &_vel, const int _factorSpeed, const int _combStep, const int _maxComb)
+{
+    std::cout << "This controller has undefined movement" << std::endl;
+}

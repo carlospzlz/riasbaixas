@@ -16,10 +16,10 @@ class DynamicSeaElement : public SeaElement
 protected:
     ngl::Vec3 m_velocity;
     Controller *m_controller;
-    DynamicSeaElement(SeaElementType _type, ngl::Obj *_model, std::string _primName, ngl::Vec3 _pos, ngl::Vec4 _rot, ngl::Vec4 _sca, Controller *_controller);
+    DynamicSeaElement(SeaElementType _type, ngl::Obj *_model, std::string _primName, ngl::Vec3 _pos, ngl::Vec4 _rot, ngl::Vec4 _sca, ngl::Vec3 _vel, Controller *_controller);
 
 public:
-    void move();
+    virtual void move();
 
 };
 

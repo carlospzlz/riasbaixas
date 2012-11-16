@@ -4,7 +4,7 @@
 Sea::Sea()
 {
     ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-    prim->createLineGrid("sea",10,10,40);
+    prim->createLineGrid("sea",SEA_DEPTH,SEA_DEPTH,SEA_DEPTH);
 }
 
 void Sea::draw(const std::string &_shader, ngl::Camera &_cam)

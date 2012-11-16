@@ -5,6 +5,9 @@
 #include <ngl/Camera.h>
 #include <ngl/ShaderLib.h>
 
+#define SEA_WIDTH 20
+#define SEA_DEPTH 3000
+
 class Sea
 {
     //private *ngl::Obj model
