@@ -8,15 +8,7 @@ DynamicSeaElement::DynamicSeaElement(SeaElementType _type, ngl::Obj *_model, std
     std::cout << "DSE created : ";
 }
 
-void DynamicSeaElement::info()
-{
-    std::cout << "DSE info:" << std::endl;
-    std::cout << "P-> " << m_position << std::endl;
-    std::cout << "R-> " << m_rotation << std::endl;
-    std::cout << "S-> " << m_scale << std::endl << std::endl;
-}
-
-void move()
+void DynamicSeaElement::move()
 {
 
 }

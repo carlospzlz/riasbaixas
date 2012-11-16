@@ -14,7 +14,6 @@ protected:
     StaticSeaElement(SeaElementType _type, ngl::Obj *_model, std::string _primName, ngl::Vec3 _pos, ngl::Vec4 _rot, ngl::Vec4 _sca);
 
 public:
-    void info();
 
 };
 

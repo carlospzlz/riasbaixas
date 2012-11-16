@@ -7,26 +7,34 @@
 #include "include/Models.h"
 #include "SpeedBoat.h"
 #include "Sea.h"
-#include "StaticSeaElement.h"
-#include "DynamicSeaElement.h"
+#include "SeaElement.h"
 #include "MusselFarm.h"
 #include "Controller.h"
+#include "PlayerControls.h"
 #include "Floating.h"
 
 
-void doMusselFarm(MusselFarm mf)
+struct playerOptions
 {
+    bool running = true;
+    int debugMode = 0;
+    int camera;
+};
 
-}
+void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOptions);
 
 int main()
 {
 
-
+    //Needed objects
     Renderer myRenderer;
-    myRenderer.initGLContext();
+    //Parser myParser;
+    Models myModels;
+    PlayerControls myPlayerControls;
+    playerOptions myPlayerOptions;
 
-    //sleep(3);
+
+    myRenderer.initGLContext();
 
     //Loading cameras
     ngl::Camera aerialCamera(ngl::Vec3(0,6,6),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
@@ -34,7 +42,7 @@ int main()
     // The final two are near and far clipping planes of 0.5 and 10
     aerialCamera.setShape(45,(float)720.0/576.0,0.05,350,ngl::PERSPECTIVE);
 
-    Models myModels;
+
     myModels.addModel(0,"models/Helix.obj");
     myModels.addModel(1,"models/SpaceShip.obj");
 
@@ -42,94 +50,147 @@ int main()
     Sea mySea;
     std::vector<StaticSeaElement> myStaticSeaElements;
     std::vector<DynamicSeaElement> myDynamicSeaElements;
+    //Parser myParser;
 
-    //SPEEDBOAT
-    Controller myFloating= Floating();
-    SpeedBoat mySpeedBoat(&myFloating,myModels.getModel(1));
-    myDynamicSeaElements.push_back(mySpeedBoat);
+
+
+    //DYNAMIC
+    myDynamicSeaElements.push_back(SpeedBoat(&myPlayerControls,myModels.getModel(1)));
 
     //MUSSELFARMS
-    MusselFarm mf1(ngl::Vec3(2,0,2));
-    myStaticSeaElements.push_back(mf1);
-    MusselFarm mf2(ngl::Vec3(-2,0,2));
-    myStaticSeaElements.push_back(mf2);
+    myStaticSeaElements.push_back(MusselFarm(ngl::Vec3(2,0,2)));
+    myStaticSeaElements.push_back(MusselFarm(ngl::Vec3(-2,0,2)));
 
 
-    //doMusselFarm(myStaticSeaElements.pop_back());
+    //Tell the world to the renderer
+    std::vector<SeaElement*> allElements;
 
-    myRenderer.setWorld(&mySea, &mySpeedBoat, &myStaticSeaElements);
+    std::vector<StaticSeaElement>::iterator lastSse = myStaticSeaElements.end();
+    for(std::vector<StaticSeaElement>::iterator currentSse = myStaticSeaElements.begin(); currentSse!=lastSse; ++currentSse)
+    {
+        allElements.push_back(&(*currentSse));
+        std::cout << (&(*currentSse)) << std::endl;
+        currentSse->info();
+    }
+
+    std::vector<DynamicSeaElement>::iterator lastDse = myDynamicSeaElements.end();
+    for(std::vector<DynamicSeaElement>::iterator currentDse = myDynamicSeaElements.begin(); currentDse!=lastDse; ++currentDse)
+        allElements.push_back(&(*currentDse));
+
+    std::vector<SeaElement*>::iterator lastSe = allElements.end();
+    for(std::vector<SeaElement*>::iterator currentSe = allElements.begin(); currentSe!=lastSe; ++currentSe)
+        std::cout << (*currentSe) << std::endl;
+
+    myRenderer.setWorld(&mySea, &allElements);
 
     //myRenderer.render(aerialCamera);
-
 
 
 
     std::cout << "Testing..." << std::endl;
 
 
-    bool running = true;
-    SDL_Event event;
-
-    while (running)
+    while (myPlayerOptions.running)
     {
-        SDL_PollEvent(&event);
-        switch (event.type)
-        {
-            case SDL_KEYDOWN:
-            switch (event.key.keysym.sym)
-            {
-                case SDLK_ESCAPE:
-                running = false;
-                break;
 
-                case SDLK_RIGHT:
-                mySpeedBoat.moveRight();
-                break;
+        readPlayerInput(myPlayerControls, myPlayerOptions);
 
-                case SDLK_LEFT:
-                mySpeedBoat.moveLeft();
-                break;
 
-                case SDLK_UP:
-                mySpeedBoat.moveUp();
-                break;
+        myDynamicSeaElements.at(0).move();
+        //myDynamicSeaElements.at(0).info();
+        myRenderer.render(aerialCamera,1);
 
-                case SDLK_DOWN:
-                mySpeedBoat.moveDown();
-                break;
-
-                case SDLK_x:
-                mySpeedBoat.rotateInX();
-                break;
-
-                case SDLK_y:
-                mySpeedBoat.rotateInY();
-                break;
-
-                case SDLK_z:
-                mySpeedBoat.rotateInZ();
-                break;
-
-            }
-            break;
-
-            case SDL_QUIT:
-                running = false;
-            break;
-        }
-        //mySpeedBoat.rotateInY();
-        //mySpeedBoat.floating();
-        //mySpeedBoat.info();
-        myRenderer.render(aerialCamera,0);
-        //mf1.info();
-        //mySpeedBoat.draw("Phong",aerialCamera,2);
-        //mySea.draw("Phong",&aerialCamera);
-        mf1.draw("Phong",aerialCamera,1);
-        mySpeedBoat.draw("Phong",aerialCamera,0);
+        //std::cin.ignore();
     }
 
     std::cout << "Tested" << std::endl;
 
     //std::cout << "End of test." << std::endl;
     return 0;
+}
+
+void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOptions)
+{
+    SDL_Event event;
+
+    SDL_PollEvent(&event);
+    switch (event.type)
+    {
+        case SDL_KEYDOWN:
+        switch (event.key.keysym.sym)
+        {
+            case SDLK_ESCAPE:
+            _playerOptions.running = false;
+            break;
+
+            case SDLK_RIGHT:
+            _playerControls.setRight(true);
+            break;
+
+            case SDLK_LEFT:
+            _playerControls.setLeft(true);
+            break;
+
+            case SDLK_SPACE:
+            _playerControls.setSpeedUp(true);
+            break;
+
+            case SDLK_0:
+            _playerOptions.debugMode = 0;
+            break;
+
+            case SDLK_1:
+            _playerOptions.debugMode = 1;
+            break;
+
+            case SDLK_2:
+            _playerOptions.debugMode = 2;
+
+
+            /*
+            case SDLK_UP:
+            mySpeedBoat.moveUp();
+            break;
+
+            case SDLK_DOWN:
+            mySpeedBoat.moveDown();
+            break;
+
+            case SDLK_x:
+            mySpeedBoat.rotateInX();
+            break;
+
+            case SDLK_y:
+            mySpeedBoat.rotateInY();
+            break;
+
+            case SDLK_z:
+            mySpeedBoat.rotateInZ();
+            break;
+            */
+
+        }
+        break;
+
+        case SDL_KEYUP:
+        switch(event.key.keysym.sym)
+        {
+            case SDLK_RIGHT:
+            _playerControls.setRight(false);
+            break;
+
+            case SDLK_LEFT:
+            _playerControls.setLeft(false);
+            break;
+
+            case SDLK_SPACE:
+            _playerControls.setSpeedUp(false);
+            break;
+        }
+        break;
+
+        case SDL_QUIT:
+            _playerOptions.running = false;
+        break;
+    }
 }
