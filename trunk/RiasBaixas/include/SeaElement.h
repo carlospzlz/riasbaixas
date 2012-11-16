@@ -39,6 +39,7 @@ protected:
 public:
     void draw(const std::string &_shader, const ngl::Camera &_cam, int _debugMode);
     SeaElementType getSeaElementType() {return m_type;}
+    void info();
 
 };
 

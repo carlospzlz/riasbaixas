@@ -20,7 +20,6 @@ protected:
 
 public:
     void move();
-    void info();
 
 };
 

@@ -32,3 +32,12 @@ void SeaElement::draw(const std::string &_shader, const ngl::Camera &_cam, int _
     else
         m_model->draw();
 }
+
+
+void SeaElement::info()
+{
+    std::cout << "SE info of " << this << " (type "<< m_type << ")" << std::endl;
+    std::cout << "P-> " << m_position << std::endl;
+    std::cout << "R-> " << m_rotation << std::endl;
+    std::cout << "S-> " << m_scale << std::endl << std::endl;
+}

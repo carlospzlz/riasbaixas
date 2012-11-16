@@ -5,11 +5,3 @@ StaticSeaElement::StaticSeaElement(SeaElementType _type, ngl::Obj *_model, std::
 {
     std::cout << "SSE created : ";
 }
-
-void StaticSeaElement::info()
-{
-    std::cout << "SSE info:" << std::endl;
-    std::cout << "P-> " << m_position << std::endl;
-    std::cout << "R-> " << m_rotation << std::endl;
-    std::cout << "S-> " << m_scale << std::endl << std::endl;
-}

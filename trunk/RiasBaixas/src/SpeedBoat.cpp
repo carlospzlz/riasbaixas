@@ -17,6 +17,7 @@ SpeedBoat::SpeedBoat(Controller *_controller) :
     std::cout << "SpeedBoat created and ready to rock." << std::endl;
 }
 
+/*
 void SpeedBoat::draw(const std::string &_shader, ngl::Camera &_cam, int _debugMode)
 {   
     ngl::ShaderLib *shader = ngl::ShaderLib::instance();
@@ -45,7 +46,7 @@ void SpeedBoat::draw(const std::string &_shader, ngl::Camera &_cam, int _debugMo
         m_model->draw();
     }
 
-}
+}*/
 
 void SpeedBoat::moveRight()
 {

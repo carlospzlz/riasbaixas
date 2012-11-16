@@ -60,11 +60,10 @@ bool Renderer::initGLContext()
     return true;
 }
 
-void Renderer::setWorld(Sea *_sea, SpeedBoat *_sp, std::vector<StaticSeaElement> *_staticSeaElements)
+void Renderer::setWorld(Sea *_sea, std::vector<SeaElement*> *_seaElements)
 {
     m_sea = _sea;
-    m_speedBoat = _sp;
-    m_staticSeaElements = _staticSeaElements;
+    m_seaElements = _seaElements;
     std::cout << "The renderer was told the world" << std::endl;
 }
 
@@ -95,10 +94,7 @@ void Renderer::render(ngl::Camera &_cam, int debugMode)
     ngl::Material m(ngl::PEWTER);
     m.loadToShader("material");
 
-    std::cin.ignore();
     loadMatricesToShader(m_transformStack,_cam);
-
-    std::cin.ignore();
 
 
 /*
@@ -110,39 +106,26 @@ void Renderer::render(ngl::Camera &_cam, int debugMode)
       loadMatricesToShader(m_transformStack,_cam);
       prim->draw("troll");
     } // and before a pop
-    m_transformStack.popTransform();
-*/
+    m_transformStack.popTransform();*/
+
 
     //DRAWING
     m_transformStack.pushTransform();
     loadMatricesToShader(m_transformStack,_cam);
     m_sea->draw("Phong", _cam);
     m_transformStack.popTransform();
-    std::cin.ignore();
 
-    /*
-    m_transformStack.pushTransform();
-    loadMatricesToShader(m_transformStack,_cam);
-    m_speedBoat->draw("Phong", _cam, debugMode);
-    m_transformStack.popTransform();
-    std::cin.ignore();
-    */
-
-
-
-    std::vector<StaticSeaElement>::iterator lastSse = m_staticSeaElements->end();
-    for(std::vector<StaticSeaElement>::iterator currentSse = m_staticSeaElements->begin(); currentSse!=lastSse; ++currentSse)
+    std::vector<SeaElement*>::iterator lastSe = m_seaElements->end();
+    for(std::vector<SeaElement*>::iterator currentSe = m_seaElements->begin(); currentSe!=lastSe; ++currentSe)
     {
         m_transformStack.pushTransform();
         loadMatricesToShader(m_transformStack,_cam);
-        currentSse->draw("Phong", _cam, debugMode);
+        (*currentSe)->draw("Phong", _cam, debugMode);
         m_transformStack.popTransform();
-        std::cout << "Renderer: SSE drawn" << std::endl;
-        currentSse->info();
-        std::cin.ignore();
+        //(*currentSe)->info();
     }
 
-    /*
+/*
     std::vector<DynamicSeaElement>::iterator lastDse = m_dynamicSeaElements->end();
     for(std::vector<DynamicSeaElement>::iterator currentDse = m_dynamicSeaElements->begin(); currentDse!=lastDse; ++currentDse)
     {
@@ -151,7 +134,7 @@ void Renderer::render(ngl::Camera &_cam, int debugMode)
         currentDse->draw("Phong", _cam, debugMode);
         m_transformStack.popTransform();
     }
-    */
+*/
     //ts.popTransform();
 
     //ts.pushTransform();
