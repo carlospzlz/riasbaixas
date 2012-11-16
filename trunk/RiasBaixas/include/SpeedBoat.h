@@ -13,7 +13,10 @@
 
 #include "DynamicSeaElement.h"
 
-
+#define SPEEDBOAT_SPEED 0.1
+#define SPEEDBOAT_SPEED_FACTOR 3
+#define SPEEDBOAT_COMBER_STEP 2
+#define SPEEDBOAT_COMBER_MAX 20
 #define MAX_LOAD 300;
 
 class SpeedBoat : public DynamicSeaElement
@@ -25,7 +28,7 @@ private:
 public:
     SpeedBoat(Controller *_controller, ngl::Obj *_model);
     SpeedBoat(Controller *_controller);
-    void move();
+    virtual void move();
     void moveRight();
     void moveLeft();
     void moveUp();
