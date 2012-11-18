@@ -15,8 +15,9 @@ private:
     ngl::Camera *m_backCamera;
     Object *m_target;
     int m_indexCurrentCamera;
-    float m_previousYComponent;
-    float m_previousZComponent;
+    float m_previousX;
+    float m_previousY;
+    float m_previousZ;
 
 public:
     CameraManager();

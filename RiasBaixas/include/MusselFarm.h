@@ -3,14 +3,14 @@
 
 #include "StaticObject.h"
 
-#define DAMAGE 10
+#define MUSSELFARM_DAMAGE 10
 
 class MusselFarm : public StaticObject
 {
 
 public:
-    MusselFarm(ngl::Obj *_model, ngl::Vec3 _pos, int _dam);
-    MusselFarm(ngl::Vec3 _pos, int _dam);
+    MusselFarm(ngl::Obj *_model, ngl::Vec3 _pos);
+    MusselFarm(ngl::Vec3 _pos);
 
 };
 
