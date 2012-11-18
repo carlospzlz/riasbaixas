@@ -1,19 +1,16 @@
 #ifndef MUSSELFARM_H
 #define MUSSELFARM_H
 
-#include <StaticSeaElement.h>
+#include "StaticObject.h"
 
 #define DAMAGE 10
 
-class MusselFarm : public StaticSeaElement
+class MusselFarm : public StaticObject
 {
-private:
-    int m_damage;
 
 public:
-    MusselFarm(ngl::Obj *_model, ngl::Vec3 _pos);
-    MusselFarm(ngl::Vec3 _pos);
-    int inline getDamage();
+    MusselFarm(ngl::Obj *_model, ngl::Vec3 _pos, int _dam);
+    MusselFarm(ngl::Vec3 _pos, int _dam);
 
 };
 

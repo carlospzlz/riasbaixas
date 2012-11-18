@@ -3,7 +3,6 @@
 
 #include <math.h>
 #include "Controller.h"
-#include "SpeedBoat.h"
 
 #define AMPLITUDE 3
 #define FRECUENCY M_PI/150

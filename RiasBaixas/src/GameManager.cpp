@@ -3,11 +3,13 @@
 #include <iostream>
 #include <ngl/VAOPrimitives.h>
 #include <ngl/TransformStack.h>
-#include "include/Renderer.h"
-#include "include/Models.h"
+#include "Renderer.h"
+#include "SourceManager.h"
+#include "CameraManager.h"
 #include "SpeedBoat.h"
 #include "Sea.h"
-#include "SeaElement.h"
+#include "Object.h"
+#include "ObjectManager.h"
 #include "MusselFarm.h"
 #include "Controller.h"
 #include "PlayerControls.h"
@@ -18,69 +20,42 @@ struct playerOptions
 {
     bool running = true;
     int debugMode = 0;
-    int camera;
+    bool backCamera = false;
+    bool changeCamera = false;
 };
 
 void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOptions);
+void setCamera(ngl::Camera *&_cam, CameraManager &_cameraManager, playerOptions &_playerOptions);
 
 int main()
 {
 
-    //Needed objects
+    //NEEDED OBJECTS
     Renderer myRenderer;
     //Parser myParser;
-    Models myModels;
+    SourceManager mySourceManager;
+    ObjectManager myObjectManager;
+    CameraManager myCameraManager;
     PlayerControls myPlayerControls;
     playerOptions myPlayerOptions;
 
-
     myRenderer.initGLContext();
 
+    //Loading models
+    mySourceManager.addMesh("helix",new ngl::Obj("models/Helix.obj"));
+    mySourceManager.addMesh("spaceship",new ngl::Obj("models/Helix.obj"));
+
     //Loading cameras
-    ngl::Camera aerialCamera(ngl::Vec3(0,6,6),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
-    // set the shape using FOV 45 Aspect Ratio based on Width and Height
-    // The final two are near and far clipping planes of 0.5 and 10
-    aerialCamera.setShape(45,(float)720.0/576.0,0.05,350,ngl::PERSPECTIVE);
+    myCameraManager.loadCameras();
+    ngl::Camera *myCamera = myCameraManager.getFirstCamera();
 
+    //SPEEDBOAT AND WORLD
+    SpeedBoat mySpeedBoat(&myPlayerControls,mySourceManager.getMesh("helix"),0);
+    myObjectManager.addDynamicObject(&mySpeedBoat);
+    myObjectManager.setSea(new Sea(3000));
+    myObjectManager.createTestLevel();
 
-    myModels.addModel(0,"models/Helix.obj");
-    myModels.addModel(1,"models/SpaceShip.obj");
-
-    //World elements
-    Sea mySea;
-    std::vector<StaticSeaElement*> myStaticSeaElements;
-    std::vector<DynamicSeaElement*> myDynamicSeaElements;
-    //Parser myParser;
-
-
-
-    //DYNAMIC
-    SpeedBoat mySpeedBoat(&myPlayerControls,myModels.getModel(1));
-    myDynamicSeaElements.push_back(&mySpeedBoat);
-
-    //MUSSELFARMS
-    myStaticSeaElements.push_back(new MusselFarm(ngl::Vec3(2,0,2)));
-    myStaticSeaElements.push_back(new MusselFarm(ngl::Vec3(-2,0,2)));
-
-
-    //Tell the world to the renderer
-    std::vector<SeaElement*> allElements;
-
-    std::vector<StaticSeaElement*>::iterator lastSse = myStaticSeaElements.end();
-    for(std::vector<StaticSeaElement*>::iterator currentSse = myStaticSeaElements.begin(); currentSse!=lastSse; ++currentSse)
-        allElements.push_back(*currentSse);
-
-
-    std::vector<DynamicSeaElement*>::iterator lastDse = myDynamicSeaElements.end();
-    for(std::vector<DynamicSeaElement*>::iterator currentDse = myDynamicSeaElements.begin(); currentDse!=lastDse; ++currentDse)
-        allElements.push_back(*currentDse);
-
-
-    myRenderer.setWorld(&mySea, &allElements);
-
-    //myRenderer.render(aerialCamera);
-
-
+    myCameraManager.setTarget(&mySpeedBoat);
 
     std::cout << "Testing..." << std::endl;
 
@@ -90,14 +65,15 @@ int main()
     {
 
         readPlayerInput(myPlayerControls, myPlayerOptions);
+        setCamera(myCamera,myCameraManager,myPlayerOptions);
 
+        //myDynamicSeaElements[0]->info();
+        myObjectManager.moveObjects();
 
-        myDynamicSeaElements[0]->info();
-        myDynamicSeaElements[0]->move();
+        myCameraManager.updateCameras();
+        //aerialCamera.setEye(ngl::Vec4(0,12,12+mySpeedBoat.getZ(),1));
 
-        aerialCamera.setEye(ngl::Vec4(0,12,12+mySpeedBoat.getZ(),1));
-
-        myRenderer.render(aerialCamera,1);
+        myRenderer.render(myObjectManager.getSea(),myObjectManager.getObjects(),*myCamera,1);
 
         //std::cin.ignore();
     }
@@ -107,6 +83,7 @@ int main()
     //std::cout << "End of test." << std::endl;
     return 0;
 }
+
 
 void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOptions)
 {
@@ -132,6 +109,14 @@ void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOpti
 
             case SDLK_SPACE:
             _playerControls.setSpeedUp(true);
+            break;
+
+            case SDLK_BACKSPACE:
+            _playerOptions.backCamera = true;
+            break;
+
+            case SDLK_c:
+            _playerOptions.changeCamera = true;
             break;
 
             case SDLK_0:
@@ -185,11 +170,37 @@ void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOpti
             case SDLK_SPACE:
             _playerControls.setSpeedUp(false);
             break;
+
+            case SDLK_BACKSPACE:
+            _playerOptions.backCamera = false;
+            break;
+
+            case SDLK_c:
+            //this is unnecessary
+            _playerOptions.changeCamera = false;
+            break;
         }
         break;
 
         case SDL_QUIT:
             _playerOptions.running = false;
         break;
+    }
+}
+
+void setCamera(ngl::Camera *&_cam, CameraManager &_cameraManager, playerOptions &_playerOptions)
+{
+    if (_playerOptions.backCamera)
+        _cam = _cameraManager.getBackCamera();
+    else
+    {
+        if (_playerOptions.changeCamera)
+        {
+            _cam = _cameraManager.getNextCamera();
+            _playerOptions.changeCamera = false;
+        }
+
+        else
+            _cam = _cameraManager.getCurrentCamera();
     }
 }

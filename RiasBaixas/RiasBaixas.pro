@@ -3,34 +3,40 @@ QMAKE_CXX=clang++ -fdiagnostics-fixit-info
 
 INCLUDEPATH += include
 HEADERS += \
-    include/Models.h \
     include/Renderer.h \
     include/SpeedBoat.h \
     include/Sea.h \
-    include/StaticSeaElement.h \
     include/MusselFarm.h \
-    include/DynamicSeaElement.h \
     include/Controller.h \
     include/Floating.h \
     include/Stream.h \
     include/Rock.h \
     include/Ramp.h \
-    include/SeaElement.h \
-    include/PlayerControls.h
+    include/PlayerControls.h \
+    include/CameraManager.h \
+    include/Object.h \
+    include/StaticObject.h \
+    include/DynamicObject.h \
+    include/SourceManager.h \
+    include/ObjectManager.h \
+    include/Parser.h \
+    include/txtParser.h
 
 SOURCES += \
-    src/Models.cpp \
     src/SpeedBoat.cpp \
     src/Renderer.cpp \
     src/GameManager.cpp \
     src/Sea.cpp \
-    src/StaticSeaElement.cpp \
     src/MusselFarm.cpp \
     src/Controller.cpp \
     src/Floating.cpp \
-    src/DynamicSeaElement.cpp \
-    src/SeaElement.cpp \
-    src/PlayerControls.cpp
+    src/PlayerControls.cpp \
+    src/CameraManager.cpp \
+    src/Object.cpp \
+    src/StaticObject.cpp \
+    src/DynamicObject.cpp \
+    src/SourceManager.cpp \
+    src/ObjectManager.cpp
 
 OBJECTS_DIR = bin
 
@@ -59,6 +65,9 @@ QT += opengl
 #SDL library
 LIBS+=$$system(sdl-config  --libs)
 message(output from sdl-config --libs added to LIBS =$$LIBS)
+
+#include boost for tokenizer and reading from configFiles
+INCLUDEPATH +=/usr/local/boost
 
 CXX_FLAGS+=$$system(sdl-config  --cflags)
 message(output from sdl-config --cflags added to CXX_FLAGS= $$CXX_FLAGS)
