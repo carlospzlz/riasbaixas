@@ -60,19 +60,21 @@ bool Renderer::initGLContext()
     return true;
 }
 
-void Renderer::setWorld(Sea *_sea, std::vector<SeaElement*> *_seaElements)
+/*
+void Renderer::setWorld(Sea *_sea, std::vector<Object*> *_objects)
 {
     m_sea = _sea;
-    m_seaElements = _seaElements;
+    m_objects = _objects;
     std::cout << "The renderer was told the world" << std::endl;
 }
+*/
 
-void Renderer::render(ngl::Camera &_cam)
+void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam)
 {
-    Renderer::render(_cam,0);
+    render(_sea, _objects, _cam, 0);
 }
 
-void Renderer::render(ngl::Camera &_cam, int debugMode)
+void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam, int debugMode)
 {
     std::cout << "RENDERING..." << std::endl;
 
@@ -112,17 +114,17 @@ void Renderer::render(ngl::Camera &_cam, int debugMode)
     //DRAWING
     m_transformStack.pushTransform();
     loadMatricesToShader(m_transformStack,_cam);
-    m_sea->draw("Phong", _cam);
+    _sea->draw("Phong", _cam);
     m_transformStack.popTransform();
 
-    std::vector<SeaElement*>::iterator lastSe = m_seaElements->end();
-    for(std::vector<SeaElement*>::iterator currentSe = m_seaElements->begin(); currentSe!=lastSe; ++currentSe)
+    std::vector<Object*>::iterator lastObject = _objects.end();
+    for(std::vector<Object*>::iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
     {
         m_transformStack.pushTransform();
         loadMatricesToShader(m_transformStack,_cam);
-        (*currentSe)->draw("Phong", _cam, debugMode);
+        (*currentObject)->draw("Phong", _cam, debugMode);
         m_transformStack.popTransform();
-        //(*currentSe)->info();
+        (*currentObject)->info();
     }
 
 /*

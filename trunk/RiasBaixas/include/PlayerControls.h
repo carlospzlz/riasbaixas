@@ -8,7 +8,11 @@
 
 #define PLAYERCONTROLS_CAMBER 1
 #define PLAYERCONTROLS_FRECUENCY M_PI/120
-#define PLAYERCONTROLS_AMPLITUDE 0.02
+#define PLAYERCONTROLS_AMPLITUDE_FLOATING 0.15
+#define PLAYERCONTROLS_AMPLITUDE_BOUNCING 0.5
+#define PLAYERCONTROLS_ACELARATION_STEP 0.005
+#define PLAYERCONTROLS_DECELARATION_STEP 0.02
+#define PLAYERCONTROLS_EMERSION 0.2
 
 class PlayerControls : public Controller
 {
@@ -17,8 +21,12 @@ private:
     bool m_right;
     bool m_speedUp;
     float m_internalVelInZ;
-    int m_ticksJumping;
+    bool m_floating;
+    bool m_bouncing;
+    bool m_jumping;
     int m_ticksFloating;
+    int m_ticksBouncing;
+    int m_ticksJumping;
 
 public:
     PlayerControls();

@@ -2,6 +2,7 @@
 #define CONTROLLER_H
 
 #include <ngl/Vec3.h>
+#include "Sea.h"
 
 class Controller
 {
