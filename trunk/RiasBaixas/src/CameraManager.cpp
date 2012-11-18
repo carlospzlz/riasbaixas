@@ -5,8 +5,9 @@
 CameraManager::CameraManager()
 {
     m_indexCurrentCamera = 0;
-    m_previousYComponent = 0;
-    m_previousZComponent = 0;
+    m_previousX = 0;
+    m_previousY = 0;
+    m_previousZ = 0;
     m_target = NULL;
 }
 
@@ -94,18 +95,20 @@ void CameraManager::updateCameras()
 {
     ngl::Vec4 eyeDisplacement;
     std::vector<ngl::Camera*>::iterator lastCamera;
-    float currentYComponent = m_target->getY();
-    float currentZComponent = m_target->getZ();
+    float currentX = m_target->getX();
+    float currentY = m_target->getY();
+    float currentZ = m_target->getZ();
 
+    //update spectator cameras
     assert(m_target);
-    eyeDisplacement = ngl::Vec4(0,0, currentZComponent-m_previousZComponent,1);
+    eyeDisplacement = ngl::Vec4(0,0, currentZ-m_previousZ,1);
     lastCamera = m_spectatorCameras.end();
     for (std::vector<ngl::Camera*>::iterator currentCamera=m_spectatorCameras.begin(); currentCamera!=lastCamera;++currentCamera)
     {
         (*currentCamera)->setEye((*currentCamera)->getEye()+eyeDisplacement);
     }
 
-    eyeDisplacement = ngl::Vec4(0,currentYComponent-m_previousYComponent, currentZComponent-m_previousZComponent,1);
+    eyeDisplacement = ngl::Vec4(currentX-m_previousX ,currentY-m_previousY, currentZ-m_previousZ,1);
     lastCamera = m_FPCameras.end();
     for (std::vector<ngl::Camera*>::iterator currentCamera=m_FPCameras.begin(); currentCamera!=lastCamera;++currentCamera)
     {
@@ -113,8 +116,9 @@ void CameraManager::updateCameras()
     }
 
     //update m_previousComponents
-    m_previousYComponent = currentYComponent;
-    m_previousZComponent = currentZComponent;
+    m_previousX = currentX;
+    m_previousY = currentY;
+    m_previousZ = currentZ;
 }
 
 

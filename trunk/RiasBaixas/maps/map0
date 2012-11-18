@@ -1,0 +1,57 @@
+Sea 3000
+
+MusselFarm musselFarm 8 0 0
+MusselFarm musselFarm -8 0 0
+
+MusselFarm musselFarm 0 0 -110
+MusselFarm musselFarm 4 0 -110
+MusselFarm musselFarm 0 0 -120
+MusselFarm musselFarm 4 0 -120
+MusselFarm musselFarm 0 0 -130
+MusselFarm musselFarm 4 0 -130
+MusselFarm musselFarm 0 0 -140
+MusselFarm musselFarm 4 0 -140
+
+MusselFarm musselFarm 0 0 -160
+MusselFarm musselFarm -4 0 -160
+MusselFarm musselFarm 0 0 -170
+MusselFarm musselFarm -4 0 -170
+MusselFarm musselFarm 0 0 -180
+MusselFarm musselFarm -4 0 -180
+MusselFarm musselFarm 0 0 -190
+MusselFarm musselFarm -4 0 -190
+
+MusselFarm musselFarm -8 0 -300
+MusselFarm musselFarm -7 0 -310
+MusselFarm musselFarm -6 0 -320
+MusselFarm musselFarm -5 0 -330
+MusselFarm musselFarm -4 0 -340
+MusselFarm musselFarm -3 0 -350
+MusselFarm musselFarm -2 0 -360
+MusselFarm musselFarm -1 0 -370
+MusselFarm musselFarm 1 0 -300
+MusselFarm musselFarm 2 0 -310
+MusselFarm musselFarm 3 0 -320
+MusselFarm musselFarm 4 0 -330
+MusselFarm musselFarm 5 0 -340
+MusselFarm musselFarm 6 0 -350
+MusselFarm musselFarm 7 0 -360
+MusselFarm musselFarm 8 0 -370
+
+
+MusselFarm musselFarm 8 0 -400
+MusselFarm musselFarm 7 0 -410
+MusselFarm musselFarm 6 0 -420
+MusselFarm musselFarm 5 0 -430
+MusselFarm musselFarm 4 0 -440
+MusselFarm musselFarm 3 0 -450
+MusselFarm musselFarm 2 0 -460
+MusselFarm musselFarm 1 0 -470
+MusselFarm musselFarm -1 0 -400
+MusselFarm musselFarm -2 0 -410
+MusselFarm musselFarm -3 0 -420
+MusselFarm musselFarm -4 0 -430
+MusselFarm musselFarm -5 0 -440
+MusselFarm musselFarm -6 0 -450
+MusselFarm musselFarm -7 0 -460
+MusselFarm musselFarm -8 0 -470

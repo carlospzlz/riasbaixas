@@ -8,10 +8,13 @@ Object::Object(objectType _type, ngl::Obj *_mesh, std::string _primName, ngl::Ve
     m_mesh = _mesh;
     m_primName = _primName;
     m_position = _pos;
+    //clamping to the Sea limits
+    m_position.m_x = std::max(-SEA_WIDTH/(float)2, m_position.m_x);
+    m_position.m_x = std::min(SEA_WIDTH/(float)2, m_position.m_x);
     m_rotation = _rot;
     m_scale = _sca;
     m_damage = _dam;
-    std::cout << "Object created : " << std::endl;
+    std::cout << "Object created : ";
 }
 
 void Object::draw(const std::string &_shader, const ngl::Camera &_cam, int _debugMode)

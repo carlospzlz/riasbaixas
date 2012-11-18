@@ -3,14 +3,20 @@
 
 #include "SourceManager.h"
 
+#include "ObjectManager.h"
+#include "Sea.h"
+#include "SpeedBoat.h"
+#include "MusselFarm.h"
+//#include "FisherBoat"
+
 class Parser
 {
 
 public:
-    void loadBasicSources(SourceManager _sourceManager){};
+    virtual bool loadBasicSources(SourceManager *_sourceManager){};
     //void loadRadioConversation();
-    void loadFullSources(SourceManager _sourceManager){};
-    void loadLevel(int _level, SourceManager _sourceManager){};
+    virtual bool loadLevelSources(int _level, SourceManager *_sourceManager){};
+    virtual bool loadMap(int _map, ObjectManager *_objectManager, SourceManager *_sourceManager){};
 
 };
 

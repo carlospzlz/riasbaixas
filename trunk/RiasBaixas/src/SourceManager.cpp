@@ -18,7 +18,7 @@ SourceManager::~SourceManager()
 
 void SourceManager::addMesh(const std::string _key, ngl::Obj* _mesh)
 {
-    std::cout << "Loading mesh " << _key << std::endl;
+    std::cout << "SourceManager: Loading mesh " << _key << std::endl;
     _mesh->createVAO();
     _mesh->calcBoundingSphere();
     m_meshes[_key] = _mesh;
@@ -26,5 +26,11 @@ void SourceManager::addMesh(const std::string _key, ngl::Obj* _mesh)
 
 ngl::Obj* SourceManager::getMesh(const std::string _key)
 {
-    return m_meshes[_key];
+    if (m_meshes.find(_key)!=m_meshes.end())
+        return m_meshes[_key];
+    else
+    {
+        return NULL;
+        std::cout << "SourceManager: Mesh " << _key << " not found!" << std::endl;
+    }
 }

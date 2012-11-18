@@ -124,7 +124,7 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
         loadMatricesToShader(m_transformStack,_cam);
         (*currentObject)->draw("Phong", _cam, debugMode);
         m_transformStack.popTransform();
-        (*currentObject)->info();
+        //(*currentObject)->info();
     }
 
 /*

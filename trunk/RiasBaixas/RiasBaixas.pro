@@ -20,7 +20,8 @@ HEADERS += \
     include/SourceManager.h \
     include/ObjectManager.h \
     include/Parser.h \
-    include/txtParser.h
+    include/TxtParser.h \
+    include/FisherBoat.h
 
 SOURCES += \
     src/SpeedBoat.cpp \
@@ -36,7 +37,8 @@ SOURCES += \
     src/StaticObject.cpp \
     src/DynamicObject.cpp \
     src/SourceManager.cpp \
-    src/ObjectManager.cpp
+    src/ObjectManager.cpp \
+    src/TxtParser.cpp
 
 OBJECTS_DIR = bin
 

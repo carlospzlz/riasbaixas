@@ -14,6 +14,7 @@
 #include "Controller.h"
 #include "PlayerControls.h"
 #include "Floating.h"
+#include "TxtParser.h"
 
 
 struct playerOptions
@@ -32,7 +33,6 @@ int main()
 
     //NEEDED OBJECTS
     Renderer myRenderer;
-    //Parser myParser;
     SourceManager mySourceManager;
     ObjectManager myObjectManager;
     CameraManager myCameraManager;
@@ -45,16 +45,20 @@ int main()
     mySourceManager.addMesh("helix",new ngl::Obj("models/Helix.obj"));
     mySourceManager.addMesh("spaceship",new ngl::Obj("models/Helix.obj"));
 
-    //Loading cameras
-    myCameraManager.loadCameras();
-    ngl::Camera *myCamera = myCameraManager.getFirstCamera();
+    //LOADING MAP
+    TxtParser *myParser;
+    myParser->loadLevelSources(0, mySourceManager);
+    myParser->loadMap(0,myObjectManager, mySourceManager);
 
-    //SPEEDBOAT AND WORLD
+    //LOADING THE MAIN CHARACTER: THE SPEEDBOAT
     SpeedBoat mySpeedBoat(&myPlayerControls,mySourceManager.getMesh("helix"),0);
     myObjectManager.addDynamicObject(&mySpeedBoat);
-    myObjectManager.setSea(new Sea(3000));
-    myObjectManager.createTestLevel();
+    //myObjectManager.setSea(new Sea(3000));
+    //myObjectManager.createTestLevel();
 
+    //Loading and linking cameras
+    myCameraManager.loadCameras();
+    ngl::Camera *myCamera = myCameraManager.getFirstCamera();
     myCameraManager.setTarget(&mySpeedBoat);
 
     std::cout << "Testing..." << std::endl;
@@ -74,6 +78,8 @@ int main()
         //aerialCamera.setEye(ngl::Vec4(0,12,12+mySpeedBoat.getZ(),1));
 
         myRenderer.render(myObjectManager.getSea(),myObjectManager.getObjects(),*myCamera,1);
+
+        std::cout << "GAMEMANAGER: DISTANCE TO THE BEACH: " << (SEA_DEPTH+mySpeedBoat.getZ()) << std::endl;
 
         //std::cin.ignore();
     }

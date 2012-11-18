@@ -9,6 +9,8 @@
 #include <ngl/ShaderLib.h>
 #include <ngl/VAOPrimitives.h>
 
+#include "Sea.h"
+
 enum  objectType
 {
     ot_musselFarm,
@@ -40,6 +42,7 @@ protected:
 public:
     void draw(const std::string &_shader, const ngl::Camera &_cam, int _debugMode);
     objectType getObjectType() {return m_type;}
+    float getX() { return m_position.m_x; }
     float getY() { return m_position.m_y; }
     float getZ() { return m_position.m_z; }
     void info();
