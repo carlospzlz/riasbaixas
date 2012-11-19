@@ -15,6 +15,7 @@
 #include "PlayerControls.h"
 #include "Floating.h"
 #include "TxtParser.h"
+#include "Diagonal.h"
 
 
 struct playerOptions
@@ -51,7 +52,8 @@ int main()
     myParser->loadMap(0,myObjectManager, mySourceManager);
 
     //LOADING THE MAIN CHARACTER: THE SPEEDBOAT
-    SpeedBoat mySpeedBoat(&myPlayerControls,mySourceManager.getMesh("helix"),0);
+    Diagonal dCont;
+    SpeedBoat mySpeedBoat(&dCont,mySourceManager.getMesh("helix"),0);
     myObjectManager.addDynamicObject(&mySpeedBoat);
     //myObjectManager.setSea(new Sea(3000));
     //myObjectManager.createTestLevel();
