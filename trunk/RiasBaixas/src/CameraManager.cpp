@@ -5,10 +5,8 @@
 CameraManager::CameraManager()
 {
     m_indexCurrentCamera = 0;
-    m_previousX = 0;
-    m_previousY = 0;
-    m_previousZ = 0;
     m_target = NULL;
+    m_far = CAMERAMANAGER_FAR_CLIPPING_PLANE;
 }
 
 CameraManager::~CameraManager()
@@ -22,6 +20,8 @@ CameraManager::~CameraManager()
 
 void CameraManager::loadCameras()
 {
+    //far clipping plane 350
+
     //camera from back
     ngl::Camera *cameraFromTheBack = new ngl::Camera(ngl::Vec3(0,12,12),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
     // set the shape using FOV 45 Aspect Ratio based on Width and Height
@@ -32,25 +32,25 @@ void CameraManager::loadCameras()
 
     //aerial camera
     ngl::Camera *aerialCamera = new ngl::Camera(ngl::Vec3(0,16,0),ngl::Vec3(0,0,0),ngl::Vec3(0,0,-1),ngl::PERSPECTIVE);
-    aerialCamera->setShape(45,(float)720.0/576.0,0.05,350,ngl::PERSPECTIVE);
+    aerialCamera->setShape(45,(float)720.0/576.0,0.05,m_far,ngl::PERSPECTIVE);
     m_allCameras.push_back(aerialCamera);
     m_spectatorCameras.push_back(aerialCamera);
 
     //first person camera
     ngl::Camera *fpCamera = new ngl::Camera(ngl::Vec3(0,1,0),ngl::Vec3(0,0,-6),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
-    fpCamera->setShape(45,(float)720.0/576.0,0.05,350,ngl::PERSPECTIVE);
+    fpCamera->setShape(45,(float)720.0/576.0,0.05,m_far,ngl::PERSPECTIVE);
     m_allCameras.push_back(fpCamera);
     m_FPCameras.push_back(fpCamera);
 
     //side camera
     ngl::Camera *cameraFromTheSide = new ngl::Camera(ngl::Vec3(-10,0,0),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
-    cameraFromTheSide->setShape(45,(float)720.0/576.0,0.05,350,ngl::PERSPECTIVE);
+    cameraFromTheSide->setShape(45,(float)720.0/576.0,0.05,m_far,ngl::PERSPECTIVE);
     m_allCameras.push_back(cameraFromTheSide);
     m_spectatorCameras.push_back(cameraFromTheSide);
 
     //special back camera
     m_backCamera = new ngl::Camera(ngl::Vec3(0,1,0),ngl::Vec3(0,0,6),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
-    m_backCamera->setShape(45,(float)720.0/576.0,0.05,350,ngl::PERSPECTIVE);
+    m_backCamera->setShape(45,(float)720.0/576.0,0.05,m_far,ngl::PERSPECTIVE);
     m_FPCameras.push_back(m_backCamera);
 }
 
@@ -95,30 +95,26 @@ void CameraManager::updateCameras()
 {
     ngl::Vec4 eyeDisplacement;
     std::vector<ngl::Camera*>::iterator lastCamera;
-    float currentX = m_target->getX();
-    float currentY = m_target->getY();
-    float currentZ = m_target->getZ();
+    ngl::Vec3 targetPos = m_target->getPosition();
+    ngl::Vec3 targetPreviousPos = m_target->getPreviousPos();
 
     //update spectator cameras
     assert(m_target);
-    eyeDisplacement = ngl::Vec4(0,0, currentZ-m_previousZ,1);
+    eyeDisplacement = ngl::Vec4(0,0, targetPos.m_z-targetPreviousPos.m_z,1);
     lastCamera = m_spectatorCameras.end();
     for (std::vector<ngl::Camera*>::iterator currentCamera=m_spectatorCameras.begin(); currentCamera!=lastCamera;++currentCamera)
     {
         (*currentCamera)->setEye((*currentCamera)->getEye()+eyeDisplacement);
     }
 
-    eyeDisplacement = ngl::Vec4(currentX-m_previousX ,currentY-m_previousY, currentZ-m_previousZ,1);
+    //update first person cameras
+    eyeDisplacement = ngl::Vec4(targetPos.m_x-targetPreviousPos.m_x ,targetPos.m_y-targetPreviousPos.m_y, targetPos.m_z-targetPreviousPos.m_z,1);
     lastCamera = m_FPCameras.end();
     for (std::vector<ngl::Camera*>::iterator currentCamera=m_FPCameras.begin(); currentCamera!=lastCamera;++currentCamera)
     {
         (*currentCamera)->setEye((*currentCamera)->getEye()+eyeDisplacement);
     }
 
-    //update m_previousComponents
-    m_previousX = currentX;
-    m_previousY = currentY;
-    m_previousZ = currentZ;
 }
 
 

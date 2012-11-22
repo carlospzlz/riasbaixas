@@ -1,9 +1,9 @@
 #include <Sea.h>
 #include <ngl/VAOPrimitives.h>
 
-Sea::Sea(float _depth)
+Sea::Sea()
 {
-    m_depth = _depth;
+    m_depth = SEA_DEPTH;
     ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
     prim->createLineGrid("sea",SEA_DEPTH,SEA_DEPTH,SEA_DEPTH);
 }

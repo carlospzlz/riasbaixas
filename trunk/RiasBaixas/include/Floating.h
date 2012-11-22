@@ -16,6 +16,7 @@ private:
 
 public:
     Floating();
+    void move(ngl::Vec3 &_pos, ngl::Vec4 &_rot, ngl::Vec3 &_vel, const int _factorSpeed, const int _combStep, const int _maxComb) {};
     void move(ngl::Vec3 &_p, ngl::Vec3 &_v);
 
 };

@@ -2,19 +2,34 @@
 
 #include "Object.h"
 
-Object::Object(objectType _type, ngl::Obj *_mesh, std::string _primName, ngl::Vec3 _pos, ngl::Vec4 _rot, ngl::Vec4 _sca, int _dam)
+
+Object::Object()
 {
-    m_type = _type;
-    m_mesh = _mesh;
-    m_primName = _primName;
+    m_active = false;
+    m_position = ngl::Vec3(0,0,0);
+    m_previousPos = m_position;
+    m_rotation = ngl::Vec3(0,0,0);
+    m_scale = ngl::Vec3(1,1,1);
+    m_velocity = ngl::Vec3(0,0,0);
+    m_maxSpeed = 0;
+    m_mass = 1;
+    m_type = ot_object;
+    m_mesh = NULL;
+    m_primName = "cube";
+    m_damage = 0;
+    bool m_jumping = false;
+    m_transform.reset();
+    m_controller = NULL;
+
+}
+
+void Object::setPosition(ngl::Vec3 _pos)
+{
     m_position = _pos;
-    //clamping to the Sea limits
     m_position.m_x = std::max(-SEA_WIDTH/(float)2, m_position.m_x);
     m_position.m_x = std::min(SEA_WIDTH/(float)2, m_position.m_x);
-    m_rotation = _rot;
-    m_scale = _sca;
-    m_damage = _dam;
-    std::cout << "Object created : ";
+    if (_pos.m_x<-SEA_WIDTH/2.0 || _pos.m_x>SEA_WIDTH/2.0)
+        std::cout << "Object: Warning: position out of the Sea" << std::endl;
 }
 
 void Object::draw(const std::string &_shader, const ngl::Camera &_cam, int _debugMode)
@@ -50,9 +65,17 @@ void Object::info()
     std::cout << "S-> " << m_scale << std::endl << std::endl;
 }
 
-/*
-void Object::interactWith()
+void Object::update(float _currentZ, float _far)
 {
-    std::cout << "No specific behaviour defined for interactWith" << std::endl;
+    m_active = (m_position.m_z > _currentZ-_far) && (m_position.m_z < _currentZ+_far);
+
+    //std::cout << m_position.m_z << " " << _currentZ << " " << _far << " " << m_active << std::endl;
+
+    //std::cout << "Object: Warning: Undefined specific update method for this object" << std::endl;
 }
-*/
+
+void Object::collisionEvent(Object _o)
+{
+    std::cout << "Object: Warning: Undefined collisionEvent method for this object" << std::endl;
+}
+

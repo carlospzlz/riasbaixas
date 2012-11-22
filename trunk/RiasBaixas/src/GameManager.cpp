@@ -10,7 +10,6 @@
 #include "Sea.h"
 #include "Object.h"
 #include "ObjectManager.h"
-#include "MusselFarm.h"
 #include "Controller.h"
 #include "PlayerControls.h"
 #include "Floating.h"
@@ -53,8 +52,12 @@ int main()
 
     //LOADING THE MAIN CHARACTER: THE SPEEDBOAT
     Diagonal dCont;
-    SpeedBoat mySpeedBoat(&dCont,mySourceManager.getMesh("helix"),0);
-    myObjectManager.addDynamicObject(&mySpeedBoat);
+    SpeedBoat mySpeedBoat;
+    mySpeedBoat.setController(&myPlayerControls);
+    myObjectManager.addObject(&mySpeedBoat);
+    myObjectManager.setCentreObject(&mySpeedBoat);
+    myObjectManager.setFar(myCameraManager.getFar());
+
     //myObjectManager.setSea(new Sea(3000));
     //myObjectManager.createTestLevel();
 
@@ -74,14 +77,14 @@ int main()
         setCamera(myCamera,myCameraManager,myPlayerOptions);
 
         //myDynamicSeaElements[0]->info();
-        myObjectManager.moveObjects();
+        myObjectManager.updateObjects();
 
         myCameraManager.updateCameras();
         //aerialCamera.setEye(ngl::Vec4(0,12,12+mySpeedBoat.getZ(),1));
 
         myRenderer.render(myObjectManager.getSea(),myObjectManager.getObjects(),*myCamera,1);
 
-        std::cout << "GAMEMANAGER: DISTANCE TO THE BEACH: " << (SEA_DEPTH+mySpeedBoat.getZ()) << std::endl;
+        std::cout << "GAMEMANAGER: DISTANCE TO THE BEACH: " << (SEA_DEPTH+mySpeedBoat.getPosition().m_z) << std::endl;
 
         //std::cin.ignore();
     }

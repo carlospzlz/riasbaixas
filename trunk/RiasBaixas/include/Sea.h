@@ -15,7 +15,8 @@ private:
     float m_depth;
 
 public:
-    Sea(float _depth);
+    Sea();
+    void setDepth(float _depth) { m_depth = _depth; }
     void draw(const std::string &_shader, ngl::Camera &_cam);
 };
 

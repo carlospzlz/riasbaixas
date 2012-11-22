@@ -3,8 +3,6 @@
 
 #include "Sea.h"
 #include "Object.h"
-#include "StaticObject.h"
-#include "DynamicObject.h"
 #include "SourceManager.h"
 
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
@@ -15,21 +13,21 @@ class ObjectManager
 private:
     Sea *m_sea;
     std::vector<Object*> m_objects;
-    std::vector<StaticObject*> m_staticObjects;
-    std::vector<DynamicObject*> m_dynamicObjects;
+    Object *m_centreObject;
+    //the clipping is both made with the far plane, thus we have frontal and back cameras
+    float m_far;
 
 public:
     void setSea(Sea *_sea) { m_sea = _sea; }
-    void addStaticObject(StaticObject *_so);
-    void addDynamicObject(DynamicObject *_do);
+    void addObject(Object *_o) { m_objects.push_back(_o);}
+    void setCentreObject(Object *_o) { m_centreObject = _o; }
+    void setFar(float _far) { m_far = _far; }
     Sea* getSea() { return m_sea; }
-    std::vector<StaticObject*> getStaticObjects() { return m_staticObjects; }
-    std::vector<DynamicObject*> getDynamicObjects() { return m_dynamicObjects; }
     std::vector<Object*> getObjects() { return m_objects; }
-    void processObjects(){}
+    //void checkCollisions(PhysicsEngine _physicsEngine);
+    void updateObjects();
     void destroyTheWorld();
     void createTestLevel();
-    void moveObjects();
 
 };
 

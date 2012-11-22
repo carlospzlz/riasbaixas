@@ -11,32 +11,28 @@
 #include <ngl/Material.h>
 #include <ngl/Light.h>
 
-#include "DynamicObject.h"
+#include "Object.h"
 
-#define SPEEDBOAT_SPEED 0.01
+#define SPEEDBOAT_SPEED 0.2
 #define SPEEDBOAT_SPEED_FACTOR 3
 #define SPEEDBOAT_COMBER_STEP 2
 #define SPEEDBOAT_COMBER_MAX 20
 #define MAX_LOAD 300;
 
-class SpeedBoat : public DynamicObject
+class SpeedBoat : public Object
 {
 private:
     int m_load;
-    int ticks;
+    //int ticks;
 
 public:
-    SpeedBoat(Controller *_controller, ngl::Obj *_mesh, int _dam);
-    SpeedBoat(Controller *_controller, int _dam);
-    virtual void move();
-    void moveRight();
-    void moveLeft();
-    void moveUp();
-    void moveDown();
-    void rotateInY();
-    void rotateInX();
-    void rotateInZ();
-    void floating();
+    SpeedBoat();
+    ~SpeedBoat() { };
+    void setLoad(int _l) { m_load = _l; }
+    int getLoad() { return m_load; }
+
+    void update(int _currentZ, float _far);
+    void collisionEvent(Object _o);
 };
 
 #endif // SPEEDBOAT_H
