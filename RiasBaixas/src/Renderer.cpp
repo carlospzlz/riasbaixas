@@ -120,11 +120,14 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
     std::vector<Object*>::iterator lastObject = _objects.end();
     for(std::vector<Object*>::iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
     {
-        m_transformStack.pushTransform();
-        loadMatricesToShader(m_transformStack,_cam);
-        (*currentObject)->draw("Phong", _cam, debugMode);
-        m_transformStack.popTransform();
-        //(*currentObject)->info();
+        if ((*currentObject)->isActive())
+        {
+            m_transformStack.pushTransform();
+            loadMatricesToShader(m_transformStack,_cam);
+            (*currentObject)->draw("Phong", _cam, debugMode);
+            m_transformStack.popTransform();
+            //(*currentObject)->info();
+        }
     }
 
 /*

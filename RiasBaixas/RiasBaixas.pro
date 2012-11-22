@@ -6,37 +6,31 @@ HEADERS += \
     include/Renderer.h \
     include/SpeedBoat.h \
     include/Sea.h \
-    include/MusselFarm.h \
     include/Controller.h \
     include/Floating.h \
     include/Stream.h \
-    include/Rock.h \
     include/Ramp.h \
     include/PlayerControls.h \
     include/CameraManager.h \
     include/Object.h \
-    include/StaticObject.h \
-    include/DynamicObject.h \
     include/SourceManager.h \
     include/ObjectManager.h \
     include/Parser.h \
     include/TxtParser.h \
     include/FisherBoat.h \
-    include/Diagonal.h
+    include/Diagonal.h \
+    include/PoliceBoat.h
 
 SOURCES += \
     src/SpeedBoat.cpp \
     src/Renderer.cpp \
     src/GameManager.cpp \
     src/Sea.cpp \
-    src/MusselFarm.cpp \
     src/Controller.cpp \
     src/Floating.cpp \
     src/PlayerControls.cpp \
     src/CameraManager.cpp \
     src/Object.cpp \
-    src/StaticObject.cpp \
-    src/DynamicObject.cpp \
     src/SourceManager.cpp \
     src/ObjectManager.cpp \
     src/TxtParser.cpp \

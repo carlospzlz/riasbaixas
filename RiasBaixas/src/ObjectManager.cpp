@@ -1,32 +1,25 @@
 #include "ObjectManager.h"
 
 #include "SpeedBoat.h"
-#include "MusselFarm.h"
 
-
-void ObjectManager::addStaticObject(StaticObject *_so)
-{
-    m_staticObjects.push_back(_so);
-    m_objects.push_back(_so);
-}
-
-void ObjectManager::addDynamicObject(DynamicObject *_do)
-{
-    m_dynamicObjects.push_back(_do);
-    m_objects.push_back(_do);
-}
 
 void ObjectManager::createTestLevel()
 {
-    addStaticObject(new MusselFarm(ngl::Vec3(-2,0,0)));
-    addStaticObject(new MusselFarm(ngl::Vec3(2,0,0)));
+    Object *o1 = new Object();
+    o1->setPosition(ngl::Vec3(0,2,-2));
+    m_objects.push_back(o1);
+
+    Object *o2 = new Object();
+    o2->setPosition(ngl::Vec3(0,-2,-2));
+    m_objects.push_back(o2);
+
 }
 
-void ObjectManager::moveObjects()
+void ObjectManager::updateObjects()
 {
-    std::vector<DynamicObject*>::iterator lastDO = m_dynamicObjects.end();
-    for(std::vector<DynamicObject*>::iterator currentDO=m_dynamicObjects.begin(); currentDO!=lastDO; ++currentDO)
+    std::vector<Object*>::iterator lastO = m_objects.end();
+    for(std::vector<Object*>::iterator currentO=m_objects.begin(); currentO!=lastO; ++currentO)
     {
-        (*currentDO)->move();
+        (*currentO)->update(m_centreObject->getPosition().m_z, m_far);
     }
 }

@@ -36,18 +36,25 @@ bool TxtParser::loadMap(int _map, ObjectManager &_objectManager, SourceManager &
 
             if (*currentToken == "Sea")
             {
-                if (!loadSea(currentToken, _objectManager, _sourceManager))
+                if (loadSea(currentToken, _objectManager, _sourceManager))
+                    std::cout <<"TxtParser: in line " << lineNumber << ": Sea loaded" << std::endl;
+                else
                     std::cout << "TxtParser: in line " << lineNumber << ": EXCEPTION: when loading Sea" << std::endl;
             }
             else if (*currentToken == "MusselFarm")
             {
-                if (!loadMusselFarm(currentToken, _objectManager, _sourceManager))
+                if (loadMusselFarm(currentToken, _objectManager, _sourceManager))
+                    std::cout <<"TxtParser: in line " << lineNumber << ": MusselFarm loaded" << std::endl;
+                else
                     std::cout << "TxtParser: in line " << lineNumber << ": EXCEPTION: when loading MusselFarm" << std::endl;
             }
             else if (*currentToken == "FisherBoat")
             {
-                if (!loadFisherBoat(currentToken, _objectManager, _sourceManager))
+                if (loadFisherBoat(currentToken, _objectManager, _sourceManager))
+                    std::cout <<"TxtParser: in line " << lineNumber << ": FisherBoat loaded" << std::endl;
+                else
                     std::cout << "TxtParser: in line " << lineNumber << ": EXCEPTION: when loading FisherBoat" << std::endl;
+
             }
             else
                 std::cout << "TxtParser: In line " << lineNumber << ": WARNING: Unknown object" << std::endl;
@@ -62,7 +69,10 @@ bool TxtParser::loadSea(tokenizer::iterator _currentParameter, ObjectManager &_o
    try
    {
         float depth = boost::lexical_cast<float>(*++_currentParameter);
-        _objectManager.setSea(new Sea(depth));
+
+        Sea *sea = new Sea();
+        sea->setDepth(depth);
+        _objectManager.setSea(sea);
         return true;
     }
     catch (...)
@@ -79,7 +89,12 @@ bool TxtParser::loadMusselFarm(tokenizer::iterator _currentParameter, ObjectMana
         float x = boost::lexical_cast<float>(*++_currentParameter);
         float y = boost::lexical_cast<float>(*++_currentParameter);
         float z = boost::lexical_cast<float>(*++_currentParameter);
-        _objectManager.addStaticObject(new MusselFarm(_sourceManager.getMesh(meshName),ngl::Vec3(x,y,z)));
+
+        Object *musselFarm = new Object();
+        musselFarm->setMesh(_sourceManager.getMesh(meshName));
+        musselFarm->setPosition(ngl::Vec3(x,y,z));
+        _objectManager.addObject(musselFarm);
+
         return true;
     }
     catch (...)

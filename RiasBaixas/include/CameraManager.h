@@ -5,6 +5,9 @@
 #include <ngl/Camera.h>
 #include "Object.h"
 
+#define CAMERAMANAGER_FAR_CLIPPING_PLANE 350
+
+
 class CameraManager
 {
 
@@ -15,9 +18,7 @@ private:
     ngl::Camera *m_backCamera;
     Object *m_target;
     int m_indexCurrentCamera;
-    float m_previousX;
-    float m_previousY;
-    float m_previousZ;
+    float m_far;
 
 public:
     CameraManager();
@@ -28,6 +29,7 @@ public:
     ngl::Camera *getCurrentCamera();
     ngl::Camera *getNextCamera();
     ngl::Camera *getBackCamera();
+    float getFar() { return m_far; }
     void updateCameras();
     void addCamera(ngl::Camera *_cam);
 
