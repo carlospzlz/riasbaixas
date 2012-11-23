@@ -17,7 +17,7 @@ Object::Object()
     m_mesh = NULL;
     m_primName = "cube";
     m_damage = 0;
-    bool m_jumping = false;
+    m_jumping = false;
     m_transform.reset();
     m_controller = NULL;
 
@@ -60,17 +60,24 @@ void Object::draw(const std::string &_shader, const ngl::Camera &_cam, int _debu
 void Object::info()
 {
     std::cout << "Object info of " << this << " (type "<< m_type << ")" << std::endl;
-    std::cout << "P-> " << m_position << std::endl;
-    std::cout << "R-> " << m_rotation << std::endl;
-    std::cout << "S-> " << m_scale << std::endl << std::endl;
+    std::cout << "Position -> " << m_position << std::endl;
+    std::cout << "Rotation -> " << m_rotation << std::endl;
+    std::cout << "Scale -> " << m_scale << std::endl << std::endl;
+    std::cout << "Velocity -> "<< m_velocity << std::endl << std::endl;
 }
 
 void Object::update(float _currentZ, float _far)
 {
     m_active = (m_position.m_z > _currentZ-_far) && (m_position.m_z < _currentZ+_far);
+    m_previousPos = m_position;
+
+    if (m_active && m_controller)
+    {
+        m_controller->move(m_position,m_rotation,m_velocity,m_maxSpeed,m_jumping,m_degreesOfFreedom);
+        info();
+    }
 
     //std::cout << m_position.m_z << " " << _currentZ << " " << _far << " " << m_active << std::endl;
-
     //std::cout << "Object: Warning: Undefined specific update method for this object" << std::endl;
 }
 

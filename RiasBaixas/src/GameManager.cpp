@@ -45,18 +45,18 @@ int main()
     mySourceManager.addMesh("helix",new ngl::Obj("models/Helix.obj"));
     mySourceManager.addMesh("spaceship",new ngl::Obj("models/Helix.obj"));
 
-    //LOADING MAP
-    TxtParser *myParser;
-    myParser->loadLevelSources(0, mySourceManager);
-    myParser->loadMap(0,myObjectManager, mySourceManager);
-
     //LOADING THE MAIN CHARACTER: THE SPEEDBOAT
     Diagonal dCont;
     SpeedBoat mySpeedBoat;
     mySpeedBoat.setController(&myPlayerControls);
     myObjectManager.addObject(&mySpeedBoat);
-    myObjectManager.setCentreObject(&mySpeedBoat);
+    myObjectManager.setCentralObject(&mySpeedBoat);
     myObjectManager.setFar(myCameraManager.getFar());
+
+    //LOADING MAP
+    TxtParser *myParser;
+    myParser->loadLevelSources(0, mySourceManager);
+    myParser->loadMap(0,myObjectManager, mySourceManager);
 
     //myObjectManager.setSea(new Sea(3000));
     //myObjectManager.createTestLevel();
