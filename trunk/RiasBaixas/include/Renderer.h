@@ -21,7 +21,7 @@ public:
     Renderer() { };
     bool initGLContext();
     void render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam);
-    void render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam, int debugMode);
+    void render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam, int _debugMode);
     //void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera m_cam);
 
 };

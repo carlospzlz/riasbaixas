@@ -2,6 +2,7 @@
 #define CONTROLLER_H
 
 #include <ngl/Vec3.h>
+#include <ngl/Transformation.h>
 #include "Sea.h"
 
 struct degreesOfFreedom
@@ -19,7 +20,7 @@ class Controller
 {
 
 public:
-    virtual void move(ngl::Vec3 &_pos, ngl::Vec4 &_rot, ngl::Vec3 &_vel, float &_maxSpeed, const bool _jumping, const degreesOfFreedom _dof);
+    virtual void move(ngl::Transformation &_transform, ngl::Vec4 &_vel, ngl::Vec4 &_angVel, const degreesOfFreedom _dof, const bool _jumping);
 
 };
 

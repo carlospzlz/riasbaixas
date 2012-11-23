@@ -32,11 +32,10 @@ class Object
 
 protected:
     bool m_active;
-    ngl::Vec3 m_position;
-    ngl::Vec3 m_previousPos;
-    ngl::Vec4 m_rotation;
-    ngl::Vec4 m_scale;
-    ngl::Vec3 m_velocity;
+    ngl::Transformation m_transform;
+    ngl::Transformation m_previousTransform;
+    ngl::Vec4 m_angularVelocity;
+    ngl::Vec4 m_velocity;
     float m_maxSpeed;
     float m_mass;
     degreesOfFreedom m_degreesOfFreedom;
@@ -45,7 +44,6 @@ protected:
     std::string m_primName;
     int m_damage;
     bool m_jumping;
-    ngl::Transformation m_transform;
     Controller *m_controller;
 
     void updateActive(float _currentZ);
@@ -55,11 +53,12 @@ public:
     ~Object() { }
     //setters
     void activate() { m_active = true; }
-    void setPosition(ngl::Vec3 _pos);
+    void setPosition(ngl::Vec4 _pos);
     //void setPreviousPos(ngl::Vec3 _prevPos) { m_previousPos = _prevPos; }
-    void setRotation(ngl::Vec3 _rot) { m_rotation = _rot; }
-    void setScale(ngl::Vec3 _sca) { m_position = _sca; }
-    void setVelocity(ngl::Vec3 _vel) { m_velocity = _vel; }
+    void setRotation(ngl::Vec4 _rot) { m_transform.setRotation(_rot); }
+    void setScale(ngl::Vec4 _sca) { m_transform.setScale(_sca); }
+    void setVelocity(ngl::Vec4 _vel) { m_velocity = _vel; }
+    void setAngularVelocity(ngl::Vec4 _aVel) { m_angularVelocity = _aVel; }
     void setMaxSpeed(float _mSpe) { m_maxSpeed = _mSpe; }
     void setMass(float _mass) { m_mass = _mass; }
     void setType(objectType _ot) { m_type = _ot; }
@@ -71,10 +70,13 @@ public:
 
     //getters
     bool isActive() { return m_active; }
-    ngl::Vec3 getPosition() { return m_position; }
-    ngl::Vec3 getPreviousPos() { return m_previousPos; }
+    ngl::Transformation getTransform() { return m_transform; }
+    ngl::Vec4 getPosition() { return m_transform.getPosition(); }
+    ngl::Vec4 getPreviousPos() { return m_previousTransform.getPosition(); }
     objectType getObjectType() { return m_type; }
     degreesOfFreedom &getDOF() { return m_degreesOfFreedom; } //will change it, I think so...
+    ngl::Obj *getMesh() { return m_mesh; }
+    std::string getPrimName() { return m_primName; }
 
     //methods
     void draw(const std::string &_shader, const ngl::Camera &_cam, int _debugMode);

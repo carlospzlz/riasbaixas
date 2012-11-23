@@ -6,11 +6,11 @@
 void ObjectManager::createTestLevel()
 {
     Object *o1 = new Object();
-    o1->setPosition(ngl::Vec3(0,2,-2));
+    o1->setPosition(ngl::Vec4(0,2,-2,1));
     m_objects.push_back(o1);
 
     Object *o2 = new Object();
-    o2->setPosition(ngl::Vec3(0,-2,-2));
+    o2->setPosition(ngl::Vec4(0,-2,-2,1));
     m_objects.push_back(o2);
 
 }

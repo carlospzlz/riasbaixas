@@ -95,8 +95,8 @@ void CameraManager::updateCameras()
 {
     ngl::Vec4 eyeDisplacement;
     std::vector<ngl::Camera*>::iterator lastCamera;
-    ngl::Vec3 targetPos = m_target->getPosition();
-    ngl::Vec3 targetPreviousPos = m_target->getPreviousPos();
+    ngl::Vec4 targetPos = m_target->getPosition();
+    ngl::Vec4 targetPreviousPos = m_target->getPreviousPos();
 
     //update spectator cameras
     assert(m_target);

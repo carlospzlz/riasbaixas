@@ -8,8 +8,9 @@ SpeedBoat::SpeedBoat()
 {
     setType(ot_speedBoat);
     setPrimName("teapot");
-    setRotation(ngl::Vec3(0,90,0));
-    setVelocity(ngl::Vec3(0.05,0.05,0.05));
+    setPosition(ngl::Vec4(0,0,0,1));
+    setRotation(ngl::Vec4(0,90,0,1));
+    setVelocity(ngl::Vec4(0,0,0,1));
 }
 
 void SpeedBoat::collisionEvent(Object _o)
