@@ -74,7 +74,7 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
     render(_sea, _objects, _cam, 0);
 }
 
-void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam, int debugMode)
+void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam, int _debugMode)
 {
     std::cout << "RENDERING..." << std::endl;
 
@@ -83,6 +83,9 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 
     ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+
+    std::cout << _cam.getEye().m_z << " CAM EYE!!" << std::endl;
+
     shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
     // now create our light this is done after the camera so we can pass the
     // transpose of the projection matrix to the light to do correct eye space
@@ -112,21 +115,56 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
 
 
     //DRAWING
-    m_transformStack.pushTransform();
-    loadMatricesToShader(m_transformStack,_cam);
-    _sea->draw("Phong", _cam);
-    m_transformStack.popTransform();
+    ngl::Mat4 MVP;
+    ngl::Obj *mesh;
+    ngl::VAOPrimitives *primitivesInstance = ngl::VAOPrimitives::instance();
 
+    //Drawing Sea
+    //MVP=(*currentObject)->getTransform().getMatrix()*_cam.getVPMatrix();
+    //shader->setShaderParamFromMat4("MVP",MVP);
+    //loadMatricesToShader(m_transformStack,_cam);
+    mesh = _sea->getMesh();
+
+    if (_debugMode != 0 || !mesh)
+    {
+        //m_transform.set
+        primitivesInstance->draw(_sea->getPrimName());
+    }
+    else
+        mesh->draw();
+
+    //Drawing objects of the world
     std::vector<Object*>::iterator lastObject = _objects.end();
     for(std::vector<Object*>::iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
     {
         if ((*currentObject)->isActive())
         {
-            m_transformStack.pushTransform();
-            loadMatricesToShader(m_transformStack,_cam);
-            (*currentObject)->draw("Phong", _cam, debugMode);
-            m_transformStack.popTransform();
+            //m_transformStack.pushTransform();
+            MVP=(*currentObject)->getTransform().getMatrix()*_cam.getVPMatrix();
+            shader->setShaderParamFromMat4("MVP",MVP);
+            //loadMatricesToShader(m_transformStack,_cam);
+            mesh = (*currentObject)->getMesh();
+
+            if (_debugMode == 1 || !mesh)
+            {
+                //m_transform.set
+                primitivesInstance->draw((*currentObject)->getPrimName());
+            }
+            else if (_debugMode == 2)
+                mesh->drawBBox();
+            else
+                mesh->draw();
+
             //(*currentObject)->info();
+
+            //m_transformStack.popTransform();
+
+
+            //m_transformStack.pushTransform();
+            //loadMatricesToShader(m_transformStack,_cam);
+            //(*currentObject)->draw("Phong", _cam, debugMode);
+            //m_transformStack.popTransform();
+
         }
     }
 

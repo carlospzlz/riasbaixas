@@ -8,16 +8,24 @@
 
 #define PLAYERCONTROLS_LOWSPEED 0.01
 #define PLAYERCONTROLS_HIGHSPEED 0.2
-#define PLAYERCONTROLS_CAMBER_STEP 0.5
-#define PLAYERCONTROLS_ACCELERATION 0.001
-
-#define PLAYERCONTROLS_CAMBER 1
+#define PLAYERCONTROLS_CAMBER_STEP 1
+#define PLAYERCONTROLS_MAX_CAMBER 30
+#define PLAYERCONTROLS_VELOCITY_STEP_X 0.05
+#define PLAYERCONTROLS_VELOCITY_STEP_Y 0.001
+#define PLAYERCONTROLS_VELOCITY_STEP_Z 0.001
+#define PLAYERCONTROLS_MAX_VELOCITY_X 0.3
+#define PLAYERCONTROLS_ANGULARVELOCITY_STEP_X 1
+#define PLAYERCONTROLS_ANGULARVELOCITY_STEP_Y 1
+#define PLAYERCONTROLS_AMPLITUDE_BOUNCING 0.02
 #define PLAYERCONTROLS_FRECUENCY M_PI/120
+#define PLAYERCONTROLS_EMERSION_HIGH 1
+
+
 #define PLAYERCONTROLS_AMPLITUDE_FLOATING 0.005
-#define PLAYERCONTROLS_AMPLITUDE_BOUNCING 0.5
+
 #define PLAYERCONTROLS_ACELARATION_STEP 0.005
 #define PLAYERCONTROLS_DECELARATION_STEP 0.02
-#define PLAYERCONTROLS_EMERSION_HIGH 0.2
+
 
 class PlayerControls : public Controller
 {
@@ -37,7 +45,7 @@ public:
     void setLeft(bool _pressed) { m_left = _pressed; }
     void setRight(bool _pressed) { m_right = _pressed; }
     void setSpeedUp(bool _pressed) { m_speedUp = _pressed; }
-    void move(ngl::Vec3 &_pos, ngl::Vec4 &_rot, ngl::Vec3 &_vel, float &_maxSpeed, const bool _jumping, const degreesOfFreedom _dof);
+    void move(ngl::Transformation &_transform, ngl::Vec4 &_vel, ngl::Vec4 &_angVel, const degreesOfFreedom _dof, const bool _jumping);
 };
 
 #endif // PLAYERCONTROLS_H
