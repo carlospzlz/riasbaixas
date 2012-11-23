@@ -20,7 +20,7 @@ private:
 public:
     void setSea(Sea *_sea) { m_sea = _sea; }
     void addObject(Object *_o) { m_objects.push_back(_o);}
-    void setCentreObject(Object *_o) { m_centreObject = _o; }
+    void setCentralObject(Object *_o) { m_centreObject = _o; }
     void setFar(float _far) { m_far = _far; }
     Sea* getSea() { return m_sea; }
     std::vector<Object*> getObjects() { return m_objects; }

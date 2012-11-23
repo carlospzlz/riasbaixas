@@ -31,7 +31,6 @@ public:
     void setLoad(int _l) { m_load = _l; }
     int getLoad() { return m_load; }
 
-    void update(int _currentZ, float _far);
     void collisionEvent(Object _o);
 };
 

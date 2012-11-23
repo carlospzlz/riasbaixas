@@ -6,17 +6,10 @@
 
 SpeedBoat::SpeedBoat()
 {
+    setType(ot_speedBoat);
     setPrimName("teapot");
     setRotation(ngl::Vec3(0,90,0));
-}
-
-void SpeedBoat::update(int _currentZ, float _far)
-{
-    //if currentZ-this.z blah inactive or active...
-    std::cout << "SpeedBoat updating!" << std::endl;
-    //if active move
-    update(_currentZ, _far);
-    m_controller->move(m_position, m_rotation, m_velocity, m_maxSpeed, m_jumping, m_degreesOfFreedom);
+    setVelocity(ngl::Vec3(0.05,0.05,0.05));
 }
 
 void SpeedBoat::collisionEvent(Object _o)
