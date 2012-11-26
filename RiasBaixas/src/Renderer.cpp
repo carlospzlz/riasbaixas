@@ -13,7 +13,7 @@ bool Renderer::initGLContext()
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
         return false;
 
-    SDL_SetVideoMode(1024, 1024, 32, SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
+    m_screen = SDL_SetVideoMode(720, 720, 32, SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
 
     ngl::NGLInit *Init = ngl::NGLInit::instance();
     Init->initGlew();
@@ -52,6 +52,31 @@ bool Renderer::initGLContext()
     // load our material values to the shader into the structure material (see Vertex shader)
     //m.loadToShader("material");
 
+    //To draw vectors we create the needed primitives
+    ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
+    prim->createCylinder("vectorModulus",0.02,2,6,1);
+    prim->createCone("vectorSense",0.05,0.2,6,1);
+
+    //Other shader that I don't really know what it is for
+    shader->createShaderProgram("Colour");
+
+    shader->attachShader("ColourVertex",ngl::VERTEX);
+    shader->attachShader("ColourFragment",ngl::FRAGMENT);
+    shader->loadShaderSource("ColourVertex","shaders/Colour.vs");
+    shader->loadShaderSource("ColourFragment","shaders/Colour.fs");
+
+    shader->compileShader("ColourVertex");
+    shader->compileShader("ColourFragment");
+    shader->attachShaderToProgram("Colour","ColourVertex");
+    shader->attachShaderToProgram("Colour","ColourFragment");
+
+    shader->bindAttribute("Colour",0,"inVert");
+    shader->linkProgramObject("Colour");
+    shader->setShaderParam4f("Colour",1,1,1,1);
+
+    //To draw Text (segmentation fault if uncomment this)
+    //m_text = new ngl::Text(QFont("Arial",18));
+
     //For removal or hidden surfaces
     glEnable(GL_DEPTH_TEST);
 
@@ -84,8 +109,6 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
 
     ngl::ShaderLib *shader=ngl::ShaderLib::instance();
 
-    std::cout << _cam.getEye().m_z << " CAM EYE!!" << std::endl;
-
     shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
     // now create our light this is done after the camera so we can pass the
     // transpose of the projection matrix to the light to do correct eye space
@@ -96,7 +119,7 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
     m_light->setTransform(iv);
     // load these values to the shader as well
     m_light->loadToShader("light");
-    ngl::Material m(ngl::PEWTER);
+    ngl::Material m(ngl::GOLD);
     m.loadToShader("material");
 
     loadMatricesToShader(m_transformStack,_cam);
@@ -120,9 +143,12 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
     ngl::VAOPrimitives *primitivesInstance = ngl::VAOPrimitives::instance();
 
     //Drawing Sea
+    shader->use("Phong");
     //MVP=(*currentObject)->getTransform().getMatrix()*_cam.getVPMatrix();
+
     //shader->setShaderParamFromMat4("MVP",MVP);
-    //loadMatricesToShader(m_transformStack,_cam);
+    m_transformStack.getCurrentTransform().reset();
+    loadMatricesToShader(m_transformStack,_cam);
     mesh = _sea->getMesh();
 
     if (_debugMode != 0 || !mesh)
@@ -139,7 +165,9 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
     {
         if ((*currentObject)->isActive())
         {
-            //m_transformStack.pushTransform();
+            shader->use("Phong");
+            m_transformStack.pushTransform();
+            {
             MVP=(*currentObject)->getTransform().getMatrix()*_cam.getVPMatrix();
             shader->setShaderParamFromMat4("MVP",MVP);
             //loadMatricesToShader(m_transformStack,_cam);
@@ -149,15 +177,19 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
             {
                 //m_transform.set
                 primitivesInstance->draw((*currentObject)->getPrimName());
+                drawVector((*currentObject)->getPosition(),(*currentObject)->getVelocity(),_cam);
             }
             else if (_debugMode == 2)
+            {
                 mesh->drawBBox();
+            }
             else
                 mesh->draw();
+            }
 
             //(*currentObject)->info();
 
-            //m_transformStack.popTransform();
+            m_transformStack.popTransform();
 
 
             //m_transformStack.pushTransform();
@@ -187,6 +219,10 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
     //ts.popTransform();
 
     SDL_GL_SwapBuffers(); //DO NOOOTT COMMENT THIS FUCKING LINE!!!!!!
+
+    //renderTextToSurface("Hello World!",300,300,m_screen);
+
+    //SDL_Flip(m_screen);
 }
 
 void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera _cam)
@@ -206,4 +242,90 @@ void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera _cam)
   shader->setShaderParamFromMat4("MVP",MVP);
   shader->setShaderParamFromMat3("normalMatrix",normalMatrix);
   shader->setShaderParamFromMat4("M",M);
+}
+
+void Renderer::drawVector(ngl::Vec4 _position, ngl::Vec4 _vector, ngl::Camera _cam)
+{
+    ngl::VAOPrimitives *primitivesInstance = ngl::VAOPrimitives::instance();
+    ngl::ShaderLib *shader = ngl::ShaderLib::instance();
+    ngl::TransformStack tx;
+    const int scaleFactor = 5;
+
+    shader->use("Colour");
+
+    tx.pushTransform();
+    {
+
+    //COMPONENT X
+    shader->setShaderParam4f("Colour",1,0,0,1);
+    tx.setScale(2,2,_vector.m_x*scaleFactor);
+    tx.setPosition(_position);
+    tx.setRotation(0,-90,0);
+    loadMatricesToShader(tx, _cam);
+    primitivesInstance->draw("vectorModulus");
+    tx.setScale(2,2,2);
+    tx.setPosition(_position.m_x+2*_vector.m_x*scaleFactor,_position.m_y,_position.m_z);
+    if (_vector.m_x>=0)
+        tx.setRotation(0,90,0);
+    loadMatricesToShader(tx, _cam);
+    primitivesInstance->draw("vectorSense");
+
+    //COMPONENT Y
+    shader->setShaderParam4f("Colour",0,0,1,1);
+    tx.setScale(2,2,_vector.m_y*scaleFactor);
+    tx.setPosition(_position);
+    tx.setRotation(90,0,0);
+    loadMatricesToShader(tx, _cam);
+    primitivesInstance->draw("vectorModulus");
+    tx.setScale(2,2,2);
+    tx.setPosition(_position.m_x,_position.m_y+2*_vector.m_y*scaleFactor,_position.m_z);
+    if (_vector.m_y>=0)
+        tx.setRotation(-90,0,0);
+    loadMatricesToShader(tx, _cam);
+    primitivesInstance->draw("vectorSense");
+
+    //COMPONENT Z
+    shader->setShaderParam4f("Colour",0,1,0,1);
+    tx.setScale(2,2,_vector.m_z*scaleFactor);
+    tx.setPosition(_position);
+    tx.setRotation(0,180,0);
+    loadMatricesToShader(tx, _cam);
+    primitivesInstance->draw("vectorModulus");
+    tx.setScale(2,2,2);
+    tx.setPosition(_position.m_x,_position.m_y,_position.m_z+2*_vector.m_z*scaleFactor);
+    if (_vector.m_z>0)
+        tx.setRotation(0,0,0);
+    loadMatricesToShader(tx, _cam);
+    primitivesInstance->draw("vectorSense");
+
+    }
+    tx.popTransform();
+}
+
+void Renderer::renderTextToSurface(std::string _line, int _x, int _y, SDL_Surface *_surface)
+{
+    SDL_Color txtColour;
+    txtColour.r = 0xFF;
+    txtColour.r = 0xFF;
+    txtColour.r = 0xFF;
+
+    SDL_Surface *textSurface;
+    SDL_Rect textRect;
+    TTF_Font *font = TTF_OpenFont("font.tff",24);
+
+    if (!(textSurface = TTF_RenderText_Solid(font,_line.c_str(), txtColour)))
+    {
+        SDL_FreeSurface(textSurface);
+        std::cerr << "Renderer: ERROR when rendering text" << std::endl;
+    }
+
+    textRect.x = _x;
+    textRect.y = _y;
+    SDL_BlitSurface(textSurface,NULL,_surface,&textRect);
+
+    //sdl flip??
+
+    SDL_FreeSurface(textSurface);
+
+    TTF_CloseFont(font);
 }

@@ -7,6 +7,7 @@
 
 #define SEA_WIDTH 16
 #define SEA_DEPTH 3000
+#define SEA_FLOATING_HIGH 0.3
 
 class Sea
 {

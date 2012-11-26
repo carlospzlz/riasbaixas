@@ -7,6 +7,11 @@
 #include "Object.h"
 #include "Sea.h"
 #include "SpeedBoat.h"
+#include "Controller.h"
+#include "Floating.h"
+#include "Horizontal.h"
+#include "Diagonal.h"
+#include "Vertical.h"
 //#include "FisherBoat"
 
 class Parser

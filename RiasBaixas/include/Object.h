@@ -21,7 +21,7 @@ enum  objectType
     ot_rock,
     ot_speedBoat,
     ot_policeBoat,
-    ot_fisheBoat,
+    ot_fisherBoat,
     ot_dolphin,
     ot_seagull
 };
@@ -34,10 +34,11 @@ protected:
     bool m_active;
     ngl::Transformation m_transform;
     ngl::Transformation m_previousTransform;
-    ngl::Vec4 m_angularVelocity;
+    float m_mass;
     ngl::Vec4 m_velocity;
     float m_maxSpeed;
-    float m_mass;
+    ngl::Vec4 m_angularVelocity;
+    float m_maxCamber;
     degreesOfFreedom m_degreesOfFreedom;
     objectType m_type;
     ngl::Obj *m_mesh;
@@ -50,7 +51,7 @@ protected:
 
 public:
     Object();
-    ~Object() { }
+    ~Object();
     //setters
     void activate() { m_active = true; }
     void setPosition(ngl::Vec4 _pos);
@@ -77,6 +78,7 @@ public:
     degreesOfFreedom &getDOF() { return m_degreesOfFreedom; } //will change it, I think so...
     ngl::Obj *getMesh() { return m_mesh; }
     std::string getPrimName() { return m_primName; }
+    ngl::Vec4 getVelocity() { return m_velocity; }
 
     //methods
     void draw(const std::string &_shader, const ngl::Camera &_cam, int _debugMode);

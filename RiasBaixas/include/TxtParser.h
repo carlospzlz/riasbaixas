@@ -11,7 +11,7 @@
 
 #include "Parser.h"
 
-#define TXTPARSER_MAPSPATH "maps/"
+#define TXTPARSER_MAPS_PATH "maps/"
 
 
 class TxtParser : public Parser
@@ -23,6 +23,7 @@ private:
     bool loadSea(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager);
     bool loadMusselFarm(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager);
     bool loadFisherBoat(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager);
+    bool loadController(tokenizer::iterator _currentParameter, Object *_object);
 
 public:
     bool loadBasicSources(SourceManager &_souceManager);

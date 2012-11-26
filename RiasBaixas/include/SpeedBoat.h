@@ -13,7 +13,6 @@
 
 #include "Object.h"
 
-#define SPEEDBOAT_SPEED 0.2
 #define SPEEDBOAT_SPEED_FACTOR 3
 #define SPEEDBOAT_COMBER_STEP 2
 #define SPEEDBOAT_COMBER_MAX 20
