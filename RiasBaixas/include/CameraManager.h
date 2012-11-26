@@ -5,7 +5,7 @@
 #include <ngl/Camera.h>
 #include "Object.h"
 
-#define CAMERAMANAGER_FAR_CLIPPING_PLANE 350
+#define CAMERAMANAGER_FAR_CLIPPING_PLANE 50
 
 
 class CameraManager

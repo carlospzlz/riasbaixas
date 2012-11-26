@@ -94,12 +94,12 @@ void Renderer::setWorld(Sea *_sea, std::vector<Object*> *_objects)
 }
 */
 
-void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam)
+void Renderer::render(const Sea *_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam)
 {
     render(_sea, _objects, _cam, 0);
 }
 
-void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam, int _debugMode)
+void Renderer::render(const Sea *_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam, int _debugMode)
 {
     std::cout << "RENDERING..." << std::endl;
 
@@ -160,8 +160,8 @@ void Renderer::render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_ca
         mesh->draw();
 
     //Drawing objects of the world
-    std::vector<Object*>::iterator lastObject = _objects.end();
-    for(std::vector<Object*>::iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
+    std::vector<Object*>::const_iterator lastObject = _objects.end();
+    for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
     {
         if ((*currentObject)->isActive())
         {
@@ -302,6 +302,47 @@ void Renderer::drawVector(ngl::Vec4 _position, ngl::Vec4 _vector, ngl::Camera _c
     tx.popTransform();
 }
 
+void Renderer::loadFont(std::string _fontFile, int _size)
+{
+    TTF_Font *font = TTF_OpenFont(_fontFile.c_str(),_size);
+    m_fontLineSkip = TTF_FontLineSkip(font);
+
+    int fontHeight = nearestPowerOfTwo(TTF_FontHeight(font));
+    int minX, maxX, fontWidth;
+    SDL_Surface *billBoardSurface;
+
+
+    const char startChar = ' ';
+    const char endChar = '~';
+
+    for (char c = startChar; c<=endChar; ++c)
+    {
+        TTF_GlyphMetrics(font,c,&minX,&maxX,NULL,NULL,NULL);
+        fontWidth = nearestPowerOfTwo(maxX-minX);
+
+        billBoardSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,fontWidth,fontHeight,32,0,0,0,0);
+        SDL_FillRect(billBoardSurface,&billBoardSurface->clip_rect,SDL_MapRGBA(billBoardSurface->format,0,0,0,0));
+
+
+
+
+    }
+}
+
+int Renderer::nearestPowerOfTwo(int _number)
+{
+    int pow2 = _number>0 ? _number-1 : 0;
+
+    _number |= _number >> 1;
+    _number |= _number >> 2;
+    _number |= _number >> 4;
+    _number |= _number >> 8;
+    _number |= _number >> 16;
+    ++_number;
+
+    return _number;
+}
+
 void Renderer::renderTextToSurface(std::string _line, int _x, int _y, SDL_Surface *_surface)
 {
     SDL_Color txtColour;
@@ -312,6 +353,7 @@ void Renderer::renderTextToSurface(std::string _line, int _x, int _y, SDL_Surfac
     SDL_Surface *textSurface;
     SDL_Rect textRect;
     TTF_Font *font = TTF_OpenFont("font.tff",24);
+
 
     if (!(textSurface = TTF_RenderText_Solid(font,_line.c_str(), txtColour)))
     {

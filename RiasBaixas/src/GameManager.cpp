@@ -66,7 +66,7 @@ int main()
     //LOADING MAP
     TxtParser *myParser;
     myParser->loadLevelSources(0, mySourceManager);
-    myParser->loadMap(1,myObjectManager, mySourceManager);
+    myParser->loadMap(0,myObjectManager, mySourceManager);
 
     //myObjectManager.setSea(new Sea(3000));
     //myObjectManager.createTestLevel();

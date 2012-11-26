@@ -11,23 +11,33 @@
 #include "Sea.h"
 #include "Object.h"
 
+struct fontChar
+{
+    int width;
+    GLuint textureID;
+    ngl::VertexArrayObject* billboard;
+};
+
 class Renderer
 {
 
 private:
     SDL_Surface *m_screen;
     ngl::Light *m_light;
-    ngl::Text *m_text;
+    std::map<char,fontChar> m_font;
+    int m_fontLineSkip;
     ngl::TransformStack m_transformStack;
+    void loadFont(std::string _fontFile, int _size);
+    int nearestPowerOfTwo(int _number);
     void drawVector(ngl::Vec4 _position, ngl::Vec4 _vector, ngl::Camera _cam);
-    void loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera m_cam);
+    void loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera _cam);
     void renderTextToSurface(std::string _line, int _x, int _y, SDL_Surface *_surface);
 
 public:
     Renderer() { };
     bool initGLContext();
-    void render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam);
-    void render(Sea *_sea, std::vector<Object*> _objects, ngl::Camera &_cam, int _debugMode);
+    void render(const Sea *_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam);
+    void render(const Sea *_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam, int _debugMode);
     //void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera m_cam);
 
 };
