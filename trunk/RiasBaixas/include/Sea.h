@@ -21,8 +21,8 @@ public:
     void setDepth(float _depth) { m_depth = _depth; }
     void draw(const std::string &_shader, ngl::Camera &_cam);
 
-    ngl::Obj *getMesh() { return NULL; }
-    std::string getPrimName() { return m_primName; }
+    ngl::Obj *getMesh() const { return NULL; }
+    std::string getPrimName() const { return m_primName; }
 };
 
 #endif // SEA_H
