@@ -15,14 +15,18 @@
 #include "Floating.h"
 #include "TxtParser.h"
 #include "Diagonal.h"
+#include "Floating.h"
+#include "Horizontal.h"
+#include "Vertical.h"
 
 
 struct playerOptions
 {
     bool running = true;
-    int debugMode = 0;
+    int debugMode = 1;
     bool backCamera = false;
     bool changeCamera = false;
+    bool pause = false;
 };
 
 void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOptions);
@@ -43,12 +47,18 @@ int main()
 
     //Loading models
     mySourceManager.addMesh("helix",new ngl::Obj("models/Helix.obj"));
-    mySourceManager.addMesh("spaceship",new ngl::Obj("models/Helix.obj"));
+    mySourceManager.addMesh("spaceship",new ngl::Obj("models/SpaceShip.obj"));
 
     //LOADING THE MAIN CHARACTER: THE SPEEDBOAT
     Diagonal dCont;
+    Floating fCont;
+    Horizontal hCont;
+    Vertical vCont;
+
     SpeedBoat mySpeedBoat;
+    //mySpeedBoat.setController(&myPlayerControls);
     mySpeedBoat.setController(&myPlayerControls);
+    mySpeedBoat.setMesh(mySourceManager.getMesh("spaceship"));
     myObjectManager.addObject(&mySpeedBoat);
     myObjectManager.setCentralObject(&mySpeedBoat);
     myObjectManager.setFar(myCameraManager.getFar());
@@ -56,7 +66,7 @@ int main()
     //LOADING MAP
     TxtParser *myParser;
     myParser->loadLevelSources(0, mySourceManager);
-    myParser->loadMap(0,myObjectManager, mySourceManager);
+    myParser->loadMap(1,myObjectManager, mySourceManager);
 
     //myObjectManager.setSea(new Sea(3000));
     //myObjectManager.createTestLevel();
@@ -76,13 +86,19 @@ int main()
         readPlayerInput(myPlayerControls, myPlayerOptions);
         setCamera(myCamera,myCameraManager,myPlayerOptions);
 
-        //myDynamicSeaElements[0]->info();
-        myObjectManager.updateObjects();
+        if (!myPlayerOptions.pause)
+        {
+            //myDynamicSeaElements[0]->info();
+            myObjectManager.updateObjects();
+            myObjectManager.checkCollisions();
 
-        myCameraManager.updateCameras();
+            myCameraManager.updateCameras();
+        }
+
         //aerialCamera.setEye(ngl::Vec4(0,12,12+mySpeedBoat.getZ(),1));
 
-        myRenderer.render(myObjectManager.getSea(),myObjectManager.getObjects(),*myCamera,1);
+        mySpeedBoat.info();
+        myRenderer.render(myObjectManager.getSea(),myObjectManager.getObjects(),*myCamera,myPlayerOptions.debugMode);
 
         std::cout << "GAMEMANAGER: DISTANCE TO THE BEACH: " << (SEA_DEPTH+mySpeedBoat.getPosition().m_z) << std::endl;
 
@@ -140,6 +156,9 @@ void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOpti
 
             case SDLK_2:
             _playerOptions.debugMode = 2;
+
+            case SDLK_PAUSE:
+            _playerOptions.pause = !_playerOptions.pause;
 
 
             /*

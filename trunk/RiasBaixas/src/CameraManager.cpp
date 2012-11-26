@@ -23,7 +23,7 @@ void CameraManager::loadCameras()
     //far clipping plane 350
 
     //camera from back
-    ngl::Camera *cameraFromTheBack = new ngl::Camera(ngl::Vec3(0,12,12),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
+    ngl::Camera *cameraFromTheBack = new ngl::Camera(ngl::Vec3(0,8,14),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
     // set the shape using FOV 45 Aspect Ratio based on Width and Height
     // The final two are near and far clipping planes of 0.5 and 10
     cameraFromTheBack->setShape(45,(float)720.0/576.0,0.05,350,ngl::PERSPECTIVE);
@@ -31,7 +31,7 @@ void CameraManager::loadCameras()
     m_spectatorCameras.push_back(cameraFromTheBack);
 
     //aerial camera
-    ngl::Camera *aerialCamera = new ngl::Camera(ngl::Vec3(0,16,0),ngl::Vec3(0,0,0),ngl::Vec3(0,0,-1),ngl::PERSPECTIVE);
+    ngl::Camera *aerialCamera = new ngl::Camera(ngl::Vec3(0,20,0),ngl::Vec3(0,0,0),ngl::Vec3(0,0,-1),ngl::PERSPECTIVE);
     aerialCamera->setShape(45,(float)720.0/576.0,0.05,m_far,ngl::PERSPECTIVE);
     m_allCameras.push_back(aerialCamera);
     m_spectatorCameras.push_back(aerialCamera);

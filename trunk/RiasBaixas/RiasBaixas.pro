@@ -19,7 +19,9 @@ HEADERS += \
     include/TxtParser.h \
     include/FisherBoat.h \
     include/Diagonal.h \
-    include/PoliceBoat.h
+    include/PoliceBoat.h \
+    include/Horizontal.h \
+    include/Vertical.h
 
 SOURCES += \
     src/SpeedBoat.cpp \
@@ -34,7 +36,9 @@ SOURCES += \
     src/SourceManager.cpp \
     src/ObjectManager.cpp \
     src/TxtParser.cpp \
-    src/Diagonal.cpp
+    src/Diagonal.cpp \
+    src/Horizontal.cpp \
+    src/Vertical.cpp
 
 OBJECTS_DIR = bin
 
@@ -63,6 +67,8 @@ QT += opengl
 #SDL library
 LIBS+=$$system(sdl-config  --libs)
 message(output from sdl-config --libs added to LIBS =$$LIBS)
+
+LIBS += -lSDL_ttf
 
 #include boost for tokenizer and reading from configFiles
 INCLUDEPATH +=/usr/local/boost

@@ -8,7 +8,7 @@ SpeedBoat::SpeedBoat()
 {
     setType(ot_speedBoat);
     setPrimName("teapot");
-    setPosition(ngl::Vec4(0,0,0,1));
+    setPosition(ngl::Vec4(0,0.3,0,1));
     setRotation(ngl::Vec4(0,90,0,1));
     setVelocity(ngl::Vec4(0,0,0,1));
 }

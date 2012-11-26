@@ -6,22 +6,35 @@
 Object::Object()
 {
     m_active = false;
-    m_transform.setPosition(ngl::Vec4(0,0,0,1));
-    m_transform.setRotation(ngl::Vec4(0,0,0,1));
-    m_transform.setScale(ngl::Vec4(1,1,1,1));
+    m_transform.reset();
+    //m_transform.setPosition(ngl::Vec4(0,0,0,1));
+    //m_transform.setRotation(ngl::Vec4(0,0,0,1));
+    //m_transform.setScale(ngl::Vec4(1,1,1,1));
     m_previousTransform = m_transform;
-    m_velocity = ngl::Vec3(0,0,0);
-    m_angularVelocity = ngl::Vec3(0,0,0);
-    m_maxSpeed = 0;
     m_mass = 1;
+    m_velocity = ngl::Vec3(0,0,0);
+    m_maxSpeed = 0.02;
+    m_angularVelocity = ngl::Vec3(0,0,0);
+    m_maxCamber = 30;
     m_type = ot_object;
     m_mesh = NULL;
     m_primName = "cube";
     m_damage = 0;
     m_jumping = false;
-    m_transform.reset();
+    m_degreesOfFreedom.forward = true;
+    m_degreesOfFreedom.backward = true;
+    m_degreesOfFreedom.up = true;
+    m_degreesOfFreedom.down = true;
+    m_degreesOfFreedom.left = true;
+    m_degreesOfFreedom.right = true;
     m_controller = NULL;
 
+}
+
+Object::~Object()
+{
+    //if (m_controller)
+    //    delete m_controller;
 }
 
 void Object::setPosition(ngl::Vec4 _pos)
@@ -59,10 +72,17 @@ void Object::info()
 {
     std::cout << "Object info of " << this << " (type "<< m_type << ")" << std::endl;
     std::cout << "Position -> " << m_transform.getPosition() << std::endl;
+    std::cout << "PreviousPos -> " << m_previousTransform.getPosition() << std::endl;
     std::cout << "Rotation -> " << m_transform.getRotation() << std::endl;
-    std::cout << "Scale -> " << m_transform.getScale() << std::endl << std::endl;
-    std::cout << "Linear Velocity -> "<< m_velocity << std::endl << std::endl;
-    std::cout << "Angular Velocity -> "<< m_angularVelocity << std::endl << std::endl;
+    std::cout << "Scale -> " << m_transform.getScale() << std::endl;
+    std::cout << "Linear Velocity -> "<< m_velocity << std::endl;
+    std::cout << "Angular Velocity -> "<< m_angularVelocity << std::endl;
+    std::cout << "Degrees Of Freedom:" << std::endl;
+    std::cout << "  " << m_degreesOfFreedom.forward << std::endl;
+    std::cout << m_degreesOfFreedom.left << "   " << m_degreesOfFreedom.right << std::endl;
+    std::cout << "  " << m_degreesOfFreedom.backward << std::endl;
+
+
 }
 
 void Object::update(float _currentZ, float _far)
@@ -72,8 +92,7 @@ void Object::update(float _currentZ, float _far)
 
     if (m_active && m_controller)
     {
-        m_controller->move(m_transform,m_velocity, m_angularVelocity,m_degreesOfFreedom,m_jumping);
-        info();
+        m_controller->move(m_transform,m_mass,m_velocity,m_maxSpeed,m_angularVelocity, m_maxCamber,m_degreesOfFreedom,m_jumping);
     }
 
     //std::cout << m_position.m_z << " " << _currentZ << " " << _far << " " << m_active << std::endl;
