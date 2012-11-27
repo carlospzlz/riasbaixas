@@ -301,7 +301,7 @@ void Renderer::drawVector(ngl::Vec4 _position, ngl::Vec4 _vector, ngl::Camera _c
     }
     tx.popTransform();
 }
-
+/*
 void Renderer::loadFont(std::string _fontFile, int _size)
 {
 
@@ -437,7 +437,7 @@ void Renderer::loadFont(std::string _fontFile, int _size)
     TTF_CloseFont(font);
     TTF_Quit();
 }
-
+*/
 int Renderer::nearestPowerOfTwo(int _number)
 {
     int pow2 = _number>0 ? _number-1 : 0;
@@ -452,11 +452,34 @@ int Renderer::nearestPowerOfTwo(int _number)
     return _number;
 }
 
-void Renderer::renderText(std::string _text)
+/*
+void Renderer::renderText(std::string _text, float _x, float _y)
 {
-    m_screen->
-}
+    glActiveTexture(0);
+    ngl::ShaderLib *shader = ngl::ShaderLib::instance();
+    (*shader)["nglTextShader"]->use();
+    shader->setShaderParam1f("ypos",_y);
 
+    glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC1_ALPHA);
+
+    fontChar fc;
+    int nChar = _text.length();
+    for(int i = 0; i<nChar; ++i)
+    {
+        shader->setShaderParam1f("xpos",_x);
+        fc = m_font[_text[i]];
+        glBindTexture(GL_TEXTURE_2D, fc.textureID);
+        fc.billboard->bind();
+        fc.billboard->draw();
+        fc.billboard->unbind();
+        _x += fc.width;
+    }
+    glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+}
+*/
 void Renderer::renderTextToSurface(std::string _line, int _x, int _y, SDL_Surface *_surface)
 {
 
