@@ -65,9 +65,11 @@ QT += opengl
 
 #SDL library
 LIBS+=$$system(sdl-config  --libs)
-message(output from sdl-config --libs added to LIBS =$$LIBS)
+#message(output from sdl-config --libs added to LIBS =$$LIBS)
 
-LIBS += -lSDL_ttf
+#SDL_ttf libray for the lab workstation
+INCLUDEPATH += $(HOME)/SDL_ttf-2.0/include
+LIBS += -L$(HOME)/SDL_ttf-2.0/lib -lSDL_ttf
 
 #include boost for tokenizer and reading from configFiles
 INCLUDEPATH +=/usr/local/boost
@@ -92,3 +94,6 @@ win32: {
         SOURCES+=C:/NGL/Support/glew/glew.c
         INCLUDEPATH+=C:/NGL/Support/glew/
 }
+
+message(INCLUDEPATH: $$INCLUDEPATH)
+message(LIBS: $$LIBS)
