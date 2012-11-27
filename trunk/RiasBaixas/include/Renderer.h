@@ -40,6 +40,7 @@ private:
     int nearestPowerOfTwo(int _number);
     void drawVector(ngl::Vec4 _position, ngl::Vec4 _vector, ngl::Camera _cam);
     void loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera _cam);
+    void Renderer::renderText(std::string _text, float _x, float _y);
     void renderTextToSurface(std::string _line, int _x, int _y, SDL_Surface *_surface);
 
 public:
