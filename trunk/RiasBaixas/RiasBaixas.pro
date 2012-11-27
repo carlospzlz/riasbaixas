@@ -17,7 +17,6 @@ HEADERS += \
     include/ObjectManager.h \
     include/Parser.h \
     include/TxtParser.h \
-    include/FisherBoat.h \
     include/Diagonal.h \
     include/PoliceBoat.h \
     include/Horizontal.h \

@@ -18,6 +18,14 @@ struct fontChar
     ngl::VertexArrayObject* billboard;
 };
 
+struct textVertData
+   {
+   ngl::Real x;
+   ngl::Real y;
+   ngl::Real u;
+   ngl::Real v;
+   };
+
 class Renderer
 {
 
@@ -25,6 +33,7 @@ private:
     SDL_Surface *m_screen;
     ngl::Light *m_light;
     std::map<char,fontChar> m_font;
+    std::map<int, ngl::VertexArrayObject> m_fontBillboards;
     int m_fontLineSkip;
     ngl::TransformStack m_transformStack;
     void loadFont(std::string _fontFile, int _size);
