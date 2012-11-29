@@ -42,6 +42,7 @@ private:
     void loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera _cam);
     void renderText(std::string _text, float _x, float _y);
     void renderTextToSurface(std::string _line, int _x, int _y, SDL_Surface *_surface);
+    void Renderer::testTexturing();
 
 public:
     Renderer() { };

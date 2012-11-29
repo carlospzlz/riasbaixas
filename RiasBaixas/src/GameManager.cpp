@@ -89,15 +89,15 @@ int main()
         if (!myPlayerOptions.pause)
         {
             //myDynamicSeaElements[0]->info();
-            myObjectManager.updateObjects();
-            myObjectManager.checkCollisions();
+            //myObjectManager.updateObjects();
+            //myObjectManager.checkCollisions();
 
-            myCameraManager.updateCameras();
+            //myCameraManager.updateCameras();
         }
 
         //aerialCamera.setEye(ngl::Vec4(0,12,12+mySpeedBoat.getZ(),1));
 
-        mySpeedBoat.info();
+        //mySpeedBoat.info();
         myRenderer.render(myObjectManager.getSea(),myObjectManager.getObjects(),*myCamera,myPlayerOptions.debugMode);
 
         std::cout << "GAMEMANAGER: DISTANCE TO THE BEACH: " << (SEA_DEPTH+mySpeedBoat.getPosition().m_z) << std::endl;
