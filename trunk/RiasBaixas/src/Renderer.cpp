@@ -4,6 +4,7 @@
 
 bool Renderer::initGLContext()
 {
+
     // Black Background
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     // enable depth testing for drawing
@@ -82,6 +83,10 @@ bool Renderer::initGLContext()
 
     SDL_GL_SwapBuffers();
 
+    loadFont("fonts/arial.ttf",16);
+
+
+
     return true;
 }
 
@@ -122,8 +127,6 @@ void Renderer::render(const Sea *_sea, const std::vector<Object*> &_objects, ngl
     ngl::Material m(ngl::GOLD);
     m.loadToShader("material");
 
-    loadMatricesToShader(m_transformStack,_cam);
-
 
 /*
     ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
@@ -160,6 +163,7 @@ void Renderer::render(const Sea *_sea, const std::vector<Object*> &_objects, ngl
         mesh->draw();
 
     //Drawing objects of the world
+    /*
     std::vector<Object*>::const_iterator lastObject = _objects.end();
     for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
     {
@@ -187,6 +191,7 @@ void Renderer::render(const Sea *_sea, const std::vector<Object*> &_objects, ngl
                 mesh->draw();
             }
 
+
             //(*currentObject)->info();
 
             m_transformStack.popTransform();
@@ -198,7 +203,8 @@ void Renderer::render(const Sea *_sea, const std::vector<Object*> &_objects, ngl
             //m_transformStack.popTransform();
 
         }
-    }
+    }*/
+    renderText("hello world of the narcotrafic! I can speak!", 20, 20);
 
 /*
     std::vector<DynamicSeaElement>::iterator lastDse = m_dynamicSeaElements->end();
@@ -301,14 +307,21 @@ void Renderer::drawVector(ngl::Vec4 _position, ngl::Vec4 _vector, ngl::Camera _c
     }
     tx.popTransform();
 }
-/*
-void Renderer::loadFont(std::string _fontFile, int _size)
+
+bool Renderer::loadFont(std::string _fontFile, int _size)
 {
 
     TTF_Init();
 
     //Font
     TTF_Font *font = TTF_OpenFont(_fontFile.c_str(),_size);
+
+    if (!font)
+    {
+        std::cout << "Error when loading font " << _fontFile << "..." << std::endl;
+        return false;
+    }
+
     m_fontLineSkip = TTF_FontLineSkip(font);
     SDL_Color fontColour = {0xFF, 0xFF, 0xFF};
 
@@ -319,25 +332,40 @@ void Renderer::loadFont(std::string _fontFile, int _size)
 
     //Surface
     SDL_Surface *billboardSurface;
+    SDL_Surface *charRenderedSurface;
 
     //Texture
     GLint nOfColours;
     GLenum textureFormat;
 
+    //Billboard
+    ngl::Real s0 = 0.0;
+    ngl::Real t0 = 0.0;
+    ngl::Real s1;
+    ngl::Real t1;
+    textVertData billboardData[6];
+
     const char startChar = ' ';
     const char endChar = '~';
 
-
+    std::cout << "Loading font " << _fontFile << std::endl;
 
     for (char c = startChar; c<=endChar; ++c)
     {
+
+        std::cout << c << ": " ;
+
         //CREATING SDL_Surface FOR THE GLYPH IMAGE
-        billboardSurface = TTF_RenderText_Solid(font,&c,fontColour);
+        //charRenderedSurface = TTF_RenderText_Solid(font,&c,fontColour);
+        billboardSurface = TTF_RenderUTF8_Blended(font,&c,fontColour);
 
         fontWidth= billboardSurface->w;
         fontWidthPow2 = nearestPowerOfTwo(fontWidth);
 
+        //billboardSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,fontWidth,fontHeight,32,0,0,0,0);
+        SDL_FillRect(billboardSurface,&billboardSurface->clip_rect,SDL_MapRGBA(billboardSurface->format,0,0,0,0));
         nOfColours = billboardSurface->format->BytesPerPixel;
+
         if (nOfColours == 4)     // contains an alpha channel
         {
             if (billboardSurface->format->Rmask == 0x000000ff)
@@ -358,6 +386,8 @@ void Renderer::loadFont(std::string _fontFile, int _size)
         //adding the width to the map of font characters
         m_font[c].width = fontWidth;
 
+        std::cout << "Surface (" << fontWidth << "," << fontHeight << "): ";
+
         //LOADING TEXTURE
         // Have OpenGL generate a texture object handle for us
         glGenTextures(1, &m_font[c].textureID);
@@ -369,63 +399,69 @@ void Renderer::loadFont(std::string _fontFile, int _size)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        nOfColours = billboardSurface->format->BytesPerPixel;
         // Edit the texture object's image data using the information SDL_Surface gives us
         glTexImage2D( GL_TEXTURE_2D, 0, nOfColours, fontWidthPow2, fontHeightPow2,
                       0, textureFormat, GL_UNSIGNED_BYTE, billboardSurface->pixels );
 
+        std::cout << "texture (" << fontWidthPow2 << "," << fontHeightPow2 << "): ";
+
         //GENERATING BILLBOARD
-        ngl::Real s0 = 0.0;
-        ngl::Real t0 = 0.0;
-        ngl::Real s1 = fontWidth * 1.0/fontWidthPow2;
-        ngl::Real t1 = fontHeight * 1.0/fontHeightPow2;
-        textVertData billboardData[6];
+        if (m_fontBillboards.find(fontWidth) == m_fontBillboards.end())
+        {
+            s1 = fontWidth * 1.0/fontWidthPow2;
+            t1 = fontHeight * 1.0/fontHeightPow2;
 
-        billboardData[0];
+            //first triangle
+            billboardData[0].x=0;
+            billboardData[0].y=0;
+            billboardData[0].u=s0;
+            billboardData[0].v=t0;
 
-        //first triangle
-        billboardData[0].x=0;
-        billboardData[0].y=0;
-        billboardData[0].u=s0;
-        billboardData[0].v=t0;
+            billboardData[1].x=fontWidth;
+            billboardData[1].y=0;
+            billboardData[1].u=s1;
+            billboardData[1].v=t0;
 
-        billboardData[1].x=fontWidth;
-        billboardData[1].y=0;
-        billboardData[1].u=s1;
-        billboardData[1].v=t0;
+            billboardData[2].x=0;
+            billboardData[2].y=fontHeight;
+            billboardData[2].u=s0;
+            billboardData[2].v=t1;
 
-        billboardData[2].x=0;
-        billboardData[2].y=fontHeight;
-        billboardData[2].u=s0;
-        billboardData[2].v=t1;
+            //second triangle
+            billboardData[3].x=0;
+            billboardData[3].y=fontHeight;
+            billboardData[3].u=s0;
+            billboardData[3].v=t1;
 
-        //second triangle
-        billboardData[3].x=0;
-        billboardData[3].y=fontHeight;
-        billboardData[3].u=s0;
-        billboardData[3].v=t1;
+            billboardData[4].x=fontWidth;
+            billboardData[4].y=0;
+            billboardData[4].u=s1;
+            billboardData[4].v=t0;
 
-        billboardData[4].x=fontWidth;
-        billboardData[4].y=0;
-        billboardData[4].u=s1;
-        billboardData[4].v=t0;
+            billboardData[5].x=fontWidth;
+            billboardData[5].y=fontHeight;
+            billboardData[5].u=s1;
+            billboardData[5].v=t1;
 
-        billboardData[5].x=fontWidth;
-        billboardData[5].y=fontHeight;
-        billboardData[5].u=s1;
-        billboardData[5].v=t1;
+            //CREATING THE VAO
+            ngl::VertexArrayObject *vao = ngl::VertexArrayObject::createVOA(GL_TRIANGLES);
+            vao->bind();
+            vao->setData(6*sizeof(textVertData),billboardData[0].x);
+            vao->setVertexAttributePointer(0,2,GL_FLOAT,sizeof(textVertData),2);
+            vao->setNumIndices(6);
+            vao->unbind();
 
-        //CREATING THE VAO
-        ngl::VertexArrayObject *vao = ngl::VertexArrayObject::createVOA(GL_TRIANGLES);
-        vao->bind();
-        vao->setData(6*sizeof(textVertData),billboardData[0].x);
-        vao->setVertexAttributePointer(0,2,GL_FLOAT,sizeof(textVertData),2);
-        vao->setNumIndices(6);
-        vao->unbind();
+            m_fontBillboards[fontWidth] = vao;
+
+            std::cout << "Billboard created: ";
+        }
+        else
+            std::cout << "Billboard reused: ";
 
         //AND FINALLY...
+        m_font[c].billboard = m_fontBillboards[fontWidth];
 
-        m_font[c].billboard = vao;
+        std::cout << "character loaded" << std::endl;
 
         //TTF_GlyphMetrics(font,c,&minX,&maxX,NULL,NULL,NULL);
         //fc.width = nearestPowerOfTwo(maxX-minX);
@@ -435,9 +471,11 @@ void Renderer::loadFont(std::string _fontFile, int _size)
     }
 
     TTF_CloseFont(font);
-    TTF_Quit();
+    //TTF_Quit();
+
+    return true;
 }
-*/
+
 int Renderer::nearestPowerOfTwo(int _number)
 {
     int pow2 = _number>0 ? _number-1 : 0;
@@ -452,12 +490,17 @@ int Renderer::nearestPowerOfTwo(int _number)
     return _number;
 }
 
-/*
+
 void Renderer::renderText(std::string _text, float _x, float _y)
 {
+    std::cout << "rendering " << _text << std::endl;
+
     glActiveTexture(0);
     ngl::ShaderLib *shader = ngl::ShaderLib::instance();
     (*shader)["nglTextShader"]->use();
+    shader->setRegisteredUniform3f("textColour",1,1,1);
+    shader->setRegisteredUniform1f("ScaleX",2.0/720);
+    shader->setRegisteredUniform1f("ScaleY",-2.0/720);
     shader->setShaderParam1f("ypos",_y);
 
     glEnable(GL_BLEND);
@@ -479,7 +522,7 @@ void Renderer::renderText(std::string _text, float _x, float _y)
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
 }
-*/
+
 void Renderer::renderTextToSurface(std::string _line, int _x, int _y, SDL_Surface *_surface)
 {
 
