@@ -75,7 +75,7 @@ LIBS += -L$(HOME)/SDL_ttf-2.0/lib -lSDL_ttf
 INCLUDEPATH +=/usr/local/boost
 
 CXX_FLAGS+=$$system(sdl-config  --cflags)
-message(output from sdl-config --cflags added to CXX_FLAGS= $$CXX_FLAGS)
+#message(output from sdl-config --cflags added to CXX_FLAGS= $$CXX_FLAGS)
 
 
 # For the rubbish of WINDOWS
