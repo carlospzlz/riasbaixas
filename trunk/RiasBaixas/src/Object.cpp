@@ -86,7 +86,6 @@ void Object::checkActive(float _currentZ, float _far)
 
 void Object::collisionEvent(Object &_o)
 {
-    m_collided = true;
-    //std::cout << "Object: Warning: Undefined collisionEvent method for this object" << std::endl;
+    std::cout << "Object: Warning: Undefined collisionEvent method for this object" << std::endl;
 }
 

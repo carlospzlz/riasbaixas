@@ -97,6 +97,7 @@ bool TXTParser::loadMusselFarm(tokenizer::iterator _currentParameter, ObjectMana
         Object *musselFarm = new Object();
         musselFarm->setMesh(_sourceManager.getMesh("musselFarm"));
         musselFarm->setType(ot_musselFarm);
+        musselFarm->setMass(0);
         musselFarm->setPosition(ngl::Vec4(x,y,z,1));
         _objectManager.addObject(musselFarm);
     }

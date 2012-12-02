@@ -26,7 +26,6 @@ void PlayerControls::move()
 
     ngl::Vec4 position = m_object->getPosition();
     ngl::Vec4 rotation = m_object->getRotation();
-    float mass = m_object->getMass();
     float maxSpeed = m_object->getMaxSpeed();
     float maxCamber = m_object->getMaxCamber();
     ngl::Vec4 velocity = m_object->getVelocity();
@@ -161,13 +160,13 @@ void PlayerControls::move()
         //MOVING IN Z
 
         //accelerating
-        if (m_speedUp)
+        if (m_speedUp || velocity.m_z < CONTROLLER_SPEED)
             velocity.m_z -= m_acceleration.m_z;
         else
             velocity.m_z += m_acceleration.m_z;
 
-            velocity.m_z = std::max(std::abs(velocity.m_z), maxSpeed);
-            velocity.m_z = -std::min(std::abs(velocity.m_z), maxSpeed);
+        //velocity.m_z = std::max(std::abs(velocity.m_z), maxSpeed);
+        velocity.m_z = -std::min(std::abs(velocity.m_z), maxSpeed);
     }
 
     //std::cout << "Player Controls: state: { " <<m_floating<< " " << m_emerging << " " << m_bouncing << " " << m_immersing << " } high "<< position.m_y << std::endl;

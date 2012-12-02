@@ -21,6 +21,7 @@
 #include "PhysicsEngine.h"
 #include "BSpherePE.h"
 
+#define GAMEMANAGER_FPS 30
 
 struct playerOptions
 {
@@ -37,6 +38,7 @@ struct playerOptions
 void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOptions, bool _isfullScreen);
 void setCamera(CameraManager &_cameraManager, const Renderer &_renderer, playerOptions &_playerOptions);
 void setWindow(Renderer &_renderer, playerOptions &_playerOptions);
+void regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_lastStartingSecond, int &_fps);
 
 int main()
 {
@@ -86,9 +88,17 @@ int main()
     //PHYSICS ENGINE
     PhysicsEngine *myPhysicsEngine = new BSpherePE();
 
+    //TIMING
+    Uint32 startingTick;
+    int frameCounter = 0;
+    Uint32 lastStartingSecond = SDL_GetTicks();
+    int fps;
+
+
     //GAME LOOP
     while (myPlayerOptions.running)
     {
+        startingTick = SDL_GetTicks();
 
         readPlayerInput(myPlayerControls, myPlayerOptions, myRenderer.isFullScreen());
         setWindow(myRenderer,myPlayerOptions);
@@ -101,12 +111,13 @@ int main()
             myObjectManager.checkCollisions(myPhysicsEngine);
 
             myCameraManager.updateCameras();
+
+            myRenderer.render(myObjectManager.sea(),myObjectManager.objects(),*myCameraManager.getCurrentCamera(),myPlayerOptions.debugMode);
         }
 
-        //aerialCamera.setEye(ngl::Vec4(0,12,12+mySpeedBoat.getZ(),1));
+        regulateFPS(startingTick, frameCounter, lastStartingSecond, fps);
 
-        //mySpeedBoat.info();
-        myRenderer.render(myObjectManager.sea(),myObjectManager.objects(),*myCameraManager.getCurrentCamera(),myPlayerOptions.debugMode);
+        std::cout << "WORKING AT "<< fps <<" FPS" << std::endl;
 
         //std::cout << "GAMEMANAGER: DISTANCE TO THE BEACH: " << (SEA_DEPTH+mySpeedBoat.getPosition().m_z) << std::endl;
 
@@ -265,5 +276,23 @@ void setCamera(CameraManager &_cameraManager, const Renderer &_renderer, playerO
         _cameraManager.nextCamera();
         //_playerOptions.changeCamera == false;
     }
+
+}
+
+void regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_lastStartingSecond, int &_fps)
+{
+    //calculate current frames per second
+    if (SDL_GetTicks()-_lastStartingSecond > 1000)
+    {
+        _lastStartingSecond = SDL_GetTicks();
+        _fps = _frameCounter;
+        _frameCounter = 0;
+    }
+    else
+        ++_frameCounter;
+
+    //Adjust frames per second
+    //if (1000/GAMEMANAGER_FPS>(SDL_GetTicks()-_startingTick))
+    //    SDL_Delay(1000/GAMEMANAGER_FPS-(SDL_GetTicks()-_startingTick));
 
 }
