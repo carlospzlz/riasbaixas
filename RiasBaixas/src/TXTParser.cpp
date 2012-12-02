@@ -1,11 +1,16 @@
-#include "TxtParser.h"
+#include "TXTParser.h"
 
-bool TxtParser::loadLevelSources(int _level, SourceManager &_sourceManager)
+bool TXTParser::loadBasicSources(SourceManager &_souceManager)
 {
 
 }
 
-bool TxtParser::loadMap(int _map, ObjectManager &_objectManager, SourceManager &_sourceManager)
+bool TXTParser::loadLevelSources(int _level, SourceManager &_sourceManager)
+{
+
+}
+
+bool TXTParser::loadMap(int _map, ObjectManager &_objectManager, ControllerManager &_controllerManager, SourceManager &_sourceManager)
 {
 
     std::ifstream mapFile;
@@ -50,7 +55,7 @@ bool TxtParser::loadMap(int _map, ObjectManager &_objectManager, SourceManager &
             }
             else if (*currentToken == "FisherBoat")
             {
-                if (loadFisherBoat(currentToken, _objectManager, _sourceManager))
+                if (loadFisherBoat(currentToken, _objectManager, _controllerManager, _sourceManager))
                     std::cout <<"TxtParser: in line " << lineNumber << ": FisherBoat loaded" << std::endl;
                 else
                     std::cout << "TxtParser: in line " << lineNumber << ": EXCEPTION: when loading FisherBoat" << std::endl;
@@ -64,14 +69,14 @@ bool TxtParser::loadMap(int _map, ObjectManager &_objectManager, SourceManager &
     return true;
 }
 
-bool TxtParser::loadSea(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager)
+bool TXTParser::loadSea(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager)
 {
    try
    {
         float depth = boost::lexical_cast<float>(*++_currentParameter);
 
-        Sea *sea = new Sea();
-        sea->setDepth(depth);
+        Sea sea;
+        sea.setDepth(depth);
         _objectManager.setSea(sea);
     }
     catch (...)
@@ -81,7 +86,7 @@ bool TxtParser::loadSea(tokenizer::iterator _currentParameter, ObjectManager &_o
     return true;
 }
 
-bool TxtParser::loadMusselFarm(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager)
+bool TXTParser::loadMusselFarm(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager)
 {
     try
     {
@@ -91,6 +96,7 @@ bool TxtParser::loadMusselFarm(tokenizer::iterator _currentParameter, ObjectMana
 
         Object *musselFarm = new Object();
         musselFarm->setMesh(_sourceManager.getMesh("musselFarm"));
+        musselFarm->setType(ot_musselFarm);
         musselFarm->setPosition(ngl::Vec4(x,y,z,1));
         _objectManager.addObject(musselFarm);
     }
@@ -101,7 +107,8 @@ bool TxtParser::loadMusselFarm(tokenizer::iterator _currentParameter, ObjectMana
     return true;
 }
 
-bool TxtParser::loadFisherBoat(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager)
+bool TXTParser::loadFisherBoat(tokenizer::iterator _currentParameter, ObjectManager &_objectManager,
+                               ControllerManager &_controllerManager, SourceManager &_sourceManager)
 {
     try
     {
@@ -115,8 +122,9 @@ bool TxtParser::loadFisherBoat(tokenizer::iterator _currentParameter, ObjectMana
         fisherBoat->setType(ot_fisherBoat);
         fisherBoat->setPrimName("teapot");
 
-        if (!loadController(_currentParameter,fisherBoat))
+        if (!loadController(_currentParameter,_controllerManager,fisherBoat))
             return false;
+
         _objectManager.addObject(fisherBoat);
     }
     catch (...)
@@ -126,7 +134,7 @@ bool TxtParser::loadFisherBoat(tokenizer::iterator _currentParameter, ObjectMana
     return true;
 }
 
-bool TxtParser::loadController(tokenizer::iterator _currentParameter, Object *_object)
+bool TXTParser::loadController(tokenizer::iterator _currentParameter, ControllerManager &_controllerManager, Object *_object)
 {
     try
     {
@@ -152,7 +160,8 @@ bool TxtParser::loadController(tokenizer::iterator _currentParameter, Object *_o
         controller = new Diagonal();
         }
 
-        _object->setController(controller);
+        controller->setControlledObject(_object);
+        _controllerManager.addController(controller);
     }
     catch (...)
     {
@@ -160,5 +169,3 @@ bool TxtParser::loadController(tokenizer::iterator _currentParameter, Object *_o
     }
     return true;
 }
-
-

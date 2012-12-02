@@ -5,13 +5,23 @@ Controller::Controller()
     m_acceleration = ngl::Vec4(0,0,0,0);
     float frequency  = CONTROLLER_FLOATING_FRECUENCY;
     m_ticksFloating = rand() % (int) M_PI/frequency;
-    std::cout << " FLOATING TICKS " << m_ticksFloating << " " << (int)M_PI << " " << (float)CONTROLLER_FLOATING_FRECUENCY << std::endl;
 }
 
-void Controller::move(ngl::Transformation &_transform, float _mass, ngl::Vec4 &_vel, float &_maxSpeed,
-                              ngl::Vec4 &_angVel, float _maxCamber, const degreesOfFreedom &_dof, bool _jumping)
+void Controller::setControlledObject(Object *_obj)
 {
-    std::cout << "This controller has undefined movement" << std::endl;
+    m_object = _obj;
+    assert(m_object->getMass()!=0);
+    m_acceleration = ngl::Vec4(CONTROLLER_MOTOR_FORCE/m_object->getMass(),CONTROLLER_MOTOR_FORCE/m_object->getMass(),CONTROLLER_MOTOR_FORCE/m_object->getMass(),1);
+}
+
+void Controller::move()
+{
+    //std::cout << "This controller has undefined movement" << std::endl;
+    m_object->setPreviousPos(m_object->getPosition());
+    m_object->setPreviousRot(m_object->getRotation());
+    m_object->setPosition(m_object->getPosition()+m_object->getVelocity());
+    m_object->setRotation(m_object->getRotation()+m_object->getAngularVelocity());
+
 }
 
 float Controller::floatingVelocity()

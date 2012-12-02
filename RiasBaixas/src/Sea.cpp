@@ -4,6 +4,12 @@
 Sea::Sea()
 {
     m_depth = SEA_DEPTH;
+    m_primName = "bunny";
+}
+
+void Sea::setDepth(float _depth)
+{
+    m_depth;
     m_primName = "sea";
     ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
     prim->createLineGrid("sea",SEA_DEPTH,SEA_DEPTH,SEA_DEPTH);

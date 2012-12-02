@@ -30,7 +30,7 @@ public:
     void setLoad(int _l) { m_load = _l; }
     int getLoad() { return m_load; }
 
-    void collisionEvent(Object _o);
+    void collisionEvent(Object &_o);
 };
 
 #endif // SPEEDBOAT_H

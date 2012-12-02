@@ -13,7 +13,9 @@ SpeedBoat::SpeedBoat()
     setVelocity(ngl::Vec4(0,0,0,1));
 }
 
-void SpeedBoat::collisionEvent(Object _o)
+void SpeedBoat::collisionEvent(Object& _o)
 {
     //reduce amount of load
+
+    Object::collisionEvent(_o);
 }

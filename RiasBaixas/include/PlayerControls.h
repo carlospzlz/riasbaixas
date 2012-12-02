@@ -22,6 +22,8 @@ private:
     bool m_speedUp;
     bool m_floating;
     bool m_bouncing;
+    bool m_emerging;
+    bool m_immersing;
     bool m_jumping;
     int m_ticksFloating;
     int m_ticksBouncing;
@@ -32,8 +34,7 @@ public:
     void setLeft(bool _pressed) { m_left = _pressed; }
     void setRight(bool _pressed) { m_right = _pressed; }
     void setSpeedUp(bool _pressed) { m_speedUp = _pressed; }
-    virtual void move(ngl::Transformation &_transform, float _mass, ngl::Vec4 &_vel, float &_maxSpeed,
-                      ngl::Vec4 &_angVel, float _maxCamber, const degreesOfFreedom &_dof, bool _jumping);
+    virtual void move();
 };
 
 #endif // PLAYERCONTROLS_H

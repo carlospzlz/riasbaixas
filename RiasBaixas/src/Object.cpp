@@ -14,59 +14,36 @@ Object::Object()
     m_mass = 1;
     m_velocity = ngl::Vec3(0,0,0);
     m_maxSpeed = 0.02;
-    m_angularVelocity = ngl::Vec3(0,0,0);
     m_maxCamber = 30;
     m_type = ot_object;
     m_mesh = NULL;
     m_primName = "cube";
+    m_bSRadius = 1;
     m_damage = 0;
     m_jumping = false;
+    m_collided = false;
     m_degreesOfFreedom.forward = true;
     m_degreesOfFreedom.backward = true;
     m_degreesOfFreedom.up = true;
     m_degreesOfFreedom.down = true;
     m_degreesOfFreedom.left = true;
     m_degreesOfFreedom.right = true;
-    m_controller = NULL;
 
-}
-
-Object::~Object()
-{
-    //if (m_controller)
-    //    delete m_controller;
 }
 
 void Object::setPosition(ngl::Vec4 _pos)
 {
-    _pos.m_x = std::max(-SEA_WIDTH/(float)2, _pos.m_x);
-    _pos.m_x = std::min(SEA_WIDTH/(float)2, _pos.m_x);
     m_transform.setPosition(_pos);
-    if (_pos.m_x<-SEA_WIDTH/2.0 || _pos.m_x>SEA_WIDTH/2.0)
-        std::cout << "Object: Warning: position out of the Sea" << std::endl;
 }
 
-/*
-void Object::draw(const std::string &_shader, const ngl::Camera &_cam, int _debugMode)
+void Object::setMesh(ngl::Obj* _obj)
 {
-    ngl::ShaderLib *shader = ngl::ShaderLib::instance();
-    (*shader)[_shader]->use();
-
-    ngl::Mat4 MVP=m_transform.getMatrix()*_cam.getVPMatrix();
-
-    shader->setShaderParamFromMat4("MVP",MVP);
-
-    if (_debugMode == 1 || !m_mesh)
+    if (_obj)
     {
-        //m_transform.set
-        ngl::VAOPrimitives::instance()->draw(m_primName);
+        m_mesh = _obj;
+        m_bSRadius = _obj->getSphereRadius();
     }
-    else if (_debugMode == 2)
-        m_mesh->drawBBox();
-    else
-        m_mesh->draw();
 }
-*/
 
 void Object::info()
 {
@@ -85,22 +62,31 @@ void Object::info()
 
 }
 
-void Object::update(float _currentZ, float _far)
+std::string Object::getType()
+{
+    if (m_type==ot_speedBoat)
+        return "Speedboat";
+    else if (m_type==ot_musselFarm)
+        return "MusselFarm";
+    else if (m_type==ot_fisherBoat)
+        return "FisherBoat";
+    else
+        return "other";
+
+}
+
+void Object::checkActive(float _currentZ, float _far)
 {
     m_active = (m_transform.getPosition().m_z > _currentZ-_far) && (m_transform.getPosition().m_z < _currentZ+_far);
     m_previousTransform = m_transform;
-
-    if (m_active && m_controller)
-    {
-        m_controller->move(m_transform,m_mass,m_velocity,m_maxSpeed,m_angularVelocity, m_maxCamber,m_degreesOfFreedom,m_jumping);
-    }
 
     //std::cout << m_position.m_z << " " << _currentZ << " " << _far << " " << m_active << std::endl;
     //std::cout << "Object: Warning: Undefined specific update method for this object" << std::endl;
 }
 
-void Object::collisionEvent(Object _o)
+void Object::collisionEvent(Object &_o)
 {
-    std::cout << "Object: Warning: Undefined collisionEvent method for this object" << std::endl;
+    m_collided = true;
+    //std::cout << "Object: Warning: Undefined collisionEvent method for this object" << std::endl;
 }
 

@@ -14,7 +14,7 @@ private:
 
 public:
     ~SourceManager();
-    void addMesh(const std::string _key, ngl::Obj *_mesh);
+    void addMesh(const std::string _key, ngl::Obj* _mesh);
     ngl::Obj *getMesh(const std::string _key);
 
 };
