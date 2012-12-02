@@ -9,4 +9,5 @@ FisherBoat 0 0.3 -20 Horizontal
 FisherBoat 0 0.3 -35 Horizontal
 FisherBoat 0 0.3 -25 Floating
 FisherBoat 0 0.3 -45 Vertical
+FisherBoat 0 0 0 Diagonal
 FisherBoat -50 0.3 0 Diagonal

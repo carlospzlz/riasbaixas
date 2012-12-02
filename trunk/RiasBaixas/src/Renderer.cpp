@@ -3,27 +3,60 @@
 #include <sstream>
 
 
-bool Renderer::initGLContext()
+void Renderer::initGLContext()
 {
 
-    // Black Background
-    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
-    // enable depth testing for drawing
+    //INITIALIZE VIDEO SUBSYSTEM, IF YOU WANT TO USE AUDIO, JOYSTICKS ETC.. INIT THEM!
+    if(SDL_Init(SDL_INIT_VIDEO) < 0)
+        SDLErrorExit("Unable to initialize Video Subsystem");
+
+    //CREATING WINDOW
+    SDL_Rect screen;
+    SDL_GetDisplayBounds(0,&screen);
+    m_window = SDL_CreateWindow("Rias Baixas",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                screen.w/2, screen.h*3.0/4.0, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+
+    if (!m_window)
+        SDLErrorExit("unable to create window");
+
+    m_fullScreen = false;
+    SDL_GetWindowSize(m_window,&m_windowWidth,&m_windowHeight);
+
+    //CREATING OPENGL CONTEXT
+    /*
+    #ifdef  DARWIN
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    #endif
+    */
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,4);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
+
+    m_glContext = SDL_GL_CreateContext(m_window);
+
+    if (!m_glContext)
+        SDLErrorExit("Unable to create GL Context");
+
+    SDL_GL_MakeCurrent(m_window, m_glContext);
+    SDL_GL_SetSwapInterval(1);
+
+    glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    //LOADING CONTEXT
-    if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
-        return false;
+    SDL_GL_SwapWindow(m_window);
 
-    m_screen = SDL_SetVideoMode(720, 720, 32, SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
-
+    //INITIALIZING NGL
     ngl::NGLInit *Init = ngl::NGLInit::instance();
     Init->initGlew();
 
-    // now to load the shader and set the values
-    // grab an instance of shader manager
+    //LOAD AND CONFIGURE THE SHADERS
     ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-    // we are creating a shader called Phong
+
+    //Phong
     shader->createShaderProgram("Phong");
     // now we are going to create empty shaders for Frag and Vert
     shader->attachShader("PhongVertex",ngl::VERTEX);
@@ -48,18 +81,13 @@ bool Renderer::initGLContext()
     // now we have associated this data we can link the shader
     shader->linkProgramObject("Phong");
     // and make it active ready to load values
-    (*shader)["Phong"]->use();
+    //(*shader)["Phong"]->use();
     // the shader will use the currently active material and light0 so set them
     //ngl::Material m(ngl::GOLD);
     // load our material values to the shader into the structure material (see Vertex shader)
     //m.loadToShader("material");
 
-    //To draw vectors we create the needed primitives
-    ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-    prim->createCylinder("vectorModulus",0.02,2,6,1);
-    prim->createCone("vectorSense",0.05,0.2,6,1);
-
-    //Other shader that I don't really know what it is for
+    //Shader for plane colours
     shader->createShaderProgram("Colour");
 
     shader->attachShader("ColourVertex",ngl::VERTEX);
@@ -74,167 +102,166 @@ bool Renderer::initGLContext()
 
     shader->bindAttribute("Colour",0,"inVert");
     shader->linkProgramObject("Colour");
-    shader->setShaderParam4f("Colour",1,1,1,1);
 
-    //To draw Text (segmentation fault if uncomment this)
-    //m_text = new ngl::Text(QFont("Arial",18));
+    //LIGHTS
+    m_light = new ngl::Light(ngl::Vec3(-2,5,2),ngl::Colour(1,1,1,1),ngl::Colour(1,1,1,1),ngl::POINTLIGHT );
 
-    //For removal or hidden surfaces
-    glEnable(GL_DEPTH_TEST);
+    //PRIMITIVES TO DRAW VECTORS
+    ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
+    prim->createCylinder("vectorModulus",0.02,2,6,1);
+    prim->createCone("vectorSense",0.05,0.2,6,1);
 
-    SDL_GL_SwapBuffers();
+    //PRIMITIVE TO DRAW BOUNDING BOX
+    prim->createSphere("bSphere",1.0,10);
 
-    loadFont("fonts/arial.ttf",16);
+    //LOADING FONT TO RENDER TEXT
+    //loadFont("fonts/arial.ttf",16);
 
-
-
-    return true;
 }
 
-/*
-void Renderer::setWorld(Sea *_sea, std::vector<Object*> *_objects)
+void Renderer::resizeWindow()
 {
-    m_sea = _sea;
-    m_objects = _objects;
-    std::cout << "The renderer was told the world" << std::endl;
+    SDL_GetWindowSize(m_window,&m_windowWidth,&m_windowHeight);
+    glViewport(0,0,m_windowWidth,m_windowHeight);
+    //set the cameras!
 }
-*/
 
-void Renderer::render(const Sea *_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam)
+void Renderer::fullScreen()
+{
+    SDL_SetWindowFullscreen(m_window,SDL_TRUE);
+    m_fullScreen = true;
+}
+
+void Renderer::restoreWindow()
+{
+    SDL_SetWindowFullscreen(m_window,SDL_FALSE);
+    m_fullScreen = false;
+}
+
+void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam)
 {
     render(_sea, _objects, _cam, 0);
 }
 
-void Renderer::render(const Sea *_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam, int _debugMode)
+void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam, int _debugMode)
 {
+
     std::cout << "RENDERING..." << std::endl;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 
     ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+    ngl::VAOPrimitives *primitives=ngl::VAOPrimitives::instance();
+    ngl::Mat4 iv;
+    ngl::Material material(ngl::GOLD);
 
-    shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
-    // now create our light this is done after the camera so we can pass the
-    // transpose of the projection matrix to the light to do correct eye space
-    // transformations
-    ngl::Mat4 iv=_cam.getViewMatrix();
-    iv.transpose();
-    ngl::Light *m_light = new ngl::Light(ngl::Vec3(-2,5,2),ngl::Colour(1,1,1,1),ngl::Colour(1,1,1,1),ngl::POINTLIGHT );
-    m_light->setTransform(iv);
-    // load these values to the shader as well
-    m_light->loadToShader("light");
-    ngl::Material m(ngl::GOLD);
-    m.loadToShader("material");
-
-
-/*
-    ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-    m_transformStack.pushTransform();
-    {
-      m_transformStack.setPosition(1.0,0.35,1.0);
-      m_transformStack.setScale(1.5,1.5,1.5);
-      loadMatricesToShader(m_transformStack,_cam);
-      prim->draw("troll");
-    } // and before a pop
-    m_transformStack.popTransform();*/
-
-
-    //DRAWING
-    ngl::Mat4 MVP;
-    ngl::Obj *mesh;
-    ngl::VAOPrimitives *primitivesInstance = ngl::VAOPrimitives::instance();
-
-    //Drawing Sea
-    shader->use("Phong");
-    //MVP=(*currentObject)->getTransform().getMatrix()*_cam.getVPMatrix();
-
-    //shader->setShaderParamFromMat4("MVP",MVP);
-    m_transformStack.getCurrentTransform().reset();
-    loadMatricesToShader(m_transformStack,_cam);
-    mesh = _sea->getMesh();
-
-    if (_debugMode != 0 || !mesh)
-    {
-        //m_transform.set
-        primitivesInstance->draw(_sea->getPrimName());
-    }
-    else
-        mesh->draw();
-
-    //Drawing objects of the world
-    /*
+    ngl::Transformation transform;
     std::vector<Object*>::const_iterator lastObject = _objects.end();
-    for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
+
+
+    if (!_debugMode)
     {
-        if ((*currentObject)->isActive())
+        (*shader)["Phong"]->use();
+
+        shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
+        iv=_cam.getViewMatrix();
+        iv.transpose();
+        m_light->setTransform(iv);
+        m_light->loadToShader("light");
+        material.loadToShader("material");
+
+        loadMatricesToPhong(transform, _cam);
+        primitives->draw(_sea.getPrimName());
+
+        for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
         {
-            shader->use("Phong");
-            m_transformStack.pushTransform();
+            if ((*currentObject)->isActive())
             {
-            MVP=(*currentObject)->getTransform().getMatrix()*_cam.getVPMatrix();
-            shader->setShaderParamFromMat4("MVP",MVP);
-            //loadMatricesToShader(m_transformStack,_cam);
-            mesh = (*currentObject)->getMesh();
-
-            if (_debugMode == 1 || !mesh)
-            {
-                //m_transform.set
-                primitivesInstance->draw((*currentObject)->getPrimName());
-                drawVector((*currentObject)->getPosition(),(*currentObject)->getVelocity(),_cam);
+                transform = (*currentObject)->getTransform();
+                loadMatricesToPhong(transform,_cam);
+                if ((*currentObject)->hasMesh())
+                    (*currentObject)->getMesh()->draw();
+                else
+                    primitives->draw((*currentObject)->getPrimName());
+                //(*currentObject)->info();
             }
-            else if (_debugMode == 2)
-            {
-                mesh->drawBBox();
-            }
-            else
-                mesh->draw();
-            }
-
-
-            //(*currentObject)->info();
-
-            m_transformStack.popTransform();
-
-
-            //m_transformStack.pushTransform();
-            //loadMatricesToShader(m_transformStack,_cam);
-            //(*currentObject)->draw("Phong", _cam, debugMode);
-            //m_transformStack.popTransform();
-
         }
-    }*/
-    //renderText("hello world of the narcotrafic! I can speak!", 20, 20);
-
-    testTexturing();
-
-/*
-    std::vector<DynamicSeaElement>::iterator lastDse = m_dynamicSeaElements->end();
-    for(std::vector<DynamicSeaElement>::iterator currentDse = m_dynamicSeaElements->begin(); currentDse!=lastDse; ++currentDse)
-    {
-        m_transformStack.pushTransform();
-        loadMatricesToShader(m_transformStack,_cam);
-        currentDse->draw("Phong", _cam, debugMode);
-        m_transformStack.popTransform();
     }
-*/
-    //ts.popTransform();
+    else if (_debugMode==1)
+    {
+        (*shader)["Phong"]->use();
 
-    //ts.pushTransform();
-    //m_transformStack.setPosition(0,4,0);
-    //loadMatricesToShader(m_transformStack,_cam);
-    //m_sea->draw("Phong", _cam);
-    //ts.popTransform();
+        shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
+        iv=_cam.getViewMatrix();
+        iv.transpose();
+        m_light->setTransform(iv);
+        m_light->loadToShader("light");
+        material.loadToShader("material");
 
-    SDL_GL_SwapBuffers(); //DO NOOOTT COMMENT THIS FUCKING LINE!!!!!!
+        loadMatricesToPhong(transform,_cam);
+        primitives->draw(_sea.getPrimName());
 
-    //renderTextToSurface("Hello World!",300,300,m_screen);
+        for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
+        {
+            if ((*currentObject)->isActive())
+            {
+                transform = (*currentObject)->getTransform();
+                loadMatricesToPhong(transform,_cam);
+                primitives->draw((*currentObject)->getPrimName());
+                //(*currentObject)->info();
+            }
+        }
 
-    //SDL_Flip(m_screen);
+        (*shader)["Colour"]->use();
+        //shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
+
+        for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
+        {
+            if ((*currentObject)->isActive()) {}
+                drawVector((*currentObject)->getPosition(),(*currentObject)->getVelocity(),_cam);
+        }
+    }
+    else if (_debugMode==2)
+    {
+        (*shader)["Colour"]->use();
+        shader->setShaderParam4f("Colour",1,1,1,1);
+
+        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+
+        loadMatricesToColour(transform,_cam);
+        primitives->draw(_sea.getPrimName());
+
+        for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
+        {
+            if ((*currentObject)->isActive())
+            {
+                if ((*currentObject)->isCollided())
+                        shader->setShaderParam4f("Colour",1,0,0,1);
+                else
+                        shader->setShaderParam4f("Colour",1,1,1,1);
+
+                transform = (*currentObject)->getTransform();
+                transform.setScale((*currentObject)->getBSRadius(), (*currentObject)->getBSRadius(), (*currentObject)->getBSRadius());
+                loadMatricesToColour(transform,_cam);
+                primitives->draw("bSphere");
+                //(*currentObject)->info();
+            }
+        }
+        glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+
+        for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
+        {
+            if ((*currentObject)->isActive()) {}
+                drawVector((*currentObject)->getPosition(),(*currentObject)->getVelocity(),_cam);
+        }
+    }
+
+    SDL_GL_SwapWindow(m_window);
+
 }
 
-void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera _cam)
+inline void Renderer::loadMatricesToPhong(ngl::Transformation &_transform, ngl::Camera &_cam)
 {
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
 
@@ -242,8 +269,8 @@ void Renderer::loadMatricesToShader(ngl::TransformStack &_tx, ngl::Camera _cam)
   ngl::Mat4 MVP;
   ngl::Mat3 normalMatrix;
   ngl::Mat4 M;
-  M=_tx.getCurrAndGlobal().getMatrix();
-  MV=  _tx.getCurrAndGlobal().getMatrix()*_cam.getViewMatrix();
+  M=_transform.getMatrix();
+  MV=  _transform.getMatrix()*_cam.getViewMatrix();
   MVP= M*_cam.getVPMatrix();
   normalMatrix=MV;
   normalMatrix.inverse();
@@ -257,58 +284,64 @@ void Renderer::drawVector(ngl::Vec4 _position, ngl::Vec4 _vector, ngl::Camera _c
 {
     ngl::VAOPrimitives *primitivesInstance = ngl::VAOPrimitives::instance();
     ngl::ShaderLib *shader = ngl::ShaderLib::instance();
-    ngl::TransformStack tx;
+    ngl::Transformation transform;
+    ngl::Mat4 MVP;
     const int scaleFactor = 5;
-
-    shader->use("Colour");
-
-    tx.pushTransform();
-    {
 
     //COMPONENT X
     shader->setShaderParam4f("Colour",1,0,0,1);
-    tx.setScale(2,2,_vector.m_x*scaleFactor);
-    tx.setPosition(_position);
-    tx.setRotation(0,-90,0);
-    loadMatricesToShader(tx, _cam);
+    transform.setScale(2,2,_vector.m_x*scaleFactor);
+    transform.setPosition(_position);
+    transform.setRotation(0,-90,0);
+    loadMatricesToColour(transform,_cam);
     primitivesInstance->draw("vectorModulus");
-    tx.setScale(2,2,2);
-    tx.setPosition(_position.m_x+2*_vector.m_x*scaleFactor,_position.m_y,_position.m_z);
+
+    transform.setScale(2,2,2);
+    transform.setPosition(_position.m_x+2*_vector.m_x*scaleFactor,_position.m_y,_position.m_z);
     if (_vector.m_x>=0)
-        tx.setRotation(0,90,0);
-    loadMatricesToShader(tx, _cam);
+        transform.setRotation(0,90,0);
+    loadMatricesToColour(transform,_cam);
     primitivesInstance->draw("vectorSense");
 
     //COMPONENT Y
     shader->setShaderParam4f("Colour",0,0,1,1);
-    tx.setScale(2,2,_vector.m_y*scaleFactor);
-    tx.setPosition(_position);
-    tx.setRotation(90,0,0);
-    loadMatricesToShader(tx, _cam);
+    transform.setScale(2,2,_vector.m_y*scaleFactor);
+    transform.setPosition(_position);
+    transform.setRotation(90,0,0);
+    loadMatricesToColour(transform,_cam);
     primitivesInstance->draw("vectorModulus");
-    tx.setScale(2,2,2);
-    tx.setPosition(_position.m_x,_position.m_y+2*_vector.m_y*scaleFactor,_position.m_z);
+
+    transform.setScale(2,2,2);
+    transform.setPosition(_position.m_x,_position.m_y+2*_vector.m_y*scaleFactor,_position.m_z);
     if (_vector.m_y>=0)
-        tx.setRotation(-90,0,0);
-    loadMatricesToShader(tx, _cam);
+        transform.setRotation(-90,0,0);
+    loadMatricesToColour(transform,_cam);
     primitivesInstance->draw("vectorSense");
 
     //COMPONENT Z
     shader->setShaderParam4f("Colour",0,1,0,1);
-    tx.setScale(2,2,_vector.m_z*scaleFactor);
-    tx.setPosition(_position);
-    tx.setRotation(0,180,0);
-    loadMatricesToShader(tx, _cam);
+    transform.setScale(2,2,_vector.m_z*scaleFactor);
+    transform.setPosition(_position);
+    transform.setRotation(0,180,0);
+    loadMatricesToColour(transform,_cam);
     primitivesInstance->draw("vectorModulus");
-    tx.setScale(2,2,2);
-    tx.setPosition(_position.m_x,_position.m_y,_position.m_z+2*_vector.m_z*scaleFactor);
+
+    transform.setScale(2,2,2);
+    transform.setPosition(_position.m_x,_position.m_y,_position.m_z+2*_vector.m_z*scaleFactor);
     if (_vector.m_z>0)
-        tx.setRotation(0,0,0);
-    loadMatricesToShader(tx, _cam);
+        transform.setRotation(0,0,0);
+    loadMatricesToColour(transform,_cam);
     primitivesInstance->draw("vectorSense");
 
-    }
-    tx.popTransform();
+}
+
+inline void Renderer::loadMatricesToColour(ngl::Transformation &_transform, ngl::Camera &_cam)
+{
+    ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+    ngl::Mat4 MVP;
+
+    MVP = _transform.getMatrix()*_cam.getVPMatrix();
+    shader->setShaderParamFromMat4("MVP",MVP);
 }
 
 bool Renderer::loadFont(std::string _fontFile, int _size)
@@ -360,7 +393,7 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
 
         //CREATING SDL_Surface FOR THE GLYPH IMAGE
         //charRenderedSurface = TTF_RenderText_Solid(font,&c,fontColour);
-        billboardSurface = SDL_DisplayFormatAlpha(TTF_RenderUTF8_Blended(font,&c,fontColour));
+        //billboardSurface = SDL_DisplayFormatAlpha(TTF_RenderUTF8_Blended(font,&c,fontColour));
 
         fontWidth= billboardSurface->w;
         fontWidthPow2 = nearestPowerOfTwo(fontWidth);
@@ -630,7 +663,7 @@ void Renderer::testTexturing()
     //DRAWING VAO
     glActiveTexture(0);
     ngl::ShaderLib *shader= ngl::ShaderLib::instance();
-    (*shader)["Blinn"]->use();
+    (*shader)["Phong"]->use();
     glEnable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -645,4 +678,13 @@ void Renderer::testTexturing()
 
     //std::cin.ignore();
 
+}
+
+void Renderer::SDLErrorExit(std::string msg)
+{
+    std::cerr << "Renderer: ERROR: ";
+    std::cerr << msg << ": ";
+    std::cerr << SDL_GetError() << std::endl;
+    SDL_Quit();
+    exit(EXIT_FAILURE);
 }

@@ -6,52 +6,67 @@ CameraManager::CameraManager()
 {
     m_indexCurrentCamera = 0;
     m_target = NULL;
+    m_angle = 45;
+    m_near = 0.05;
     m_far = CAMERAMANAGER_FAR_CLIPPING_PLANE;
+
 }
 
 CameraManager::~CameraManager()
 {
-    std::vector<ngl::Camera*>::iterator lastCamera = m_allCameras.end();
-    for (std::vector<ngl::Camera*>::iterator currentCamera=m_allCameras.begin(); currentCamera!=lastCamera;++currentCamera)
-        delete *currentCamera;
+    //std::vector<ngl::Camera*>::iterator lastCamera = m_camerasCircularQueue.end();
+    //for (std::vector<ngl::Camera*>::iterator currentCamera=m_camerasCircularQueue.begin(); currentCamera!=lastCamera;++currentCamera)
+    //    delete *currentCamera;
 
-    delete m_backCamera;
+    //delete m_backCamera;
 }
 
-void CameraManager::loadCameras()
+void CameraManager::loadCameras(int _w, int _h)
 {
     //far clipping plane 350
 
     //camera from back
-    ngl::Camera *cameraFromTheBack = new ngl::Camera(ngl::Vec3(0,8,14),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
+    ngl::Camera* cameraFromTheBack = new ngl::Camera(ngl::Vec3(0,8,14),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
     // set the shape using FOV 45 Aspect Ratio based on Width and Height
     // The final two are near and far clipping planes of 0.5 and 10
-    cameraFromTheBack->setShape(45,(float)720.0/576.0,0.05,350,ngl::PERSPECTIVE);
-    m_allCameras.push_back(cameraFromTheBack);
+    cameraFromTheBack->setShape(m_angle, _w/(float)_h, m_near, m_far, ngl::PERSPECTIVE);
     m_spectatorCameras.push_back(cameraFromTheBack);
+    m_camerasCircularQueue.push_back(m_spectatorCameras.back());
 
     //aerial camera
-    ngl::Camera *aerialCamera = new ngl::Camera(ngl::Vec3(0,20,0),ngl::Vec3(0,0,0),ngl::Vec3(0,0,-1),ngl::PERSPECTIVE);
-    aerialCamera->setShape(45,(float)720.0/576.0,0.05,m_far,ngl::PERSPECTIVE);
-    m_allCameras.push_back(aerialCamera);
+    ngl::Camera* aerialCamera = new ngl::Camera(ngl::Vec3(0,20,0),ngl::Vec3(0,0,0),ngl::Vec3(0,0,-1),ngl::PERSPECTIVE);
+    aerialCamera->setShape(m_angle, _w/(float)_h, m_near, m_far, ngl::PERSPECTIVE);
     m_spectatorCameras.push_back(aerialCamera);
+    m_camerasCircularQueue.push_back(m_spectatorCameras.back());
 
     //first person camera
-    ngl::Camera *fpCamera = new ngl::Camera(ngl::Vec3(0,1,0),ngl::Vec3(0,0,-6),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
-    fpCamera->setShape(45,(float)720.0/576.0,0.05,m_far,ngl::PERSPECTIVE);
-    m_allCameras.push_back(fpCamera);
+    ngl::Camera* fpCamera = new ngl::Camera(ngl::Vec3(0,1,0),ngl::Vec3(0,0,-6),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
+    fpCamera->setShape(m_angle, _w/(float)_h, m_near, m_far, ngl::PERSPECTIVE);
     m_FPCameras.push_back(fpCamera);
+    m_camerasCircularQueue.push_back(m_FPCameras.back());
 
     //side camera
-    ngl::Camera *cameraFromTheSide = new ngl::Camera(ngl::Vec3(-10,0,0),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
-    cameraFromTheSide->setShape(45,(float)720.0/576.0,0.05,m_far,ngl::PERSPECTIVE);
-    m_allCameras.push_back(cameraFromTheSide);
+    ngl::Camera* cameraFromTheSide = new ngl::Camera(ngl::Vec3(-10,0,0),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
+    cameraFromTheSide->setShape(m_angle, _w/(float)_h, m_near, m_far, ngl::PERSPECTIVE);
     m_spectatorCameras.push_back(cameraFromTheSide);
+    m_camerasCircularQueue.push_back(m_spectatorCameras.back());
 
     //special back camera
     m_backCamera = new ngl::Camera(ngl::Vec3(0,1,0),ngl::Vec3(0,0,6),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);
-    m_backCamera->setShape(45,(float)720.0/576.0,0.05,m_far,ngl::PERSPECTIVE);
+    m_backCamera->setShape(m_angle, _w/(float)_h, m_near, m_far, ngl::PERSPECTIVE);
     m_FPCameras.push_back(m_backCamera);
+
+    m_currentCamera = m_camerasCircularQueue[0];
+}
+
+void CameraManager::setShape(int _w, int _h)
+{
+    std::vector<ngl::Camera*>::iterator lastCamera = m_camerasCircularQueue.end();
+    for(std::vector<ngl::Camera*>::iterator currentCamera = m_camerasCircularQueue.begin(); currentCamera!=lastCamera;++currentCamera)
+    {
+        (*currentCamera)->setShape(m_angle,_w/(float)_h,m_near,m_far,ngl::PERSPECTIVE);
+    }
+    m_backCamera->setShape(m_angle,_w/(float)_h,m_near,m_far,ngl::PERSPECTIVE);
 }
 
 void CameraManager::setTarget(Object *_target)
@@ -59,36 +74,29 @@ void CameraManager::setTarget(Object *_target)
     m_target = _target;
 }
 
-ngl::Camera* CameraManager::getFirstCamera()
+void CameraManager::changeToBackCamera()
 {
-    assert(m_allCameras.size()!=0);
-    return m_allCameras[0];
+    m_currentCamera = m_backCamera;
 }
 
-ngl::Camera* CameraManager::getCurrentCamera()
+void CameraManager::leaveBackCamera()
 {
-    assert(m_indexCurrentCamera>=0 && m_indexCurrentCamera<m_allCameras.size());
-    return m_allCameras[m_indexCurrentCamera];
+    assert(m_indexCurrentCamera>=0 && m_indexCurrentCamera<m_camerasCircularQueue.size());
+    m_currentCamera = m_camerasCircularQueue[m_indexCurrentCamera];
 }
 
-ngl::Camera* CameraManager::getBackCamera()
+void CameraManager::nextCamera()
 {
-    assert(m_backCamera!=NULL);
-    return m_backCamera;
-}
-
-ngl::Camera* CameraManager::getNextCamera()
-{
-    assert(m_indexCurrentCamera>=0 && m_indexCurrentCamera<m_allCameras.size());
-    if (++m_indexCurrentCamera==m_allCameras.size())
+    assert(m_indexCurrentCamera>=0 && m_indexCurrentCamera<m_camerasCircularQueue.size());
+    if (++m_indexCurrentCamera==m_camerasCircularQueue.size())
             m_indexCurrentCamera = 0;
-    return m_allCameras[m_indexCurrentCamera];
+    m_currentCamera = m_camerasCircularQueue[m_indexCurrentCamera];
 }
 
 void CameraManager::addCamera(ngl::Camera* _cam)
 {
-    m_allCameras.push_back(_cam);
     m_spectatorCameras.push_back(_cam);
+    m_camerasCircularQueue.push_back(_cam);
 }
 
 void CameraManager::updateCameras()

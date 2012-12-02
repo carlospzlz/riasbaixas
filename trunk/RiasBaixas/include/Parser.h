@@ -2,7 +2,7 @@
 #define PARSER_H
 
 #include "SourceManager.h"
-
+#include "ControllerManager.h"
 #include "ObjectManager.h"
 #include "Object.h"
 #include "Sea.h"
@@ -18,10 +18,10 @@ class Parser
 {
 
 public:
-    virtual bool loadBasicSources(SourceManager *_sourceManager){};
+    virtual bool loadBasicSources(SourceManager &_sourceManager){};
     //void loadRadioConversation();
-    virtual bool loadLevelSources(int _level, SourceManager *_sourceManager){};
-    virtual bool loadMap(int _map, ObjectManager *_objectManager, SourceManager *_sourceManager){};
+    virtual bool loadLevelSources(int _level, SourceManager &_sourceManager){};
+    virtual bool loadMap(int _map, ObjectManager &_objectManager, ControllerManager &_controllerManager, SourceManager &_sourceManager){};
 
 };
 

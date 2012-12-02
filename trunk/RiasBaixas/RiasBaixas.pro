@@ -16,11 +16,14 @@ HEADERS += \
     include/SourceManager.h \
     include/ObjectManager.h \
     include/Parser.h \
-    include/TxtParser.h \
     include/Diagonal.h \
     include/PoliceBoat.h \
     include/Horizontal.h \
-    include/Vertical.h
+    include/Vertical.h \
+    include/ControllerManager.h \
+    include/TXTParser.h \
+    include/PhysicsEngine.h \
+    include/BSpherePE.h
 
 SOURCES += \
     src/SpeedBoat.cpp \
@@ -34,10 +37,12 @@ SOURCES += \
     src/Object.cpp \
     src/SourceManager.cpp \
     src/ObjectManager.cpp \
-    src/TxtParser.cpp \
     src/Diagonal.cpp \
     src/Horizontal.cpp \
-    src/Vertical.cpp
+    src/Vertical.cpp \
+    src/ControllerManager.cpp \
+    src/TXTParser.cpp \
+    src/BSpherePE.cpp
 
 OBJECTS_DIR = bin
 
@@ -45,7 +50,7 @@ OBJECTS_DIR = bin
 INCLUDEPATH += $(HOME)/NGL/include
 LIBS += -L$(HOME)/NGL/lib -l NGL
 
-#OpenGL Extension Wrangler library (This library is used by NGL, not by you!!)
+#OpenGL Extension Wrangler library (This library is used by NGL, not by you!!) at Dexter
 #INCLUDEPATH += $(HOME)/glew-1.9.0/includeGL
 LIBS += -L$(HOME)/glew-1.9.0/lib
 
@@ -63,8 +68,10 @@ QT += opengl
 #    LIBS+= -lGLEW
 #}
 
-#SDL library
-LIBS+=$$system(sdl-config  --libs)
+#SDL-2.0 library at dexter
+#include at /usr/local/include
+#libs at /usr/local/libs
+LIBS+=$$system(sdl2-config  --libs)
 #message(output from sdl-config --libs added to LIBS =$$LIBS)
 
 #SDL_ttf libray for the lab workstation

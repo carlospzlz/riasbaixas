@@ -31,6 +31,6 @@ ngl::Obj* SourceManager::getMesh(const std::string _key)
     else
     {
         return NULL;
-        std::cout << "SourceManager: Mesh " << _key << " not found!" << std::endl;
+        std::cout << "SourceManager: WARNING: Mesh " << _key << " not found!" << std::endl;
     }
 }

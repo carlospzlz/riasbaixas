@@ -14,7 +14,7 @@
 #define TXTPARSER_MAPS_PATH "maps/"
 
 
-class TxtParser : public Parser
+class TXTParser : public Parser
 {
 
     typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
@@ -22,13 +22,13 @@ class TxtParser : public Parser
 private:
     bool loadSea(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager);
     bool loadMusselFarm(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager);
-    bool loadFisherBoat(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager);
-    bool loadController(tokenizer::iterator _currentParameter, Object *_object);
+    bool loadFisherBoat(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, ControllerManager &_controllerManager, SourceManager &_sourceManager);
+    bool loadController(tokenizer::iterator _currentParameter, ControllerManager &_controllerManager, Object *_object);
 
 public:
     bool loadBasicSources(SourceManager &_souceManager);
     bool loadLevelSources(int _level, SourceManager &_sourceManager);
-    bool loadMap(int _map, ObjectManager &_objectManager, SourceManager &_sourceManager);
+    bool loadMap(int _map, ObjectManager &_objectManager, ControllerManager &_controllerManager, SourceManager &_sourceManager);
 };
 
 #endif // TXTPARSER_H
