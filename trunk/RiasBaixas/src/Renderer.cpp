@@ -224,7 +224,7 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
     }
     else if (_debugMode==2)
     {
-        (*shader)["Colour"]->use();
+        (*shader)["nglColourShader"]->use();
         shader->setShaderParam4f("Colour",1,1,1,1);
 
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -350,13 +350,13 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
     TTF_Init();
 
     //Font
-    TTF_Font *font = TTF_OpenFont(_fontFile.c_str(),_size);
+    //TTF_Font *font = TTF_OpenFont(_fontFile.c_str(),_size);
+    TTF_Font *font = TTF_OpenFont("arial.ttf",_size);
+
+    std::cout << "FONT: "<< font << std::endl;
 
     if (!font)
-    {
-        std::cout << "Error when loading font " << _fontFile << "..." << std::endl;
-        return false;
-    }
+        SDLErrorExit("Error when loading font "+_fontFile);
 
     m_fontLineSkip = TTF_FontLineSkip(font);
     SDL_Color fontColour = {0xFF, 0xFF, 0xFF};

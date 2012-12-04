@@ -27,7 +27,8 @@ struct playerOptions
 {
     bool running = true;
     int debugMode = 1;
-    bool changeCamera = false;
+    bool possibleChangeCamera = true;
+    bool changeCameraPressed = false;
     bool backCamera = false;
     bool pause = false;
     bool resizeWindow = false;
@@ -50,6 +51,13 @@ int main()
     ControllerManager myControllerManager;
     CameraManager myCameraManager;
     playerOptions myPlayerOptions;
+
+    //testing text
+    TTF_Init();
+
+    TTF_Font* f = TTF_OpenFont("arial.ttf",16);
+    std::cout << "trying to load font from gameManager" << f << std::endl;
+
 
     myRenderer.initGLContext();
 
@@ -101,6 +109,9 @@ int main()
         startingTick = SDL_GetTicks();
 
         readPlayerInput(myPlayerControls, myPlayerOptions, myRenderer.isFullScreen());
+
+        std::cout << "FLAGS ->> " << myPlayerOptions.possibleChangeCamera << " " << myPlayerOptions.changeCameraPressed << std::endl;
+
         setWindow(myRenderer,myPlayerOptions);
         setCamera(myCameraManager, myRenderer, myPlayerOptions);
 
@@ -134,100 +145,107 @@ int main()
 void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOptions, bool _isfullScreen)
 {
     SDL_Event event;
+    int a;
 
-    SDL_PollEvent(&event);
-    switch (event.type)
+    while (a = SDL_PollEvent(&event))
     {
+        std::cout << "EVENTTTTT <<<<<" << a << std::endl;
+    	switch (event.type)
+    	{
 
-        case SDL_QUIT:
-        _playerOptions.running = false;
-        break;
+        	case SDL_QUIT:
+	        _playerOptions.running = false;
+        	break;
 
-        case SDL_WINDOWEVENT:
-        _playerOptions.resizeWindow = true;
+	        case SDL_WINDOWEVENT:
+        	_playerOptions.resizeWindow = true;
 
-        case SDL_KEYDOWN:
-        switch (event.key.keysym.sym)
-        {
-            case SDLK_ESCAPE:
-            {
-            if (_isfullScreen)
-                _playerOptions.restoreWindow = true;
-            else
-                _playerOptions.running = false;
-            }
-            break;
+	        case SDL_KEYDOWN:
+        	switch (event.key.keysym.sym)
+	        {
+        	    case SDLK_ESCAPE:
+	            {
+        	    if (_isfullScreen)
+	                _playerOptions.restoreWindow = true;
+        	    else
+                	_playerOptions.running = false;
+	            }
+        	    break;
 
-            case SDLK_RIGHT:
-            _playerControls.setRight(true);
-            break;
+	            case SDLK_RIGHT:
+        	    _playerControls.setRight(true);
+	            break;
 
-            case SDLK_LEFT:
-            _playerControls.setLeft(true);
-            break;
+        	    case SDLK_LEFT:
+	            _playerControls.setLeft(true);
+        	    break;
 
-            case SDLK_SPACE:
-            _playerControls.setSpeedUp(true);
-            break;
+	            case SDLK_SPACE:
+	            _playerControls.setSpeedUp(true);
+	            break;
 
-            case SDLK_BACKSPACE:
-            _playerOptions.backCamera = true;
-            break;
+        	    case SDLK_BACKSPACE:
+                _playerOptions.backCamera = true;
+	            break;
 
-            case SDLK_c:
-            _playerOptions.changeCamera = true;
-            break;
+        	    case SDLK_c:
+                _playerOptions.changeCameraPressed = true;
+	            break;
 
-            case SDLK_0:
-            _playerOptions.debugMode = 0;
-            break;
+        	    case SDLK_0:
+	            _playerOptions.debugMode = 0;
+        	    break;
 
-            case SDLK_1:
-            _playerOptions.debugMode = 1;
-            break;
+	            case SDLK_1:
+        	    _playerOptions.debugMode = 1;
+	            break;
 
-            case SDLK_2:
-            _playerOptions.debugMode = 2;
-            break;
+        	    case SDLK_2:
+	            _playerOptions.debugMode = 2;
+        	    break;
 
-            case SDLK_PAUSE:
-            _playerOptions.pause = !_playerOptions.pause;
-            break;
+	            case SDLK_PAUSE:
+        	    _playerOptions.pause = !_playerOptions.pause;
+	            break;
 
-            case SDLK_F11:
-            if (!_isfullScreen)
-                _playerOptions.changeToFullScreen = true;
-            else
-                _playerOptions.restoreWindow = true;
+        	    case SDLK_F11:
+	            if (!_isfullScreen)
+        	        _playerOptions.changeToFullScreen = true;
+	            else
+        	        _playerOptions.restoreWindow = true;
+	            break;
+		   
+		   }
+	        break;
+
+        	case SDL_KEYUP:
+	        switch(event.key.keysym.sym)
+        	{
+	            case SDLK_RIGHT:
+        	    _playerControls.setRight(false);
+	            break;
+
+        	    case SDLK_LEFT:
+	            _playerControls.setLeft(false);
+        	    break;
+
+	            case SDLK_SPACE:
+        	    _playerControls.setSpeedUp(false);
+	            break;
+
+        	    case SDLK_BACKSPACE:
+	            _playerOptions.backCamera = false;
+        	    break;
+
+	            case SDLK_c:
+                {
+                _playerOptions.changeCameraPressed = false;
+                _playerOptions.possibleChangeCamera = true;
+                }
+        	    break;
+	        }
             break;
         }
-        break;
-
-        case SDL_KEYUP:
-        switch(event.key.keysym.sym)
-        {
-            case SDLK_RIGHT:
-            _playerControls.setRight(false);
-            break;
-
-            case SDLK_LEFT:
-            _playerControls.setLeft(false);
-            break;
-
-            case SDLK_SPACE:
-            _playerControls.setSpeedUp(false);
-            break;
-
-            case SDLK_BACKSPACE:
-            _playerOptions.backCamera = false;
-            break;
-
-            case SDLK_c:
-            //this is unnecessary
-            _playerOptions.changeCamera = false;
-            break;
-        }
-        break;
     }
 
 }
@@ -271,10 +289,10 @@ void setCamera(CameraManager &_cameraManager, const Renderer &_renderer, playerO
             _cameraManager.leaveBackCamera();
     }
 
-    if (_playerOptions.changeCamera && !_cameraManager.isBackCameraActive())
+    if (_playerOptions.changeCameraPressed && _playerOptions.possibleChangeCamera && !_cameraManager.isBackCameraActive())
     {
         _cameraManager.nextCamera();
-        //_playerOptions.changeCamera == false;
+        _playerOptions.possibleChangeCamera = false;
     }
 
 }
