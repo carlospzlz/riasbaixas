@@ -115,7 +115,7 @@ void Renderer::initGLContext()
     prim->createSphere("bSphere",1.0,10);
 
     //LOADING FONT TO RENDER TEXT
-    //loadFont("fonts/arial.ttf",16);
+    loadFont("fonts/arial.ttf",16);
 
 }
 
@@ -221,6 +221,9 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
             if ((*currentObject)->isActive()) {}
                 drawVector((*currentObject)->getPosition(),(*currentObject)->getVelocity(),_cam);
         }
+        (*shader)["nglTextShader"]->use();
+        //renderText("hello world of the narcotrafic again...", 20, 20);
+        testTexturing();
     }
     else if (_debugMode==2)
     {
@@ -351,7 +354,7 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
 
     //Font
     //TTF_Font *font = TTF_OpenFont(_fontFile.c_str(),_size);
-    TTF_Font *font = TTF_OpenFont("arial.ttf",_size);
+    TTF_Font *font = TTF_OpenFont(_fontFile.c_str(),_size);
 
     std::cout << "FONT: "<< font << std::endl;
 
@@ -393,7 +396,7 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
 
         //CREATING SDL_Surface FOR THE GLYPH IMAGE
         //charRenderedSurface = TTF_RenderText_Solid(font,&c,fontColour);
-        //billboardSurface = SDL_DisplayFormatAlpha(TTF_RenderUTF8_Blended(font,&c,fontColour));
+        billboardSurface = TTF_RenderUTF8_Blended(font,&c,fontColour);
 
         fontWidth= billboardSurface->w;
         fontWidthPow2 = nearestPowerOfTwo(fontWidth);

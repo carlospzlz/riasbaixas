@@ -2,7 +2,7 @@
 #define RENDERER_H
 
 #include <SDL2/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include <ngl/Camera.h>
 #include <ngl/Light.h>
 #include <ngl/Material.h>
@@ -39,7 +39,6 @@ private:
     std::map<char,fontChar> m_font;
     std::map<int, ngl::VertexArrayObject*> m_fontBillboards;
     int m_fontLineSkip;
-    ngl::TransformStack m_transformStack;
     bool loadFont(std::string _fontFile, int _size);
     int nearestPowerOfTwo(int _number);
     void drawVector(ngl::Vec4 _position, ngl::Vec4 _vector, ngl::Camera _cam);
