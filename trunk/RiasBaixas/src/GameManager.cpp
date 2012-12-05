@@ -110,8 +110,6 @@ int main()
 
         readPlayerInput(myPlayerControls, myPlayerOptions, myRenderer.isFullScreen());
 
-        std::cout << "FLAGS ->> " << myPlayerOptions.possibleChangeCamera << " " << myPlayerOptions.changeCameraPressed << std::endl;
-
         setWindow(myRenderer,myPlayerOptions);
         setCamera(myCameraManager, myRenderer, myPlayerOptions);
 
@@ -149,8 +147,7 @@ void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOpti
 
     while (a = SDL_PollEvent(&event))
     {
-        std::cout << "EVENTTTTT <<<<<" << a << std::endl;
-    	switch (event.type)
+        switch (event.type)
     	{
 
         	case SDL_QUIT:

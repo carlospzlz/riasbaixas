@@ -1,6 +1,5 @@
 #include "SpeedBoat.h"
 #include <iostream>
-#include <SDL/SDL.h>
 #include <math.h>
 
 

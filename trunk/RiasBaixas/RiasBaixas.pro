@@ -74,13 +74,17 @@ QT += opengl
 LIBS+=$$system(sdl2-config  --libs)
 #message(output from sdl-config --libs added to LIBS =$$LIBS)
 
+#SDL2_ttf library at dexter
+LIBS += -lSDL2_ttf
+
+
 #SDL-2.0 library at University login
 INCLUDEPATH += $(HOME)/SDL-2.0/include
 #libs are got with sdl2-config, so the line the below is valid
 
-#SDL_ttf libray for the lab workstation
-INCLUDEPATH += $(HOME)/SDL_ttf-2.0/include
-LIBS += -L$(HOME)/SDL_ttf-2.0/lib -lSDL_ttf
+#SDL_ttf libray at University login11
+#INCLUDEPATH += $(HOME)/SDL_ttf-2.0/include
+#LIBS += -L$(HOME)/SDL_ttf-2.0/lib -lSDL_ttf
 
 #include boost for tokenizer and reading from configFiles
 INCLUDEPATH +=/usr/local/boost
