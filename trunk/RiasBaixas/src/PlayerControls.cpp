@@ -41,23 +41,23 @@ void PlayerControls::move()
         {
             //comber left
             velocity.m_x += -m_acceleration.m_x;
-            angularVelocity.m_x = CONTROLLER_ANGULAR_VELOCITY;
-            angularVelocity.m_z = CONTROLLER_ANGULAR_VELOCITY;
+            angularVelocity.m_y = CONTROLLER_ANGULAR_VELOCITY;
+            angularVelocity.m_x = -CONTROLLER_ANGULAR_VELOCITY;
         }
 
         if (m_right && !m_left)
         {
             //comber right
             velocity.m_x += m_acceleration.m_x;
+            angularVelocity.m_y = -CONTROLLER_ANGULAR_VELOCITY;
             angularVelocity.m_x = CONTROLLER_ANGULAR_VELOCITY;
-            angularVelocity.m_z = -CONTROLLER_ANGULAR_VELOCITY;
         }
 
 
-        if (rotation.m_z > maxCamber || rotation.m_z < -maxCamber)
-            angularVelocity.m_z = 0;
-        if (rotation.m_x > + maxCamber || (rotation.m_x < -maxCamber))
+        if (rotation.m_x > maxCamber || rotation.m_x < -maxCamber)
             angularVelocity.m_x = 0;
+        if (rotation.m_y > 90+ maxCamber || (rotation.m_y < 90 -maxCamber))
+            angularVelocity.m_y = 0;
 
 
         //recover velocity and comber
@@ -74,21 +74,20 @@ void PlayerControls::move()
                 velocity.m_x = 0;
 
             //recover comber in Y
-            //if (rotation.m_y < 0)
-            //    angularVelocity.m_y = CONTROLLER_ANGULAR_VELOCITY;
-            //else
-            if (rotation.m_x > 0)
-                angularVelocity.m_x = -CONTROLLER_ANGULAR_VELOCITY;
+            if (rotation.m_y < 90)
+                angularVelocity.m_y = CONTROLLER_ANGULAR_VELOCITY;
+            else if (rotation.m_y > 90)
+                angularVelocity.m_y = -CONTROLLER_ANGULAR_VELOCITY;
             else
                 angularVelocity.m_y = 0;
 
-            //recover comber in Z
-            if (rotation.m_z > 0)
-                angularVelocity.m_z = -CONTROLLER_ANGULAR_VELOCITY;
-            else if (rotation.m_z < 0)
-                angularVelocity.m_z = CONTROLLER_ANGULAR_VELOCITY;
+            //recover comber in X
+            if (rotation.m_x > 0)
+                angularVelocity.m_x = -CONTROLLER_ANGULAR_VELOCITY;
+            else if (rotation.m_x < 0)
+                angularVelocity.m_x = CONTROLLER_ANGULAR_VELOCITY;
             else
-                angularVelocity.m_z = 0;
+                angularVelocity.m_x = 0;
         }
 
         //campling velocity in x

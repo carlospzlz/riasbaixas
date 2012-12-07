@@ -233,7 +233,7 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
         {
             if ((*currentObject)->isActive())
             {
-                transform = (*currentObject)->getPrimTransform();
+                transform = (*currentObject)->getTransform();
                 loadMatricesToPhong(transform,_cam);
                 primitives->draw((*currentObject)->getPrimName());
                 //(*currentObject)->info();
@@ -279,7 +279,7 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
                 }
                 else
                 {
-                    transform = (*currentObject)->getPrimTransform();
+                    transform = (*currentObject)->getTransform();
                     loadMatricesToColour(transform,_cam);
                     primitives->draw("bSphere");
                 }

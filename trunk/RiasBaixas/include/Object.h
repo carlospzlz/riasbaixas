@@ -44,8 +44,6 @@ protected:
     bool m_active;
     ngl::Transformation m_transform;
     ngl::Transformation m_previousTransform;
-    ngl::Transformation m_meshInitTransform;
-    ngl::Transformation m_primInitTransform;
     float m_mass;
     ngl::Vec4 m_velocity;
     ngl::Vec4 m_angularVelocity;
@@ -67,8 +65,6 @@ public:
     //not needed copy constructor
     //setters
     void activate() { m_active = true; }
-    void setMeshInitTransform(ngl::Transformation _t) { m_meshInitTransform = _t; }
-    void setPrimInitTransform(ngl::Transformation _t) { m_primInitTransform = _t; }
     void setPosition(ngl::Vec4 _pos);
     //void setPreviousPos(ngl::Vec3 _prevPos) { m_previousPos = _prevPos; }
     void setRotation(ngl::Vec4 _rot) { m_transform.setRotation(_rot); }
@@ -88,8 +84,7 @@ public:
 
     //getters
     bool isActive() const { return m_active; }
-    ngl::Transformation getTransform() { return m_meshInitTransform*m_transform; }
-    ngl::Transformation getPrimTransform() { return m_primInitTransform*m_transform; }
+    ngl::Transformation getTransform() { return m_transform; }
     ngl::Vec4 getPosition() const { return m_transform.getPosition(); }
     ngl::Vec4 getPreviousPos() const { return m_previousTransform.getPosition(); }
     ngl::Vec4 getRotation() const { return m_transform.getRotation(); }
