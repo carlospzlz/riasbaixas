@@ -71,25 +71,33 @@ QT += opengl
 #SDL-2.0 library at dexter
 #include at /usr/local/include
 #libs at /usr/local/libs
-LIBS+=$$system(sdl2-config  --libs)
+#LIBS+=$$system(sdl2-config  --libs)
 #message(output from sdl-config --libs added to LIBS =$$LIBS)
 
+
 #SDL2_ttf library at dexter
-LIBS += -lSDL2_ttf
+#LIBS += -lSDL2_ttf
+
+#SDL2 library at the University
+INCLUDEPATH += $(HOME)/SDL-2.0/include
+INCLUDEPATH += $(HOME)/SDL2_ttf-2.0/include
+
+LIBS += -L$(HOME)/SDL-2.0/lib -lSDL2
+LIBS += -L$(HOME)/SDL2_ttf-2.0/lib -lSDL2_ttf
 
 
 #SDL-2.0 library at University login
-INCLUDEPATH += $(HOME)/SDL-2.0/include
+#INCLUDEPATH += $(HOME)/SDL-2.0/include
 #libs are got with sdl2-config, so the line the below is valid
 
-#SDL_ttf libray at University login11
+#SDL_ttf libray at University login
 #INCLUDEPATH += $(HOME)/SDL_ttf-2.0/include
 #LIBS += -L$(HOME)/SDL_ttf-2.0/lib -lSDL_ttf
 
 #include boost for tokenizer and reading from configFiles
-INCLUDEPATH +=/usr/local/boost
+INCLUDEPATH += /usr/local/boost
 
-CXX_FLAGS+=$$system(sdl-config  --cflags)
+#CXX_FLAGS+=$$system(sdl-config  --cflags)
 #message(output from sdl-config --cflags added to CXX_FLAGS= $$CXX_FLAGS)
 
 
