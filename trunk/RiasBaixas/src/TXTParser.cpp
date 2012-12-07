@@ -118,7 +118,7 @@ bool TXTParser::loadFisherBoat(tokenizer::iterator _currentParameter, ObjectMana
         float z = boost::lexical_cast<float>(*++_currentParameter);
 
         Object *fisherBoat = new Object();
-        fisherBoat->setMesh(_sourceManager.getMesh("fisheBoat"));
+        fisherBoat->setMesh(_sourceManager.getMesh("fisherBoat"));
         fisherBoat->setPosition(ngl::Vec4(x,y,z,1));
         fisherBoat->setType(ot_fisherBoat);
         fisherBoat->setPrimName("teapot");

@@ -103,6 +103,25 @@ void Renderer::initGLContext()
     shader->bindAttribute("Colour",0,"inVert");
     shader->linkProgramObject("Colour");
 
+    //Shader for textures
+    shader->createShaderProgram("TextureShader");
+
+    shader->attachShader("TextureVertex",ngl::VERTEX);
+    shader->attachShader("TextureFragment",ngl::FRAGMENT);
+    shader->loadShaderSource("TextureVertex","shaders/Vertex.vs");
+    shader->loadShaderSource("TextureFragment","shaders/Fragment.fs");
+
+    shader->compileShader("TextureVertex");
+    shader->compileShader("TextureFragment");
+    shader->attachShaderToProgram("TextureShader","TextureVertex");
+    shader->attachShaderToProgram("TextureShader","TextureFragment");
+    // bind our attributes for the vertex shader
+    shader->bindAttribute("TextureShader",0,"inVert");
+    shader->bindAttribute("TextureShader",1,"inUV");
+
+    // link the shader no attributes are bound
+    shader->linkProgramObject("TextureShader");
+
     //LIGHTS
     m_light = new ngl::Light(ngl::Vec3(-2,5,2),ngl::Colour(1,1,1,1),ngl::Colour(1,1,1,1),ngl::POINTLIGHT );
 
@@ -115,7 +134,11 @@ void Renderer::initGLContext()
     prim->createSphere("bSphere",1.0,10);
 
     //LOADING FONT TO RENDER TEXT
-    loadFont("fonts/arial.ttf",16);
+    loadFont("fonts/arial.ttf",22);
+
+    //LOAD TEST TEXTURES
+    loadTexture("images/lena.bmp", m_lena);
+    prim->createTrianglePlane("plane",1,1,1,1,ngl::Vec3(0,1,0));
 
 }
 
@@ -159,10 +182,14 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
     ngl::Transformation transform;
     std::vector<Object*>::const_iterator lastObject = _objects.end();
 
+    //(*shader)["nglTextureShader"]->use();
+    //testTexturing();
+    float sphereRadius;
+
 
     if (!_debugMode)
     {
-        (*shader)["Phong"]->use();
+        (*shader)["TextureShader"]->use();
 
         shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
         iv=_cam.getViewMatrix();
@@ -206,7 +233,7 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
         {
             if ((*currentObject)->isActive())
             {
-                transform = (*currentObject)->getTransform();
+                transform = (*currentObject)->getPrimTransform();
                 loadMatricesToPhong(transform,_cam);
                 primitives->draw((*currentObject)->getPrimName());
                 //(*currentObject)->info();
@@ -221,9 +248,6 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
             if ((*currentObject)->isActive()) {}
                 drawVector((*currentObject)->getPosition(),(*currentObject)->getVelocity(),_cam);
         }
-        (*shader)["nglTextShader"]->use();
-        //renderText("hello world of the narcotrafic again...", 20, 20);
-        testTexturing();
     }
     else if (_debugMode==2)
     {
@@ -244,20 +268,44 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
                 else
                         shader->setShaderParam4f("Colour",1,1,1,1);
 
-                transform = (*currentObject)->getTransform();
-                transform.setScale((*currentObject)->getBSRadius(), (*currentObject)->getBSRadius(), (*currentObject)->getBSRadius());
-                loadMatricesToColour(transform,_cam);
-                primitives->draw("bSphere");
-                //(*currentObject)->info();
+                if ((*currentObject)->hasMesh())
+                {
+                    transform = (*currentObject)->getTransform();
+                    sphereRadius = (*currentObject)->getBSRadius()*(*currentObject)->getScale().m_x;
+                    transform.setScale(sphereRadius, sphereRadius, sphereRadius);
+                    loadMatricesToColour(transform,_cam);
+                    primitives->draw("bSphere");
+                    //(*currentObject)->info();
+                }
+                else
+                {
+                    transform = (*currentObject)->getPrimTransform();
+                    loadMatricesToColour(transform,_cam);
+                    primitives->draw("bSphere");
+                }
             }
         }
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
         for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=lastObject; ++currentObject)
         {
-            if ((*currentObject)->isActive()) {}
+            if ((*currentObject)->isActive())
                 drawVector((*currentObject)->getPosition(),(*currentObject)->getVelocity(),_cam);
         }
+        renderText("hello World",m_windowWidth/2,m_windowHeight/2);
+    }
+    else if (_debugMode==3)
+    {
+        (*shader)["TextureShader"]->use();
+        shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
+
+        transform.setPosition(0,0,_cam.getEye().m_z-10);
+        //transform.setRotation(90,0,0);
+        transform.setScale(5,5,5);
+        loadMatricesToColour(transform,_cam);
+        //renderText("hello World",m_windowWidth/2,m_windowHeight/2);
+        renderImage(30,30,m_lena);
+        primitives->draw("plane");
     }
 
     SDL_GL_SwapWindow(m_window);
@@ -353,8 +401,8 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
     TTF_Init();
 
     //Font
-    //TTF_Font *font = TTF_OpenFont(_fontFile.c_str(),_size);
     TTF_Font *font = TTF_OpenFont(_fontFile.c_str(),_size);
+    TTF_SetFontStyle(font,TTF_STYLE_NORMAL);
 
     std::cout << "FONT: "<< font << std::endl;
 
@@ -363,6 +411,7 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
 
     m_fontLineSkip = TTF_FontLineSkip(font);
     SDL_Color fontColour = {0xFF, 0xFF, 0xFF};
+    SDL_Color fontBackground = {0,0xFF,0xFF};
 
     int fontHeight = TTF_FontHeight(font);
     int fontHeightPow2 = nearestPowerOfTwo(fontHeight);
@@ -371,7 +420,8 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
 
     //Surface
     SDL_Surface *billboardSurface;
-    SDL_Surface *charRenderedSurface;
+    SDL_Surface *glyph;
+    SDL_Rect area;
 
     //Texture
     GLint nOfColours;
@@ -388,6 +438,8 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
     const char endChar = '~';
 
     std::cout << "Loading font " << _fontFile << std::endl;
+    std::stringstream ss;
+    std::string s;
 
     for (char c = startChar; c<=endChar; ++c)
     {
@@ -396,13 +448,24 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
 
         //CREATING SDL_Surface FOR THE GLYPH IMAGE
         //charRenderedSurface = TTF_RenderText_Solid(font,&c,fontColour);
-        billboardSurface = TTF_RenderUTF8_Blended(font,&c,fontColour);
+        //billboardSurface = TTF_RenderUTF8_Blended(font,&c,fontColour);
+        glyph = TTF_RenderGlyph_Shaded(font,(int)c,fontColour,fontBackground);
 
-        fontWidth= billboardSurface->w;
+        ss << "glyphs/" << c << ".bmp";
+        s = ss.str();
+        SDL_SaveBMP(glyph,s.c_str());
+        ss.str("");
+
+        std::cout << "saving in " << s << std::endl;
+
+        //std::cout << "FORMAT:   " << (int)billboardSurface->format->BytesPerPixel << std::endl;
+        //it has alpha channel
+
+        fontWidth = glyph->w;
         fontWidthPow2 = nearestPowerOfTwo(fontWidth);
 
-        //billboardSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,fontWidth,fontHeight,32,0,0,0,0);
-        SDL_FillRect(billboardSurface,&billboardSurface->clip_rect,SDL_MapRGBA(billboardSurface->format,0,0,0,0));
+        //billboardSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,fontWidth,fontHeight,32,0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+        billboardSurface = glyph;
         nOfColours = billboardSurface->format->BytesPerPixel;
 
         if (nOfColours == 4)     // contains an alpha channel
@@ -429,7 +492,7 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
 
         //LOADING TEXTURE
         // Have OpenGL generate a texture object handle for us
-        glGenTextures(1, &m_font[c].textureID);
+        glGenTextures(1, &(m_font[c].textureID));
 
         // Bind the texture object
         glBindTexture( GL_TEXTURE_2D, m_font[c].textureID);
@@ -515,6 +578,8 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
         //SDL_FillRect(billBoardSurface,&billBoardSurface->clip_rect,SDL_MapRGBA(billBoardSurface->format,0,0,0,0));
     }
 
+    SDL_FreeSurface(billboardSurface);
+
     TTF_CloseFont(font);
     //TTF_Quit();
 
@@ -542,8 +607,8 @@ void Renderer::renderText(std::string _text, float _x, float _y)
 
     glActiveTexture(0);
     ngl::ShaderLib *shader = ngl::ShaderLib::instance();
-    (*shader)["Phong"]->use();
-    //shader->setRegisteredUniform3f("textColour",1,1,1);
+    //(*shader)["TextureShader"]->use();
+    //shader->setRegisteredUniform3f("Colour",1,1,1);
     //shader->setRegisteredUniform1f("ScaleX",2.0/720);
     //shader->setRegisteredUniform1f("ScaleY",-2.0/720);
     //shader->setShaderParam1f("ypos",_y);
@@ -601,57 +666,63 @@ void Renderer::renderTextToSurface(std::string _line, int _x, int _y, SDL_Surfac
     */
 }
 
-void Renderer::testTexturing()
+void Renderer::loadTexture(std::string _path, GLuint &_texture)
 {
-    SDL_Surface *lena = SDL_LoadBMP("images/lena.bmp");
-    GLuint texture;
+    SDL_Surface *surface = SDL_LoadBMP(_path.c_str());
 
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D,texture);
+    glGenTextures(1, &_texture);
+    glBindTexture(GL_TEXTURE_2D,_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, lena->w, lena->h, 0, GL_RGB, GL_UNSIGNED_BYTE, lena->pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, nearestPowerOfTwo(surface->w), nearestPowerOfTwo(surface->h),
+                 0, GL_BGR, GL_UNSIGNED_BYTE, surface->pixels);
 
-    std::cout << "number of colours: " << (int) lena->format->BytesPerPixel << std::endl;
+    //std::cout << "number of colours: " << (int) lena->format->BytesPerPixel << std::endl;
 
-    SDL_FreeSurface(lena);
+    SDL_FreeSurface(surface);
+
+}
+
+void Renderer::renderImage(float _width, float _height, GLuint _texture)
+{
 
     // billboard
     ngl::Real s0 = 0.0;
     ngl::Real t0 = 0.0;
-    ngl::Real s1 = lena->w;
-    ngl::Real t1 = lena->h;
+    ngl::Real s1 = _width * 1.0 / nearestPowerOfTwo(_width);
+    ngl::Real t1 = _height * 1.0 / nearestPowerOfTwo(_height);
 
     textVertData billboardData[6];
 
     //first triangle
     billboardData[0].x=0;
     billboardData[0].y=0;
-    billboardData[0].u=s0;
-    billboardData[0].v=t0;
+    billboardData[0].u=0;
+    billboardData[0].v=0;
 
-    billboardData[1].x=lena->w;
+    billboardData[1].x=_width;
     billboardData[1].y=0;
     billboardData[1].u=s1;
-    billboardData[1].v=t0;
+    billboardData[1].v=0;
 
     billboardData[2].x=0;
-    billboardData[2].y=lena->h;
-    billboardData[2].u=s0;
+    billboardData[2].y=_height;
+    billboardData[2].u=0;
     billboardData[2].v=t1;
 
     //second triangle
     billboardData[3].x=0;
-    billboardData[3].y=lena->h;
-    billboardData[3].u=s0;
+    billboardData[3].y=_height;
+    billboardData[3].u=0;
     billboardData[3].v=t1;
 
-    billboardData[4].x=lena->w;
+    billboardData[4].x=_width;
     billboardData[4].y=0;
     billboardData[4].u=s1;
-    billboardData[4].v=t0;
+    billboardData[4].v=0;
 
-    billboardData[5].x=lena->w;
-    billboardData[5].y=lena->h;
+    billboardData[5].x=_width;
+    billboardData[5].y=_height;
     billboardData[5].u=s1;
     billboardData[5].v=t1;
 
@@ -664,20 +735,22 @@ void Renderer::testTexturing()
     vao->unbind();
 
     //DRAWING VAO
-    glActiveTexture(0);
-    ngl::ShaderLib *shader= ngl::ShaderLib::instance();
-    (*shader)["Phong"]->use();
-    glEnable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    vao->bind();;
+    //glActiveTexture(0);
+    //ngl::ShaderLib *shader= ngl::ShaderLib::instance();
+    //(*shader)["TextureShader"]->use();
+    //shader->setShaderParam1f("xpos",0);
+    //shader->setShaderParam1f("ypos",0);
+    //glEnable(GL_BLEND);
+    //glDisable(GL_DEPTH_TEST);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBindTexture(GL_TEXTURE_2D, _texture);
+    //vao->bind();;
     vao->draw();
-    vao->unbind();
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    //vao->unbind();
+    //glDisable(GL_BLEND);
+    //glEnable(GL_DEPTH_TEST);
 
-    std::cout << "Lena rendered" <<std::endl;
+    std::cout << "Image rendered" <<std::endl;
 
     //std::cin.ignore();
 

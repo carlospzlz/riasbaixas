@@ -39,6 +39,7 @@ private:
     std::map<char,fontChar> m_font;
     std::map<int, ngl::VertexArrayObject*> m_fontBillboards;
     int m_fontLineSkip;
+    GLuint m_lena;
     bool loadFont(std::string _fontFile, int _size);
     int nearestPowerOfTwo(int _number);
     void drawVector(ngl::Vec4 _position, ngl::Vec4 _vector, ngl::Camera _cam);
@@ -46,7 +47,8 @@ private:
     inline void loadMatricesToColour(ngl::Transformation &_t, ngl::Camera &_cam);
     void renderText(std::string _text, float _x, float _y);
     void renderTextToSurface(std::string _line, int _x, int _y, SDL_Surface *_surface);
-    void testTexturing();
+    void loadTexture(std::string _path, GLuint &_texture);
+    void renderImage(float _width, float _height, GLuint _texture);
     void SDLErrorExit(std::string msg);
 
 public:
