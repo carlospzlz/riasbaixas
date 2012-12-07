@@ -63,7 +63,7 @@ int main()
 
     //Loading models
     mySourceManager.addMesh("helix", new ngl::Obj("models/Helix.obj"));
-    mySourceManager.addMesh("spaceship", new ngl::Obj("models/SpaceShip.obj"));
+    mySourceManager.addMesh("spaceship", new ngl::Obj("models/SpaceShip.obj","images/lena.bmp"));
 
     //LOADING THE MAIN CHARACTER: THE SPEEDBOAT
     Diagonal dCont;
@@ -75,7 +75,9 @@ int main()
     PlayerControls myPlayerControls;
     //mySpeedBoat.setController(&myPlayerControls);
     myPlayerControls.setControlledObject(&mySpeedBoat);
-    //mySpeedBoat.setMesh(mySourceManager.getMesh("spaceship"));
+    mySpeedBoat.setMesh(mySourceManager.getMesh("spaceship"));
+    //mySpeedBoat.setScale(ngl::Vec4(0.2,0.2,0.2,1));
+    //mySpeedBoat.setRotation(ngl::Vec4(0,-90,0,1));
     myObjectManager.addObject(&mySpeedBoat);
     myControllerManager.addController(&myPlayerControls);
     myObjectManager.setCentralObject(&mySpeedBoat);
@@ -200,6 +202,10 @@ void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOpti
         	    case SDLK_2:
 	            _playerOptions.debugMode = 2;
         	    break;
+
+                case SDLK_3:
+                _playerOptions.debugMode = 3;
+                break;
 
 	            case SDLK_PAUSE:
         	    _playerOptions.pause = !_playerOptions.pause;
