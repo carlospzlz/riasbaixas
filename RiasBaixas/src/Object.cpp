@@ -34,6 +34,10 @@ Object::Object()
 void Object::setPosition(ngl::Vec4 _pos)
 {
     m_transform.setPosition(_pos);
+    //take care with this, might give problems for checkings, but looks good..
+    //if there is no mass, you just change the position once!
+    //if (!m_mass)
+    //    m_previousTransform.setPosition(_pos);
 }
 
 void Object::setMesh(ngl::Obj* _obj)
@@ -78,14 +82,12 @@ std::string Object::getType()
 void Object::checkActive(float _currentZ, float _far)
 {
     m_active = (m_transform.getPosition().m_z > _currentZ-_far) && (m_transform.getPosition().m_z < _currentZ+_far);
-    m_previousTransform = m_transform;
-
-    //std::cout << m_position.m_z << " " << _currentZ << " " << _far << " " << m_active << std::endl;
-    //std::cout << "Object: Warning: Undefined specific update method for this object" << std::endl;
+    //m_previousTransform = m_transform; because if not, static objects disapear at collisions, the recover a position
+    //which was never set
 }
 
 void Object::collisionEvent(Object &_o)
 {
-    std::cout << "Object: Warning: Undefined collisionEvent method for this object" << std::endl;
+    //std::cout << "Object: Warning: Undefined collisionEvent method for this object" << std::endl;
 }
 

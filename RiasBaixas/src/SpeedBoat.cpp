@@ -15,6 +15,4 @@ SpeedBoat::SpeedBoat()
 void SpeedBoat::collisionEvent(Object& _o)
 {
     //reduce amount of load
-
-    Object::collisionEvent(_o);
 }

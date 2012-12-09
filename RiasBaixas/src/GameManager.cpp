@@ -20,26 +20,9 @@
 #include "Vertical.h"
 #include "PhysicsEngine.h"
 #include "BSpherePE.h"
+#include "Utilities.h"
 
 #define GAMEMANAGER_FPS 30
-
-struct playerOptions
-{
-    bool running = true;
-    int debugMode = 1;
-    bool possibleChangeCamera = true;
-    bool changeCameraPressed = false;
-    bool backCamera = false;
-    bool pause = false;
-    bool resizeWindow = false;
-    bool changeToFullScreen = false;
-    bool restoreWindow = false;
-};
-
-void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOptions, bool _isfullScreen);
-void setCamera(CameraManager &_cameraManager, const Renderer &_renderer, playerOptions &_playerOptions);
-void setWindow(Renderer &_renderer, playerOptions &_playerOptions);
-void regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_lastStartingSecond, int &_fps);
 
 int main()
 {
@@ -51,13 +34,7 @@ int main()
     ControllerManager myControllerManager;
     CameraManager myCameraManager;
     playerOptions myPlayerOptions;
-
-    //testing text
-    TTF_Init();
-
-    TTF_Font* f = TTF_OpenFont("arial.ttf",16);
-    std::cout << "trying to load font from gameManager" << f << std::endl;
-
+    Utilities myUtilities;
 
     myRenderer.initGLContext();
 
@@ -66,21 +43,15 @@ int main()
     mySourceManager.addMesh("spaceship", new ngl::Obj("models/SpaceShip.obj","images/lena.bmp"));
 
     //LOADING THE MAIN CHARACTER: THE SPEEDBOAT
-    Diagonal dCont;
-    Floating fCont;
-    Horizontal hCont;
-    Vertical vCont;
-
-    SpeedBoat mySpeedBoat;
-    PlayerControls myPlayerControls;
-    //mySpeedBoat.setController(&myPlayerControls);
-    myPlayerControls.setControlledObject(&mySpeedBoat);
-    mySpeedBoat.setMesh(mySourceManager.getMesh("spaceship"));
+    SpeedBoat* mySpeedBoat = new SpeedBoat();
+    PlayerControls* myPlayerControls = new PlayerControls();
+    myPlayerControls->setControlledObject(mySpeedBoat);
+    //mySpeedBoat.setMesh(mySourceManager.getMesh("spaceship"));
     //mySpeedBoat.setScale(ngl::Vec4(0.2,0.2,0.2,1));
     //mySpeedBoat.setRotation(ngl::Vec4(0,-90,0,1));
-    myObjectManager.addObject(&mySpeedBoat);
-    myControllerManager.addController(&myPlayerControls);
-    myObjectManager.setCentralObject(&mySpeedBoat);
+    myObjectManager.addObject(mySpeedBoat);
+    myControllerManager.addController(myPlayerControls);
+    myObjectManager.setCentralObject(mySpeedBoat);
     myObjectManager.setFar(myCameraManager.getFar());
 
     //LOADING MAP
@@ -88,12 +59,9 @@ int main()
     myParser->loadLevelSources(0, mySourceManager);
     myParser->loadMap(0, myObjectManager, myControllerManager, mySourceManager);
 
-    //myObjectManager.setSea(new Sea(3000));
-    //myObjectManager.createTestLevel();
-
     //Loading and linking cameras
     myCameraManager.loadCameras(myRenderer.getWindowWidth(),myRenderer.getWindowHeight());
-    myCameraManager.setTarget(&mySpeedBoat);
+    myCameraManager.setTarget(mySpeedBoat);
 
     //PHYSICS ENGINE
     PhysicsEngine *myPhysicsEngine = new BSpherePE();
@@ -110,10 +78,10 @@ int main()
     {
         startingTick = SDL_GetTicks();
 
-        readPlayerInput(myPlayerControls, myPlayerOptions, myRenderer.isFullScreen());
+        myUtilities.readPlayerInput(*myPlayerControls, myPlayerOptions, myRenderer.isFullScreen());
 
-        setWindow(myRenderer,myPlayerOptions);
-        setCamera(myCameraManager, myRenderer, myPlayerOptions);
+        myUtilities.setWindow(myRenderer,myPlayerOptions);
+        myUtilities.setCamera(myCameraManager, myRenderer, myPlayerOptions);
 
         if (!myPlayerOptions.pause)
         {
@@ -126,7 +94,7 @@ int main()
             myRenderer.render(myObjectManager.sea(),myObjectManager.objects(),*myCameraManager.getCurrentCamera(),myPlayerOptions.debugMode);
         }
 
-        regulateFPS(startingTick, frameCounter, lastStartingSecond, fps);
+        myUtilities.regulateFPS(startingTick, frameCounter, lastStartingSecond, fps);
 
         std::cout << "WORKING AT "<< fps <<" FPS" << std::endl;
 
@@ -134,186 +102,10 @@ int main()
 
         //std::cin.ignore();
     }
-
-    std::cout << "Tested" << std::endl;
-
-    //std::cout << "End of test." << std::endl;
     return 0;
 }
 
 
-void readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOptions, bool _isfullScreen)
-{
-    SDL_Event event;
-    int a;
 
-    while (a = SDL_PollEvent(&event))
-    {
-        switch (event.type)
-    	{
 
-        	case SDL_QUIT:
-	        _playerOptions.running = false;
-        	break;
 
-	        case SDL_WINDOWEVENT:
-        	_playerOptions.resizeWindow = true;
-
-	        case SDL_KEYDOWN:
-        	switch (event.key.keysym.sym)
-	        {
-        	    case SDLK_ESCAPE:
-	            {
-        	    if (_isfullScreen)
-	                _playerOptions.restoreWindow = true;
-        	    else
-                	_playerOptions.running = false;
-	            }
-        	    break;
-
-	            case SDLK_RIGHT:
-        	    _playerControls.setRight(true);
-	            break;
-
-        	    case SDLK_LEFT:
-	            _playerControls.setLeft(true);
-        	    break;
-
-	            case SDLK_SPACE:
-	            _playerControls.setSpeedUp(true);
-	            break;
-
-        	    case SDLK_BACKSPACE:
-                _playerOptions.backCamera = true;
-	            break;
-
-        	    case SDLK_c:
-                _playerOptions.changeCameraPressed = true;
-	            break;
-
-        	    case SDLK_0:
-	            _playerOptions.debugMode = 0;
-        	    break;
-
-	            case SDLK_1:
-        	    _playerOptions.debugMode = 1;
-	            break;
-
-        	    case SDLK_2:
-	            _playerOptions.debugMode = 2;
-        	    break;
-
-                case SDLK_3:
-                _playerOptions.debugMode = 3;
-                break;
-
-	            case SDLK_PAUSE:
-        	    _playerOptions.pause = !_playerOptions.pause;
-	            break;
-
-        	    case SDLK_F11:
-	            if (!_isfullScreen)
-        	        _playerOptions.changeToFullScreen = true;
-	            else
-        	        _playerOptions.restoreWindow = true;
-	            break;
-		   
-		   }
-	        break;
-
-        	case SDL_KEYUP:
-	        switch(event.key.keysym.sym)
-        	{
-	            case SDLK_RIGHT:
-        	    _playerControls.setRight(false);
-	            break;
-
-        	    case SDLK_LEFT:
-	            _playerControls.setLeft(false);
-        	    break;
-
-	            case SDLK_SPACE:
-        	    _playerControls.setSpeedUp(false);
-	            break;
-
-        	    case SDLK_BACKSPACE:
-	            _playerOptions.backCamera = false;
-        	    break;
-
-	            case SDLK_c:
-                {
-                _playerOptions.changeCameraPressed = false;
-                _playerOptions.possibleChangeCamera = true;
-                }
-        	    break;
-	        }
-            break;
-        }
-    }
-
-}
-
-void setWindow(Renderer &_renderer, playerOptions &_playerOptions)
-{
-    if (_playerOptions.resizeWindow)
-    {
-        _renderer.resizeWindow();
-        _playerOptions.resizeWindow = false;
-    }
-    if (_playerOptions.changeToFullScreen)
-    {
-        _renderer.fullScreen();
-        _playerOptions.changeToFullScreen = false;
-    }
-    if (_playerOptions.restoreWindow)
-    {
-        _renderer.restoreWindow();
-        _playerOptions.restoreWindow = false;
-    }
-
-}
-
-void setCamera(CameraManager &_cameraManager, const Renderer &_renderer, playerOptions &_playerOptions)
-{
-    if (_playerOptions.resizeWindow)//|| _playerOptions.changeToFullScreen || _playerOptions.restoreWindow)
-    {
-        _cameraManager.setShape(_renderer.getWindowWidth(), _renderer.getWindowHeight());
-        _playerOptions.resizeWindow = false;
-    }
-
-    if (_playerOptions.backCamera)
-    {
-        if (!_cameraManager.isBackCameraActive())
-            _cameraManager.changeToBackCamera();
-    }
-    else
-    {
-        if (_cameraManager.isBackCameraActive())
-            _cameraManager.leaveBackCamera();
-    }
-
-    if (_playerOptions.changeCameraPressed && _playerOptions.possibleChangeCamera && !_cameraManager.isBackCameraActive())
-    {
-        _cameraManager.nextCamera();
-        _playerOptions.possibleChangeCamera = false;
-    }
-
-}
-
-void regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_lastStartingSecond, int &_fps)
-{
-    //calculate current frames per second
-    if (SDL_GetTicks()-_lastStartingSecond > 1000)
-    {
-        _lastStartingSecond = SDL_GetTicks();
-        _fps = _frameCounter;
-        _frameCounter = 0;
-    }
-    else
-        ++_frameCounter;
-
-    //Adjust frames per second
-    //if (1000/GAMEMANAGER_FPS>(SDL_GetTicks()-_startingTick))
-    //    SDL_Delay(1000/GAMEMANAGER_FPS-(SDL_GetTicks()-_startingTick));
-
-}

@@ -14,16 +14,18 @@ CameraManager::CameraManager()
 
 CameraManager::~CameraManager()
 {
-    //std::vector<ngl::Camera*>::iterator lastCamera = m_camerasCircularQueue.end();
-    //for (std::vector<ngl::Camera*>::iterator currentCamera=m_camerasCircularQueue.begin(); currentCamera!=lastCamera;++currentCamera)
-    //    delete *currentCamera;
+    std::cout << "CameraManager: Deleting cameras..." << std::endl;
+    std::vector<ngl::Camera*>::iterator lastCamera = m_camerasCircularQueue.end();
+    for (std::vector<ngl::Camera*>::iterator currentCamera=m_camerasCircularQueue.begin(); currentCamera!=lastCamera;++currentCamera)
+    {
+        delete *currentCamera;
+    }
 
-    //delete m_backCamera;
+    delete m_backCamera;
 }
 
 void CameraManager::loadCameras(int _w, int _h)
 {
-    //far clipping plane 350
 
     //camera from back
     ngl::Camera* cameraFromTheBack = new ngl::Camera(ngl::Vec3(0,8,14),ngl::Vec3(0,0,0),ngl::Vec3(0,1,0),ngl::PERSPECTIVE);

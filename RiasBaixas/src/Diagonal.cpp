@@ -140,7 +140,7 @@ void Diagonal::move()
 
     velocity.m_y = floatingVelocity();
 
-    std::cout << "DIAGONAL: { quadrant: " << m_quadrant << ", angle: " << m_angle << "}" << std::endl;
+    //std::cout << "DIAGONAL: { quadrant: " << m_quadrant << ", angle: " << m_angle << "}" << std::endl;
 
     m_object->setVelocity(velocity);
     m_object->setAngularVelocity(angularVelocity);
