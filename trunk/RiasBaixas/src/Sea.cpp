@@ -9,23 +9,8 @@ Sea::Sea()
 
 void Sea::setDepth(float _depth)
 {
-    m_depth;
+    m_depth = _depth;
     m_primName = "sea";
     ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-    prim->createLineGrid("sea",SEA_DEPTH,SEA_DEPTH,SEA_DEPTH);
+    prim->createLineGrid("sea",2*m_depth, 2*m_depth, 2*m_depth);
 }
-
-/*
-void Sea::draw(const std::string &_shader, ngl::Camera &_cam)
-{
-    //ngl::ShaderLib *shader = ngl::ShaderLib::instance();
-    //(*shader)[_shader]->use();
-
-    //ngl::Mat4 MVP=m_transform.getMatrix()*_cam->getVPMatrix();
-
-    //shader->setShaderParamFromMat4("MVP",MVP);
-    //m_model->draw();
-    ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-    prim->draw("sea");
-}
-*/

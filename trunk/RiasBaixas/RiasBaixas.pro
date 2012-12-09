@@ -1,7 +1,14 @@
-TARGET = RiasBaixas
-QMAKE_CXX=clang++ -fdiagnostics-fixit-info
+####################################
+# 3D GAME PROJECT CONFIGURATION FILE
+####################################
 
-INCLUDEPATH += include
+TARGET = RiasBaixas
+
+
+##############
+# SOURCE FILES
+##############
+
 HEADERS += \
     include/Renderer.h \
     include/SpeedBoat.h \
@@ -23,7 +30,8 @@ HEADERS += \
     include/ControllerManager.h \
     include/TXTParser.h \
     include/PhysicsEngine.h \
-    include/BSpherePE.h
+    include/BSpherePE.h \
+    include/Utilities.h
 
 SOURCES += \
     src/SpeedBoat.cpp \
@@ -42,66 +50,69 @@ SOURCES += \
     src/Vertical.cpp \
     src/ControllerManager.cpp \
     src/TXTParser.cpp \
-    src/BSpherePE.cpp
+    src/BSpherePE.cpp \
+    src/Utilities.cpp
+
+
+###################
+# NEEDED LIBRARIES:
+#
+# NGL, opengl, glew
+# boost
+# SDL2, SDL2_ttf
+###################
+
+
+#######################
+# GENERAL CONFIGURATION
+#######################
+
+QMAKE_CXX=clang++ -fdiagnostics-fixit-info -g
 
 OBJECTS_DIR = bin
 
-#NGL library
+INCLUDEPATH += include
+
+#OpenGL QT
+QT += opengl
+
+#include boost for tokenizer and reading from configFiles
+INCLUDEPATH += /usr/local/boost
+
+
+##################################
+# CONFIGURATION FOR DEXTER (MY PC)
+##################################
+
+#NGL library at dexter
 INCLUDEPATH += $(HOME)/NGL/include
 LIBS += -L$(HOME)/NGL/lib -l NGL
 
-#OpenGL Extension Wrangler library (This library is used by NGL, not by you!!) at Dexter
+#OpenGL Extension Wrangler library at dexter
 #INCLUDEPATH += $(HOME)/glew-1.9.0/includeGL
 LIBS += -L$(HOME)/glew-1.9.0/lib
 
-#OpenGL QT
-#INCLUDEPATH += $(HOME)/glew-1.9.0/include
-QT += opengl
-
-#now if we are under unix and not on a Mac (i.e. linux) define GLEW
-#linux-clang {
-#    DEFINES += LINUX
-#    LIBS+= -lGLEW
-#}
-#linux-g++-64 {
-#    DEFINES += LINUX
-#    LIBS+= -lGLEW
-#}
-
-#SDL-2.0 library at dexter
-#include at /usr/local/include
-#libs at /usr/local/libs
-#LIBS+=$$system(sdl2-config  --libs)
-#message(output from sdl-config --libs added to LIBS =$$LIBS)
+#SDL2 at dexter
+LIBS+=$$system(sdl2-config --libs)
 
 
-#SDL2_ttf library at dexter
-#LIBS += -lSDL2_ttf
+##################################
+# CONFIGURATION FOR THE UNIVERSITY
+##################################
 
 #SDL2 library at the University
 INCLUDEPATH += $(HOME)/SDL-2.0/include
 INCLUDEPATH += $(HOME)/SDL2_ttf-2.0/include
 
+#SDL2_ttf library at the University
 LIBS += -L$(HOME)/SDL-2.0/lib -lSDL2
 LIBS += -L$(HOME)/SDL2_ttf-2.0/lib -lSDL2_ttf
 
 
-#SDL-2.0 library at University login
-#INCLUDEPATH += $(HOME)/SDL-2.0/include
-#libs are got with sdl2-config, so the line the below is valid
+########################################
+# For the rubbish of WINDOWS, no offense
+########################################
 
-#SDL_ttf libray at University login
-#INCLUDEPATH += $(HOME)/SDL_ttf-2.0/include
-#LIBS += -L$(HOME)/SDL_ttf-2.0/lib -lSDL_ttf
-
-#include boost for tokenizer and reading from configFiles
-INCLUDEPATH += /usr/local/boost
-
-#CXX_FLAGS+=$$system(sdl-config  --cflags)
-#message(output from sdl-config --cflags added to CXX_FLAGS= $$CXX_FLAGS)
-
-
-# For the rubbish of WINDOWS
 win32: {
         DEFINES+=USING_GLEW
         INCLUDEPATH+=-I c:/boost_1_44_0
@@ -117,6 +128,11 @@ win32: {
         SOURCES+=C:/NGL/Support/glew/glew.c
         INCLUDEPATH+=C:/NGL/Support/glew/
 }
+
+
+###############
+# PRINTING INFO
+###############
 
 message(INCLUDEPATH: $$INCLUDEPATH)
 message(LIBS: $$LIBS)

@@ -1,6 +1,10 @@
 #ifndef TXTPARSER_H
 #define TXTPARSER_H
 
+/**
+ * @file TXTParser.h
+ * @brief specific Parser for .txt files
+ */
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -13,7 +17,10 @@
 
 #define TXTPARSER_MAPS_PATH "maps/"
 
-
+/**
+ * @class TXTParser
+ * @brief specific Parser for .txt files
+ */
 class TXTParser : public Parser
 {
 

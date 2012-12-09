@@ -1,6 +1,10 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+/**
+ * @file Object.h
+ * @brief A simple object of a 3D scene
+ */
 #include <ngl/Obj.h>
 #include <ngl/Vec3.h>
 #include <ngl/Vec4.h>
@@ -10,7 +14,10 @@
 #include <ngl/ShaderLib.h>
 #include <ngl/VAOPrimitives.h>
 
-
+/**
+ * @enum objectType
+ * @brief the specific type of an object in the context of the sea
+ */
 enum  objectType
 {
     ot_object,
@@ -25,7 +32,11 @@ enum  objectType
     ot_seagull
 };
 
-
+/**
+ * @struct degreesOfFreedom
+ * @brief specifies the directions an object can move towards in the 3D space,
+ * this information is used by the AI module.
+ */
 struct degreesOfFreedom
 {
     bool forward;
@@ -36,31 +47,85 @@ struct degreesOfFreedom
     bool down;
 };
 
-
+/**
+ * @class Object
+ * @brief This class represents a simple object in a 3D scene
+ * @author Carlos Pérez López
+ */
 class Object
 {
 
 protected:
+    /**
+     * @brief flag to determine if the object is active (visible) or not
+     */
     bool m_active;
+    /**
+     * @brief current transformation of the object
+     */
     ngl::Transformation m_transform;
+    /**
+     * @brief previous transformation of the object
+     */
     ngl::Transformation m_previousTransform;
+    /**
+     * @brief mass of the object, used to calculate acceleration (a = F/m).
+     * Mass 0 means the object is completely static
+     */
     float m_mass;
+    /**
+     * @brief linear velocity of the object
+     */
     ngl::Vec4 m_velocity;
+    /**
+     * @brief angular velocity of the object
+     */
     ngl::Vec4 m_angularVelocity;
+    /**
+     * @brief maximum speed that the obejct can reach
+     */
     float m_maxSpeed;
+    /**
+     * @brief maximum camber that the obejct can reach (linked to the context of boats)
+     */
     float m_maxCamber;
+    /**
+     * @brief to which directions the object can move
+     */
     degreesOfFreedom m_degreesOfFreedom;
+    /**
+     * @brief internal type of the object in the context of the sea
+     */
     objectType m_type;
+    /**
+     * @brief ngl::obj which stores the mesh and texture of the object
+     */
     ngl::Obj *m_mesh;
+    /**
+     * @brief name of the primitive used for debugging of if there is no mesh assinged
+     */
     std::string m_primName;
+    /**
+     * @brief radious of the bounding sphere
+     */
     float m_bSRadius;
+    /**
+     * @brief damage that the object provoques in a collision
+     */
     int m_damage;
+    /**
+     * @brief state of jumping (used by AI)
+     */
     bool m_jumping;
+    /**
+     * @brief state of collided (use by the renderer)
+     */
     bool m_collided;
 
-    void updateActive(float _currentZ);
-
 public:
+    /**
+     * @brief constructor of the object which sets all the attibutes to default values
+     */
     Object();
     //not needed copy constructor
     //setters
@@ -91,7 +156,7 @@ public:
     ngl::Vec4 getScale() const { return m_transform.getScale(); }
     float getMass() const { return m_mass; }
     std::string getType();
-    degreesOfFreedom &getDOF() { return m_degreesOfFreedom; } //will change it, I think so...
+    degreesOfFreedom &getDOF() { return m_degreesOfFreedom; }
     ngl::Obj *getMesh() const { return m_mesh; }
     std::string getPrimName() const { return m_primName; }
     ngl::Vec4 getVelocity() const { return m_velocity; }
@@ -104,9 +169,19 @@ public:
     bool isCollided() const { return m_collided; }
 
     //methods
-    void draw(const std::string &_shader, const ngl::Camera &_cam, int _debugMode);
+    /**
+     * @brief print info of the object to the standard output
+     */
     void info();
+    /**
+     * @brief check if an object is active (visible) or not,depending
+     * on the current Z where the player is a the far clipping plane of the cameras
+     */
     void checkActive(float _currentZ, float _far);
+    /**
+     * @brief event launched when a collision with an object takes place, the specific
+     * behaviour of this method should be implemented by the children classes
+     */
     virtual void collisionEvent(Object &_o);
 
 };

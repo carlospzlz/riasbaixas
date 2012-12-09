@@ -2,6 +2,20 @@
 
 #include "SpeedBoat.h"
 
+ObjectManager::~ObjectManager()
+{
+    destroyTheWorld();
+}
+
+void ObjectManager::destroyTheWorld()
+{
+    std::cout << "ObjectManager: Destroying the world..." << std::endl;
+    std::vector<Object*>::iterator endO = m_objects.end();
+    for(std::vector<Object*>::iterator currentO=m_objects.begin(); currentO!=endO; ++currentO)
+    {
+        delete (*currentO);
+    }
+}
 
 void ObjectManager::createTestLevel()
 {

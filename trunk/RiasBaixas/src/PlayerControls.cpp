@@ -7,7 +7,6 @@ PlayerControls::PlayerControls()
     m_right = false;
     m_speedUp = false;
     m_floating = true;
-    m_ticksFloating = 0;
     m_ticksBouncing = 0;
 
 }
