@@ -4,9 +4,8 @@
 void Utilities::readPlayerInput(PlayerControls &_playerControls, playerOptions &_playerOptions, bool _isfullScreen)
 {
     SDL_Event event;
-    int a;
 
-    while (a = SDL_PollEvent(&event))
+    while (SDL_PollEvent(&event))
     {
         switch (event.type)
         {
