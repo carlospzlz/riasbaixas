@@ -37,7 +37,9 @@ private:
 public:
     Sea();
     void setDepth(float _depth);
+    void setMesh(ngl::Obj* _mesh) { m_mesh = _mesh; }
 
+    bool hasMesh() const { return m_mesh; }
     ngl::Obj* getMesh() const { return m_mesh; }
     std::string getPrimName() const { return m_primName; }
 };

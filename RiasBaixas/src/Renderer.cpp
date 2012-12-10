@@ -181,14 +181,17 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
         (*shader)["TextureShader"]->use();
 
         shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
-        iv=_cam.getViewMatrix();
-        iv.transpose();
-        m_light->setTransform(iv);
-        m_light->loadToShader("light");
-        material.loadToShader("material");
+        //iv=_cam.getViewMatrix();
+        //iv.transpose();
+        //m_light->setTransform(iv);
+        //m_light->loadToShader("light");
+        //material.loadToShader("material");
 
         loadMVPToShader(transform, _cam);
-        primitives->draw(_sea.getPrimName());
+        if (_sea.hasMesh())
+            _sea.getMesh()->draw();
+        else
+            primitives->draw(_sea.getPrimName());
 
         for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=endObject; ++currentObject)
         {

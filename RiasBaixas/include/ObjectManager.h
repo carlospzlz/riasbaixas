@@ -23,7 +23,7 @@ private:
     /**
      * @brief background of the game scene
      */
-    Sea m_sea;
+    Sea* m_sea;
     /**
      * @brief all the objects in the world
      */
@@ -49,11 +49,11 @@ private:
 
 public:
     ~ObjectManager();
-    void setSea(Sea _sea) { m_sea = _sea; }
+    void setSea(Sea* _sea) { m_sea = _sea; }
     void addObject(Object* _o) { m_objects.push_back(_o);}
     void setCentralObject(Object* _o) { m_centralObject = _o; }
     void setFar(float _far) { m_far = _far; }
-    const Sea& sea() { return m_sea; }
+    const Sea& sea() { return *m_sea; }
     std::vector<Object*>& objects() { return m_objects; }
     /**
      * @brief check all the objects and activate those ones which are
