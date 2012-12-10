@@ -187,7 +187,7 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
         m_light->loadToShader("light");
         material.loadToShader("material");
 
-        loadMatricesToShader(transform, _cam);
+        loadMVPToShader(transform, _cam);
         primitives->draw(_sea.getPrimName());
 
         for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=endObject; ++currentObject)
@@ -195,7 +195,7 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
             if ((*currentObject)->isActive())
             {
                 transform = (*currentObject)->getTransform();
-                loadMatricesToShader(transform,_cam);
+                loadMVPToShader(transform,_cam);
                 if ((*currentObject)->hasMesh())
                     (*currentObject)->getMesh()->draw();
                 else
