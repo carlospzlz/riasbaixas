@@ -13,6 +13,7 @@
 %for the bibliography
 \usepackage{booktabs}
 \usepackage{url}
+\usepackage{tocloft}
 
 \renewcommand{\baselinestretch}{1.5}
 
@@ -51,7 +52,7 @@
 \setlength\parindent{24pt} % Removes all indentation from paragraphs
 
 \renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
-
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 
 \newpage
 \tableofcontents
@@ -78,17 +79,17 @@ funtionalities more suitable referring to game programming. The SDL library \cit
  
  Some other libraries were studied for their use as well. BulletPhysics \cite{bulletPhysics} was thought in first instance as main physics engine to handle the collisions in the world of the game
  due to it is a full package which offers a wide range of collisions detection. In the same way, to implement the AI of the system, the author had in mind OpenSteer \cite{openSteer}, which offers
- steering behaviours for autonomous characters in game and animation. Finally, due to the not very high complexity level of this project both libraries were rejected. Besides, using directly
+ steering behaviours for autonomous characters in game and animation. Finally, due to the simplicity of this project both libraries were rejected. Besides, using directly
  low level C++ to implement it, the approach of the used algorithms would be greater, so it would be a better chance to learn.
  
- The final technologies chosen to implement the game were NGL, the graphic library of the NCCA, and SDL2 for handling the graphic context and the user events. Later, SDL2\_ttf would also be
- added for debugging purpose and because some functionalities of rendering text are required at some points of the game play.
+ The final technologies chosen to implement the game were NGL, the graphic library of the NCCA, and SDL2 for handling the graphic context and user events. Later, SDL2\_ttf would also be
+ added for debugging purpose and because of some functionalities of rendering text are required at some points of the game play.
  
  The main source of learning NGL was the ASD professor website \cite{maceyWebsite} as well as his blog \cite{maceyBlog}. Reading the demos' code and writing small programs was the process of understanding the concepts a progressing 
  little by little. The same happened with SDL, but extending it with all the other sources that might be found through the internet.
  
  Parallel to this, other research was being carried out relative to the design of the game which, certainly, is completely independent of the technologies chosen to implement it. M. Sanchez provided
- to the author the contact of E. Anderson, an experienced teacher in games programming working at BU at the moment. He gently gave to the author an explanation of the typical game architecture, as well as provided 
+ to the author the contact of E. Anderson, an experienced teacher in game programming working at BU at the moment. He gently gave to the author an explanation of the typical game architecture, as well as provided 
  some slides he often uses during his lectures.
  
  At this point, the research material and documentation was enough to start with the design of the 3D game.
@@ -100,8 +101,8 @@ funtionalities more suitable referring to game programming. The SDL library \cit
 
 \section{Initial Design}
 
-Currently, the most part of applications are desgined using the paradigm of Object Orientation, due to the flexibility and scalability that design patterns offers, as well as it is widely belief
-as a very smart way of programming. But concerning to this project, it must be added that the execution of a game is normally a very secuencial flow.
+Currently, the most part of applications are desgined using the paradigm of Object Orientation, due to the flexibility and scalability that design patterns offer, as well as it is widely belief
+as a very smart way of programming. But concerning to this project, it must be said that the execution of a game is normally a very secuencial flow.
 
 All the games has a main loop with a similar estructure:
 \begin{itemize}
@@ -113,15 +114,7 @@ All the games has a main loop with a similar estructure:
 \end{itemize}
 
 So to design this execution flow, it was decided to count with a class \emph{GameManager} which will be the centre of the system and will mantain the specific behaviour of this specific game. 
-The rest of the modules which are surrounding this master class will purely have an object oriented design and will conform our game engine.
-
-A game engine is a framework designed for the creation and development of video games. It might be thought as a group of predefined functions that offer to the game developper behaviour
-already programmed. Thus, all the different modules in this game should be part of a game engine, the most independent possible of this specific game, and that might be used in the future by
-other games of similar characteristics.
-
-Once these concepts were clarified and the main structure was decided, the different modules had to be thought. One the main worries of the author at the time of the design were the flexibility
-and the scalability, so a convenient idea was treat every module as an independent system which is charge of certain responsabilities logically grouped and that could unacoplated and used by any
-other client. See \ref{fig:ge}.
+The rest of the modules which are surrounding this master class will purely have an object oriented design and will conform our game engine. See \ref{fig:ge}.
 
 \begin{figure}[h]
 \begin{center}
@@ -131,9 +124,17 @@ other client. See \ref{fig:ge}.
 \end{center}
 \end{figure}
 
-In order to define the world, a class \emph{Object} was defined, which represents a simple object in the world and that mainly stores state information and some little behaviour for the interaction
-with other objects. This is the top of the hierarchy, and then some other classes with more specific state and behaviour might be defined. To store the objects of a concrete world there is manager
-named \emph{ObjectManager} which holds a list with all the objects a provides an interface with basic operations such as \emph{addObject} or other more linked to this context.
+A game engine is a framework designed for the creation and development of video games. It might be thought as a group of predefined functions that offer to the game developper behaviour
+already programmed. Thus, all the different modules in this game should be part of a game engine, the most independent possible of this specific game, and that might be used in the future by
+other games of similar characteristics.
+
+Once these concepts were clarified and the main structure was decided, the different modules had to be thought. One of the main worries of the author at the time of the design were the flexibility
+and the scalability, so a convenient idea was treat every module as an independent system which is in charge of certain responsabilities logically grouped and that could be unacoplated and used by any
+other client. 
+
+In order to model the world, a class \emph{Object} was defined, which represents a simple object in the world and that mainly stores state information and some little behaviour for the interaction
+with other objects. This is the top of the hierarchy, and then some other classes with more specific state and behaviour might be defined. To store the objects of a concrete world there is a manager
+named \emph{ObjectManager} which holds a list with all the objects and provides an interface with basic operations such as \emph{addObject} or others more linked to this context.
 
 The module in charge of updating the world is born in the class \emph{Controller}, which provides a hierarchy of different autonomous behaviours (the AI of the game) as well as the controller defined
 by the user input. At first, this was thought as a strategy pattern, since the objects might have different strategies of movement but later, regarding the fact that is the controller the entity
@@ -161,9 +162,9 @@ flexibility. See \ref{fig:pesec}.
 \end{center}
 \end{figure}
 
-Concerning to the graphic module of this assignment, which is one of great importance taking into account the nature of this course itself, there is class that is in charge of all the funtionalities
+Concerning to the graphic module of this assignment, which is one of great importance taking into account the nature of this course itself, there is a class that is in charge of all the funtionalities
 related with the drawing, which could not be named in other way that \emph{Renderer}. The \emph{Renderer} is the responsible of creating the graphic context and initialize everything needed for the
-rendering of the current scene of the game's world. It deals with the shaders and lights, and it is thought to be able to draw any 3D object over a background as well as images 2D or text. At the time 
+rendering of the current scene of the game's world. It deals with the shaders and lights, and it is thought to be able to draw any 3D object over a background as well as 2D images or text. At the time 
 the client asks for the render of the world, they should provide a reference to the world and its background, the camera from where the render should be processed and a simple flag to indicate a \emph{debugMode}.
 As a design decision, the cameras are treated apart and independently to offer the user more transparency and versatility to visualize the scene. A \emph{CameraManager} is added to the design as well to
 update all the positions of the different type of cameras according with a target, that is the main object of the world, the one the player is controlling.
@@ -172,7 +173,7 @@ The design counts with a class which acts as a stock and stores all the sources 
 \emph{SourceManager}. The presence of managers is quite abundant in this system, the reason is that there will be a big amount of different objects during the runtime, and they can offer abstraction
 to the \emph{GameManager} to deal with all of them. At first it was thought to make them singletons, but finally it was taken the option of just keeping one single instance of each manager.
 
-Finally, in order to load our game world, a \emph{Parser} is used to read from a describing scene file and some auxiliar functions used by the \emph{GameManager} were grouped in a \emph{Utilities} class
+Finally, in order to load our game world, a \emph{Parser} is used to read from a describing scene file and some auxiliar functions used by the \emph{GameManager} were grouped in a \emph{Utilities} class.
 
 
 %----------------------------------------------------------------------------------------
