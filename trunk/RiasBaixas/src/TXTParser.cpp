@@ -42,27 +42,27 @@ bool TXTParser::loadMap(int _map, ObjectManager &_objectManager, ControllerManag
             if (*currentToken == "Sea")
             {
                 if (loadSea(currentToken, _objectManager, _sourceManager))
-                    std::cout <<"TxtParser: in line " << lineNumber << ": Sea loaded" << std::endl;
+                    std::cout <<"TXTParser: in line " << lineNumber << ": Sea loaded" << std::endl;
                 else
-                    std::cout << "TxtParser: in line " << lineNumber << ": EXCEPTION: when loading Sea" << std::endl;
+                    std::cout << "TXTParser: in line " << lineNumber << ": EXCEPTION: when loading Sea" << std::endl;
             }
             else if (*currentToken == "MusselFarm")
             {
                 if (loadMusselFarm(currentToken, _objectManager, _sourceManager))
-                    std::cout <<"TxtParser: in line " << lineNumber << ": MusselFarm loaded" << std::endl;
+                    std::cout <<"TXTParser: in line " << lineNumber << ": MusselFarm loaded" << std::endl;
                 else
-                    std::cout << "TxtParser: in line " << lineNumber << ": EXCEPTION: when loading MusselFarm" << std::endl;
+                    std::cout << "TXTParser: in line " << lineNumber << ": EXCEPTION: when loading MusselFarm" << std::endl;
             }
             else if (*currentToken == "FisherBoat")
             {
                 if (loadFisherBoat(currentToken, _objectManager, _controllerManager, _sourceManager))
-                    std::cout <<"TxtParser: in line " << lineNumber << ": FisherBoat loaded" << std::endl;
+                    std::cout <<"TXTParser: in line " << lineNumber << ": FisherBoat loaded" << std::endl;
                 else
-                    std::cout << "TxtParser: in line " << lineNumber << ": EXCEPTION: when loading FisherBoat" << std::endl;
+                    std::cout << "TXTParser: in line " << lineNumber << ": EXCEPTION: when loading FisherBoat" << std::endl;
 
             }
             else
-                std::cout << "TxtParser: In line " << lineNumber << ": WARNING: Unknown object" << std::endl;
+                std::cout << "TXTParser: In line " << lineNumber << ": WARNING: Unknown object" << std::endl;
         }
     ++lineNumber;
     }
@@ -75,8 +75,9 @@ bool TXTParser::loadSea(tokenizer::iterator _currentParameter, ObjectManager &_o
    {
         float depth = boost::lexical_cast<float>(*++_currentParameter);
 
-        Sea sea;
-        sea.setDepth(depth);
+        Sea* sea = new Sea();
+        sea->setDepth(depth);
+        sea->setMesh(_sourceManager.getMesh("sea"));
         _objectManager.setSea(sea);
     }
     catch (...)
@@ -95,8 +96,8 @@ bool TXTParser::loadMusselFarm(tokenizer::iterator _currentParameter, ObjectMana
         float z = boost::lexical_cast<float>(*++_currentParameter);
 
         Object *musselFarm = new Object();
-        musselFarm->setMesh(_sourceManager.getMesh("musselFarm"));
         musselFarm->setType(ot_musselFarm);
+        musselFarm->setMesh(_sourceManager.getMesh("musselFarm"));
         musselFarm->setMass(0);
         musselFarm->setPosition(ngl::Vec4(x,y,z,1));
         _objectManager.addObject(musselFarm);

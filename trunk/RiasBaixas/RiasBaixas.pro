@@ -79,6 +79,10 @@ QT += opengl
 #include boost for tokenizer and reading from configFiles
 INCLUDEPATH += /usr/local/boost
 
+#SDL2
+#QMAKE_CXXFLAGS+=$$system($$(HOME)/SDL2.0/bin/sdl2-config  --cflags)
+#LIBS+=$$system($$(HOME)/SDL2.0/bin/sdl2-config  --libs)
+
 
 ##################################
 # CONFIGURATION FOR DEXTER (MY PC)

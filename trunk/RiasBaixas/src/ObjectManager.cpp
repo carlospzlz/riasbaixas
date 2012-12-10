@@ -10,6 +10,8 @@ ObjectManager::~ObjectManager()
 void ObjectManager::destroyTheWorld()
 {
     std::cout << "ObjectManager: Destroying the world..." << std::endl;
+
+    delete m_sea;
     std::vector<Object*>::iterator endO = m_objects.end();
     for(std::vector<Object*>::iterator currentO=m_objects.begin(); currentO!=endO; ++currentO)
     {

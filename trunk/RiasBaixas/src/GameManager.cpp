@@ -39,14 +39,19 @@ int main()
     myRenderer.initGLContext();
 
     //Loading models
+    //Eventually this will be loaded by the parser automatically
     mySourceManager.addMesh("helix", new ngl::Obj("models/Helix.obj"));
-    mySourceManager.addMesh("spaceship", new ngl::Obj("models/SpaceShip.obj","images/lena.bmp"));
+    mySourceManager.addMesh("spaceship", new ngl::Obj("models/SpaceShip.obj"));
+    mySourceManager.addMesh("speedboat", new ngl::Obj("models/speedboat.obj","textures/speedboat.jpg"));
+    mySourceManager.addMesh("sea", new ngl::Obj("models/sea.obj","textures/sea.png"));
+    mySourceManager.addMesh("musselFarm", new ngl::Obj("models/musselFarm.obj","textures/musselFarm.jpg"));
+    mySourceManager.addMesh("fisherBoat", new ngl::Obj("models/fisherBoat.obj","textures/fisherBoat.jpg"));
 
     //LOADING THE MAIN CHARACTER: THE SPEEDBOAT
     SpeedBoat* mySpeedBoat = new SpeedBoat();
     PlayerControls* myPlayerControls = new PlayerControls();
     myPlayerControls->setControlledObject(mySpeedBoat);
-    //mySpeedBoat.setMesh(mySourceManager.getMesh("spaceship"));
+    mySpeedBoat->setMesh(mySourceManager.getMesh("speedboat"));
     //mySpeedBoat.setScale(ngl::Vec4(0.2,0.2,0.2,1));
     //mySpeedBoat.setRotation(ngl::Vec4(0,-90,0,1));
     myObjectManager.addObject(mySpeedBoat);
