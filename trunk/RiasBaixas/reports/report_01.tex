@@ -157,7 +157,7 @@ flexibility. See \ref{fig:pesec}.
 \begin{figure}[h]
 \begin{center}
 \includegraphics[width=0.75\textwidth]{images/physicsEngineSec.eps}
-\caption{Secuence of the collisions check}
+\caption{Sequence of the collisions check}
 \label{fig:pesec}
 \end{center}
 \end{figure}
@@ -175,12 +175,42 @@ to the \emph{GameManager} to deal with all of them. At first it was thought to m
 
 Finally, in order to load our game world, a \emph{Parser} is used to read from a describing scene file and some auxiliar functions used by the \emph{GameManager} were grouped in a \emph{Utilities} class.
 
+A diagram of sequence is shown in \ref{fig:mainLoop} to illustrate how the main loop works and how the \emph{GamaManager} interacts with the different modules.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=1\textwidth]{images/mainLoopSequence.eps}
+\caption{Sequence of the main loop}
+\label{fig:mainLoop}
+\end{center}
+\end{figure}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 3
 %----------------------------------------------------------------------------------------
 
 \section{Proof of Context}
+
+The main aim of this first approach is the design, but a simple prototype is attached as a proof of context. The developer has a programming background in java an C, thus there is a period of adaptation to C++ 11, so one of the main objects of this prototype is getting familiar to this technology.
+
+This first version of the application shows the gameplay, rendered on a openGL context using NGL and SDL. So far it is single player and keyboard controlled, by this is tied to future modifications presented in the next section. The user will control an object which will be the main character of the world.
+
+All the world is ambiented in the sea, so, in this context, the generic objects might perform roles such as obstacles on the sea, different types of boats or even marine fauna. The aim of the game is reaching the beach, which is at the end of the track where the main speedboat is advancing on. The main idea, which is not already implemented, is that the player might loose the game in two situtations; if he looses all the load in his speedboat or if the police boats catch him. All of this is linked to the game story which is not relevant for this technical part.
+
+It might be noticed that the AI is a very wide field to work when we are talking about boats moving on the sea, where a good understanding of physics plays a really important role. Some basic but different behaviours methods were implemented, thus the player might find boats which are crossing the sea track, which are coming towards the speedboat, etc. 
+
+The prototype can work so far with some test meshes and in two different debugging modes:
+
+\begin{itemize}
+\item mode 1: this is the primitives mode, where all the objects are rendered as primitives and the velocity vectors are drawn.
+\item mode 2: this is the collision mode, where the bounding spheres are rendered showing when a collision is produced.
+\end{itemize}
+
+It is possible to access to a specific debugging mode pressing the corresponding key number. For no debugging mode press 0.
+
+The set of default cameras offered to the user for the rendering of the game scene is loaded at the initialization of the game. There is a circular queue of cameras which holds the typical cameras present on a video game, such as the camera from the back, up camera or first person camera. To iterate over this set of cameras the key \emph{c} must be pressed. In addition, it was added a special camera, the back camera, which will be active while the player press \emph{backspace}. The purpose of this camera for the real game is that it might be a useful feature when the police is chasing the player.
+
+Other test functionalites have been added as well. It is possible to pause the game with the key \emph{pause} or to interact with the window changing its size or converting it to fullscreen mode.
 
 
 %----------------------------------------------------------------------------------------
@@ -189,8 +219,21 @@ Finally, in order to load our game world, a \emph{Parser} is used to read from a
 
 \section{Future work}
 
+This prototype compounds the main core of the game a it is thought to be formed by different modules the most indepent possible. In this way, the application will adquire a flexible and scalable architecture profitable for reusability and expansibility.
 
+After this first version, some reflexions were taken and some hints for future work and improvements on the system in the next term are these:
 
+\begin{itemize}
+\item Adding a Game State pattern to the design to manage the different states of the game, such as menu, story level, scores or gameplay.
+\item Adding the \emph{Checkpoint} feature perhaps with a memento pattern.
+\item As it is a game about boats, it was considered a good idea to add particles systems to simulate the interaction of the motors or the hulls against the sea water.
+\item Improving the \emph{physicsEngine} and the quality of the collision detection.
+\item Adding a subsystem of radio conversations. The player will be able to see on the screen radio conversations (rendering images a text) which in some situations might work as tutorial guide, information, story or a gag launched by some event in the gameplay. The first idea to desigh this is using an observer-observable pattern between the radio conversations and the objects, so every object can notify to a \emph{ConversationManager} when a collision takes place.
+\item Adding a new controller to support the use of a joystick such as a play station joystick.
+\item Once the engine and technical part is finished, work on the visual impact of the game to make it atractive. Model good looking meshes and work on the appearence, thus it is a very important part of a 3D game.
+\end{itemize}
+
+\newpage
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
