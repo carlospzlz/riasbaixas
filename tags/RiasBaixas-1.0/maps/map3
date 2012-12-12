@@ -1,0 +1,27 @@
+Sea 200
+
+MusselFarm 6 0 0
+MusselFarm -6 0 0
+MusselFarm 0 0 -5
+MusselFarm -2 0 -7
+MusselFarm 1 0 -9
+
+FisherBoat 6 0.3 -11 Horizontal
+FisheBoat -6 0.3 -12 Horizontal
+MusselFarm -3 0 -15
+FisherBoat 2 0.3 -20 Vertical
+FisherBoat -6 0.3 -18 Diagonal
+FisherBoat 6 0.3 -18 Diagonal
+
+MusselFarm -3 0 -35
+MusselFarm 0 0 -35
+MusselFarm 3 0 -35
+MusselFarm -1 0 -40
+MusselFarm 1 0 -40
+MusselFarm -3 0 -45
+MusselFarm 0 0 -45
+MusselFarm 3 0 -45
+
+FisherBoat 0 0.3 -50 Horizontal
+FisherBoat -2 0.3 -60 Vertical
+

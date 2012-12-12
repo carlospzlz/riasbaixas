@@ -1,0 +1,92 @@
+Sea 1000
+
+//MusselFarm musselFarm 8 0 0
+//MusselFarm musselFarm -8 0 0
+
+MusselFarm 0 0 -110
+MusselFarm 4 0 -110
+MusselFarm 0 0 -120
+MusselFarm 4 0 -120
+MusselFarm 0 0 -130
+MusselFarm 4 0 -130
+MusselFarm 0 0 -140
+MusselFarm 4 0 -140
+
+FisherBoat 0 0 -150 Horizontal
+
+MusselFarm 0 0 -160
+MusselFarm 4 0 -160
+MusselFarm 0 0 -170
+MusselFarm 4 0 -170
+MusselFarm 0 0 -180
+MusselFarm 4 0 -180
+MusselFarm 0 0 -190
+MusselFarm 4 0 -190
+
+MusselFarm -8 0 -300
+MusselFarm -7 0 -310
+MusselFarm -6 0 -320
+MusselFarm -5 0 -330
+MusselFarm -4 0 -340
+MusselFarm -3 0 -350
+MusselFarm -2 0 -360
+MusselFarm -1 0 -370
+MusselFarm 1 0 -300
+MusselFarm 2 0 -310
+MusselFarm 3 0 -320
+MusselFarm 4 0 -330
+MusselFarm 5 0 -340
+MusselFarm 6 0 -350
+MusselFarm 7 0 -360
+MusselFarm 8 0 -370
+
+
+MusselFarm 8 0 -400
+MusselFarm 7 0 -410
+MusselFarm 6 0 -420
+MusselFarm 5 0 -430
+MusselFarm 4 0 -440
+MusselFarm 3 0 -450
+MusselFarm 2 0 -460
+MusselFarm 1 0 -470
+MusselFarm -1 0 -400
+MusselFarm -2 0 -410
+MusselFarm -3 0 -420
+MusselFarm -4 0 -430
+MusselFarm -5 0 -440
+MusselFarm -6 0 -450
+MusselFarm -7 0 -460
+MusselFarm -8 0 -470
+
+FisherBoat -14 0.3 -500 Horizontal
+FisherBoat -10 0.3 -505 Horizontal
+FisherBoat 3 0.3 -510 Horizontal
+FisherBoat 0 0.3 -515 Horizontal
+FisherBoat 55 0.3 -520 Horizontal
+FisherBoat 10 0.3 -525 Horizontal
+FisherBoat 12 0.3 -530 Horizontal
+FisherBoat -1 0.3 -535 Horizontal
+FisherBoat 14 0.3 -540 Horizontal
+
+FisherBoat 12 0.3 -600 Vertical
+FisherBoat 0 0.3 -620 Vertical
+FisherBoat -2 0.3 -680 Vertical
+FisherBoat -16 0.3 -635 Vertical
+FisherBoat -7 0.3 -700 Vertical
+FisherBoat 9 0.3 -680 Vertical
+FisherBoat 16 0.3 -690 Vertical
+FisherBoat 18 0.3 -666 Vertical
+FisherBoat 4 0.3 -696 Vertical 
+FisherBoat 5 0.3 -750 Vertical
+FisherBoat 6 0.3 -800 Vertical
+
+FisherBoat 0 0.3 -850 Diagonal
+FisherBoat 9 0.3 -860 Diagonal
+FisherBoat -1 0.3 -860 Diagonal
+FisherBoat -4 0.3 -880 Diagonal
+FisherBoat -7 0.3 -890 Diagonal
+FisherBoat -3 0.3 -900 Diagonal
+FisherBoat 8 0.3 -875 Diagonal
+FisherBoat 18 0.3 -860 Diagonal
+FisherBoat 5 0.3 -900 Diagonal
+FisherBoat 9 0.3 -885 Diagonal
