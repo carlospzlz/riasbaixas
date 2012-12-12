@@ -83,7 +83,7 @@ funtionalities more suitable referring to game programming. The SDL library \cit
  low level C++ to implement it, the approach of the used algorithms would be greater, so it would be a better chance to learn.
  
  The final technologies chosen to implement the game were NGL, the graphic library of the NCCA, and SDL2 for handling the graphic context and user events. Later, SDL2\_ttf would also be
- added for debugging purpose and because of some functionalities of rendering text are required at some points of the game play.
+ added for debugging purpose and because of some functionalities of rendering text are required at some points of the gameplay.
  
  The main source of learning NGL was the ASD professor website \cite{maceyWebsite} as well as his blog \cite{maceyBlog}. Reading the demos' code and writing small programs was the process of understanding the concepts a progressing 
  little by little. The same happened with SDL, but extending it with all the other sources that might be found through the internet.
@@ -128,7 +128,7 @@ A game engine is a framework designed for the creation and development of video 
 already programmed. Thus, all the different modules in this game should be part of a game engine, the most independent possible of this specific game, and that might be used in the future by
 other games of similar characteristics.
 
-Once these concepts were clarified and the main structure was decided, the different modules had to be thought. One of the main worries of the author at the time of the design were the flexibility
+Once these concepts were clarified and the main structure was decided, the different modules had to be thought. Some of the main worries of the author at the time of the design were the flexibility
 and the scalability, so a convenient idea was treat every module as an independent system which is in charge of certain responsabilities logically grouped and that could be unacoplated and used by any
 other client. 
 
@@ -169,7 +169,7 @@ the client asks for the render of the world, they should provide a reference to 
 As a design decision, the cameras are treated apart and independently to offer the user more transparency and versatility to visualize the scene. A \emph{CameraManager} is added to the design as well to
 update all the positions of the different type of cameras according with a target, that is the main object of the world, the one the player is controlling.
 
-The design counts with a class which acts as a stock and stores all the sources needed for the excecution of our game, such as meshes, textures, images, text, sound, etc. This is the 
+The design counts with a class which acts as a stock and stores all the sources needed for the execution of our game, such as meshes, textures, images, text, sound, etc. This is the 
 \emph{SourceManager}. The presence of managers is quite abundant in this system, the reason is that there will be a big amount of different objects during the runtime, and they can offer abstraction
 to the \emph{GameManager} to deal with all of them. At first it was thought to make them singletons, but finally it was taken the option of just keeping one single instance of each manager.
 
@@ -195,7 +195,7 @@ The main aim of this first approach is the design, but a simple prototype is att
 
 This first version of the application shows the gameplay, rendered on a openGL context using NGL and SDL. So far it is single player and keyboard controlled, by this is tied to future modifications presented in the next section. The user will control an object which will be the main character of the world.
 
-All the world is ambiented in the sea, so, in this context, the generic objects might perform roles such as obstacles on the sea, different types of boats or even marine fauna. The aim of the game is reaching the beach, which is at the end of the track where the main speedboat is advancing on. The main idea, which is not already implemented, is that the player might loose the game in two situtations; if he looses all the load in his speedboat or if the police boats catch him. All of this is linked to the game story which is not relevant for this technical part.
+All the world is ambiented at the sea, so, in this context, the generic objects might perform roles such as obstacles on the sea, different types of boats or even marine fauna. The aim of the game is reaching the beach, which is at the end of the track where the main speedboat is advancing on. The main idea, which is not already implemented, is that the player might loose the game in two situtations; if he looses all the load in his speedboat or if the police boats catch him. All of this is linked to the game story which is not relevant for this technical part.
 
 It might be noticed that the AI is a very wide field to work when we are talking about boats moving on the sea, where a good understanding of physics plays a really important role. Some basic but different behaviours methods were implemented, thus the player might find boats which are crossing the sea track, which are coming towards the speedboat, etc. 
 
@@ -228,9 +228,9 @@ After this first version, some reflexions were taken and some hints for future w
 \item Adding the \emph{Checkpoint} feature perhaps with a memento pattern.
 \item As it is a game about boats, it was considered a good idea to add particles systems to simulate the interaction of the motors or the hulls against the sea water.
 \item Improving the \emph{physicsEngine} and the quality of the collision detection.
-\item Adding a subsystem of radio conversations. The player will be able to see on the screen radio conversations (rendering images a text) which in some situations might work as tutorial guide, information, story or a gag launched by some event in the gameplay. The first idea to desigh this is using an observer-observable pattern between the radio conversations and the objects, so every object can notify to a \emph{ConversationManager} when a collision takes place.
-\item Adding a new controller to support the use of a joystick such as a play station joystick.
-\item Once the engine and technical part is finished, work on the visual impact of the game to make it atractive. Model good looking meshes and work on the appearence, thus it is a very important part of a 3D game.
+\item Adding a subsystem of radio conversations. The player will be able to see on the screen radio conversations (rendering images and text) which in some situations might work as tutorial guide, information, story or a gag launched by some event in the gameplay. The first idea to desigh this is using an observer-observable pattern between the radio conversations and the objects, so every object can notify to a \emph{ConversationManager} when a collision takes place.
+\item Adding a new controller to support the use of a joystick such as a play-station joystick.
+\item Once the engine and technical part are finished, work on the visual impact of the game to make it atractive. Model good looking meshes and work on the appearence, thus it is a very important part of a 3D game.
 \end{itemize}
 
 \newpage
