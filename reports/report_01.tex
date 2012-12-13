@@ -138,7 +138,7 @@ named \emph{ObjectManager} which holds a list with all the objects and provides 
 
 The module in charge of updating the world is born in the class \emph{Controller}, which provides a hierarchy of different autonomous behaviours (the AI of the game) as well as the controller defined
 by the user input. At first, this was thought as a strategy pattern, since the objects might have different strategies of movement but later, regarding the fact that is the controller the entity
-that moves an object and will have to modify its state, it was decided to use composition. So, in the same way, we count with a manager class that deals with all the controllers in order to give 
+that moves an object and will have to modify its state, it was decided to use aggregation. So, in the same way, we count with a manager class that deals with all the controllers in order to give 
 the client abstraction and to avoid they manage each one of them manually. The figure \ref{fig:object-controller} shows this.
 
 \begin{figure}[h]
