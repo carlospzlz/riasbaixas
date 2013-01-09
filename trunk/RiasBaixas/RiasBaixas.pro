@@ -69,7 +69,7 @@ SOURCES += \
 
 QMAKE_CXX=clang++ -fdiagnostics-fixit-info -g
 
-OBJECTS_DIR = bin
+OBJECTS_DIR = obj
 
 INCLUDEPATH += include
 
