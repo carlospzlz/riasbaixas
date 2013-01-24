@@ -106,11 +106,12 @@ LIBS+=$$system(sdl2-config --libs)
 
 #SDL2 library at the University
 INCLUDEPATH += $(HOME)/SDL-2.0/include
-INCLUDEPATH += $(HOME)/SDL2_ttf-2.0/include
+#INCLUDEPATH += $(HOME)/SDL2_ttf-2.0/include
 
 #SDL2_ttf library at the University
 LIBS += -L$(HOME)/SDL-2.0/lib -lSDL2
-LIBS += -L$(HOME)/SDL2_ttf-2.0/lib -lSDL2_ttf
+LIBS += -L$(HOME)/SDL-2.0/lib -lSDL2_ttf
+LIBS += -L$(HOME)/SDL-2.0/lib -lSDL2_image
 
 
 ########################################

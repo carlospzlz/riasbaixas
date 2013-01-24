@@ -130,7 +130,7 @@ void Renderer::initGLContext()
     loadFont("fonts/arial.ttf",22);
 
     //LOAD TEST TEXTURES
-    loadTexture("images/lena.bmp", m_lena);
+    loadTexture("textures/speedboat.jpg", m_lena);
     prim->createTrianglePlane("plane",1,1,1,1,ngl::Vec3(0,1,0));
 
 }
@@ -284,7 +284,7 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
                 drawVector((*currentObject)->getPosition(),(*currentObject)->getVelocity(),_cam);
         }
     }
-    /* DEBUG MODE FOR SOME TESTS
+    // DEBUG MODE FOR SOME TESTS
     else if (_debugMode==3)
     {
         (*shader)["TextureShader"]->use();
@@ -293,11 +293,11 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
         transform.setPosition(0,0,_cam.getEye().m_z-10);
         //transform.setRotation(90,0,0);
         transform.setScale(5,5,5);
-        loadMatricesToColour(transform,_cam);
+        loadMVPToShader(transform,_cam);
         //renderText("hello World",m_windowWidth/2,m_windowHeight/2);
         renderImage(30,30,m_lena);
         primitives->draw("plane");
-    }*/
+    }
 
     SDL_GL_SwapWindow(m_window);
 
@@ -631,7 +631,8 @@ void Renderer::renderText(std::string _text, float _x, float _y)
 
 void Renderer::loadTexture(std::string _path, GLuint &_texture)
 {
-    SDL_Surface *surface = SDL_LoadBMP(_path.c_str());
+    //SDL_Surface *surface = SDL_LoadBMP(_path.c_str());
+    SDL_Surface *surface = IMG_Load(_path.c_str());
 
     glGenTextures(1, &_texture);
     glBindTexture(GL_TEXTURE_2D,_texture);
@@ -639,6 +640,8 @@ void Renderer::loadTexture(std::string _path, GLuint &_texture)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, 3, nearestPowerOfTwo(surface->w), nearestPowerOfTwo(surface->h),
                  0, GL_BGR, GL_UNSIGNED_BYTE, surface->pixels);
+
+    //glGenerateMipmap(GL_TEXTURE_2D);
 
     //std::cout << "number of colours: " << (int) lena->format->BytesPerPixel << std::endl;
 
@@ -706,7 +709,7 @@ void Renderer::renderImage(float _width, float _height, GLuint _texture)
     //glEnable(GL_BLEND);
     //glDisable(GL_DEPTH_TEST);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glBindTexture(GL_TEXTURE_2D, _texture);
+    glBindTexture(GL_TEXTURE_2D, _texture);
     //vao->bind();;
     vao->draw();
     //vao->unbind();

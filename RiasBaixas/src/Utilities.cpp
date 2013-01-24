@@ -61,6 +61,10 @@ void Utilities::readPlayerInput(PlayerControls &_playerControls, playerOptions &
                 _playerOptions.debugMode = 2;
                 break;
 
+                case SDLK_3:
+                _playerOptions.debugMode = 3;
+                break;
+
                 case SDLK_PAUSE:
                 _playerOptions.pause = !_playerOptions.pause;
                 break;
@@ -156,7 +160,7 @@ void Utilities::setCamera(CameraManager &_cameraManager, const Renderer &_render
 
 }
 
-void Utilities::regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_lastStartingSecond, int &_fps)
+void Utilities::regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_lastStartingSecond, int &_fps, int max_fps)
 {
     //calculate current frames per second
     if (SDL_GetTicks()-_lastStartingSecond > 1000)
@@ -169,7 +173,7 @@ void Utilities::regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_
         ++_frameCounter;
 
     //Adjust frames per second
-    //if (1000/GAMEMANAGER_FPS>(SDL_GetTicks()-_startingTick))
-    //    SDL_Delay(1000/GAMEMANAGER_FPS-(SDL_GetTicks()-_startingTick));
+    if (1000/max_fps>(SDL_GetTicks()-_startingTick))
+        SDL_Delay(1000/max_fps-(SDL_GetTicks()-_startingTick));
 
 }
