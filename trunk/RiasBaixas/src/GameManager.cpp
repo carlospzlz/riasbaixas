@@ -22,10 +22,10 @@
 #include "BSpherePE.h"
 #include "Utilities.h"
 
-#define GAMEMANAGER_FPS 30
-
 int main()
 {
+
+    static const int GAMEMANAGER_FPS = 30;
 
     //NEEDED OBJECTS
     Renderer myRenderer;
@@ -99,7 +99,7 @@ int main()
             myRenderer.render(myObjectManager.sea(),myObjectManager.objects(),*myCameraManager.getCurrentCamera(),myPlayerOptions.debugMode);
         }
 
-        myUtilities.regulateFPS(startingTick, frameCounter, lastStartingSecond, fps);
+        myUtilities.regulateFPS(startingTick, frameCounter, lastStartingSecond, fps, GAMEMANAGER_FPS);
 
         std::cout << "WORKING AT "<< fps <<" FPS" << std::endl;
 

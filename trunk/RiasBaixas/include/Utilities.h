@@ -50,7 +50,7 @@ public:
     /**
      * @brief regulates the frames per second rate of the game play
      */
-    void regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_lastStartingSecond, int &_fps);
+    void regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_lastStartingSecond, int &_fps, int max_fps);
 };
 
 #endif // UTILITIES_H
