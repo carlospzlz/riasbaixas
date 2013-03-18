@@ -112,6 +112,8 @@ INCLUDEPATH += $(HOME)/SDL-2.0/include
 LIBS += -L$(HOME)/SDL-2.0/lib -lSDL2
 LIBS += -L$(HOME)/SDL-2.0/lib -lSDL2_ttf
 LIBS += -L$(HOME)/SDL-2.0/lib -lSDL2_image
+DEFINES += LINUX
+LIBS+= -lGLEW
 
 
 ########################################

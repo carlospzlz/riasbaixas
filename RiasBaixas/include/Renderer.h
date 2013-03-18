@@ -117,6 +117,7 @@ private:
     /**
      * @brief render text on the screen (in construction)
      */
+    void testText();
     void loadTexture(std::string _path, GLuint &_texture);
     /**
      * @brief render a plane image 2D on the screen (in construction)
