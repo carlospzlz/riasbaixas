@@ -127,10 +127,10 @@ void Renderer::initGLContext()
     prim->createSphere("bSphere",1.0,10);
 
     //LOADING FONT TO RENDER TEXT
-    loadFont("fonts/arial.ttf",22);
+    loadFont("fonts/FreeSans.ttf",22);
 
     //LOAD TEST TEXTURES
-    loadTexture("textures/speedboat.jpg", m_lena);
+    loadTexture("images/A.png", m_lena);
     prim->createTrianglePlane("plane",1,1,1,1,ngl::Vec3(0,1,0));
 
 }
@@ -297,6 +297,8 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
         //renderText("hello World",m_windowWidth/2,m_windowHeight/2);
         renderImage(30,30,m_lena);
         primitives->draw("plane");
+        //testText();
+        //renderText("hello world!",0,0);
     }
 
     SDL_GL_SwapWindow(m_window);
@@ -455,7 +457,7 @@ bool Renderer::loadFont(std::string _fontFile, int _size)
         fontWidth = glyph->w;
         fontWidthPow2 = nearestPowerOfTwo(fontWidth);
 
-        //billboardSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,fontWidth,fontHeight,32,0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+        billboardSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,fontWidth,fontHeight,32,0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
         billboardSurface = glyph;
         nOfColours = billboardSurface->format->BytesPerPixel;
 
@@ -629,6 +631,39 @@ void Renderer::renderText(std::string _text, float _x, float _y)
     glEnable(GL_DEPTH_TEST);
 }
 
+void Renderer::testText()
+{
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC1_ALPHA);
+
+    std::cout << "testing alphabet: " << m_font.size() << std::endl;
+
+    fontChar fc = m_font['B'];
+    glBindTexture(GL_TEXTURE, fc.textureID);
+    fc.billboard->bind();
+    fc.billboard->draw();
+
+   /* fc = m_font['B'];
+    glBindTexture(GL_TEXTURE, fc.textureID);
+    fc.billboard->bind();
+    fc.billboard->draw();
+
+    fc = m_font['C'];
+    glBindTexture(GL_TEXTURE, fc.textureID);
+    fc.billboard->bind();
+    fc.billboard->draw();
+
+    fc = m_font['D'];
+    glBindTexture(GL_TEXTURE, fc.textureID);
+    fc.billboard->bind();
+    fc.billboard->draw();*/
+
+    glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+}
+
 void Renderer::loadTexture(std::string _path, GLuint &_texture)
 {
     //SDL_Surface *surface = SDL_LoadBMP(_path.c_str());
@@ -638,10 +673,13 @@ void Renderer::loadTexture(std::string _path, GLuint &_texture)
     glBindTexture(GL_TEXTURE_2D,_texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, nearestPowerOfTwo(surface->w), nearestPowerOfTwo(surface->h),
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, (surface->w), (surface->h),
                  0, GL_BGR, GL_UNSIGNED_BYTE, surface->pixels);
 
-    //glGenerateMipmap(GL_TEXTURE_2D);
+    //THIS WAS THE BLOODY LINE NEEDED, J. MACEY FIXED IT
+    glGenerateMipmap(GL_TEXTURE_2D);
+    //THIS DOES NOT COMPILE AT HOME.. FFFFFFUUU.....
+
 
     //std::cout << "number of colours: " << (int) lena->format->BytesPerPixel << std::endl;
 
@@ -655,8 +693,8 @@ void Renderer::renderImage(float _width, float _height, GLuint _texture)
     // billboard
     ngl::Real s0 = 0.0;
     ngl::Real t0 = 0.0;
-    ngl::Real s1 = _width * 1.0 / nearestPowerOfTwo(_width);
-    ngl::Real t1 = _height * 1.0 / nearestPowerOfTwo(_height);
+    ngl::Real s1 =1; //_width * 1.0 / nearestPowerOfTwo(_width);
+    ngl::Real t1 =1; // _height * 1.0 / nearestPowerOfTwo(_height);
 
     textVertData billboardData[6];
 
@@ -693,28 +731,70 @@ void Renderer::renderImage(float _width, float _height, GLuint _texture)
     billboardData[5].v=t1;
 
     //CREATING THE VAO
+
     ngl::VertexArrayObject *vao = ngl::VertexArrayObject::createVOA(GL_TRIANGLES);
     vao->bind();
     vao->setData(6*sizeof(textVertData),billboardData[0].x);
     vao->setVertexAttributePointer(0,2,GL_FLOAT,sizeof(textVertData),2);
     vao->setNumIndices(6);
-    vao->unbind();
+
+    //TRYING WITH FONTS... ****************************************
+    TTF_Font *font = TTF_OpenFont("fonts/arial.ttf",16  );
+    SDL_Color fontColour = {0xFF, 0xFF, 0xFF};
+    SDL_Color fontBackground = {0x00, 0x00, 0x00};
+
+    //charRenderedSurface = TTF_RenderText_Solid(font,&c,fontColour);
+    //billboardSurface = TTF_RenderUTF8_Blended(font,&c,fontColour);
+    char c = 'T';
+    SDL_Surface* glyph;
+    //glyph = TTF_RenderGlyph_Shaded(font,20,fontColour,fontBackground);
+    //glyph = TTF_RenderText_Solid(font,&c,fontColour);
+    //glyph = TTF_RenderUTF8_Blended(font,&c,fontColour);
+    glyph = TTF_RenderGlyph_Shaded(font,'A',fontColour,fontBackground);
+    //glyph = TTF_RenderText_Blended(font, &c, fontColour);
+    //SDL_Surface* intermediary = SDL_CreateRGBSurface(0, 32, 32, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+    //SDL_BlitSurface(glyph, 0, intermediary, 0);
+
+
+
+    //LOADING TEXTURE
+    // Have OpenGL generate a texture object handle for us
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+
+    // Bind the texture object
+    glBindTexture( GL_TEXTURE_2D, textureID);
+
+    // Set the texture's stretching properties
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Edit the texture object's image data using the information SDL_Surface gives us
+    glTexImage2D( GL_TEXTURE_2D, 0, 3, 16, 25, 0, GL_RGB, GL_UNSIGNED_BYTE, glyph->pixels );
+
+    //glGenerateMipmap(GL_TEXTURE_2D);
+
+    //_texture = textureID;
+
+    //*****************************************************************
 
     //DRAWING VAO
-    //glActiveTexture(0);
-    //ngl::ShaderLib *shader= ngl::ShaderLib::instance();
-    //(*shader)["TextureShader"]->use();
-    //shader->setShaderParam1f("xpos",0);
-    //shader->setShaderParam1f("ypos",0);
-    //glEnable(GL_BLEND);
-    //glDisable(GL_DEPTH_TEST);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glActiveTexture(0);
+    ngl::ShaderLib *shader= ngl::ShaderLib::instance();
+    (*shader)["TextureShader"]->use();
+    shader->setShaderParam1f("xpos",0);
+    shader->setShaderParam1f("ypos",0);
+    glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBindTexture(GL_TEXTURE_2D, _texture);
     //vao->bind();;
     vao->draw();
     //vao->unbind();
     //glDisable(GL_BLEND);
     //glEnable(GL_DEPTH_TEST);
+    vao->unbind();
+
 
     std::cout << "Image rendered" <<std::endl;
 
