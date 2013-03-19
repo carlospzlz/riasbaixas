@@ -81,7 +81,9 @@ private:
      * @brief reusable billboards where to attach the textures of each glyph
      * the font
      */
-    std::map<int, ngl::VertexArrayObject*> m_fontBillboards;
+    std::map<char, GLuint> m_fontCharTexture;
+    ngl::VertexArrayObject *m_billboard;
+
     /**
      * @brief space inbetween lines for the font
      */
@@ -93,7 +95,7 @@ private:
     /**
      * @brief load a specific font in ttf format
      */
-    bool loadFont(std::string _fontFile, int _size);
+    bool loadFont(std::string _fontFile);
     /**
      * @brief calculates the nearest power of two greater than a number
      */
