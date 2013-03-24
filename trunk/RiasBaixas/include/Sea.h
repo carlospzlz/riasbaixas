@@ -21,6 +21,7 @@ class Sea
 {
 
 private:
+    static const int s_width = SEA_WIDTH;
     /**
      * @brief size of the see in the Z axis
      */
@@ -42,6 +43,8 @@ public:
     bool hasMesh() const { return m_mesh; }
     ngl::Obj* getMesh() const { return m_mesh; }
     std::string getPrimName() const { return m_primName; }
+    int getWidth() const { return s_width; }
+
 };
 
 #endif // SEA_H

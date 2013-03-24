@@ -133,28 +133,28 @@ void Utilities::setWindow(Renderer &_renderer, playerOptions &_playerOptions)
 }
 
 
-void Utilities::setCamera(CameraManager &_cameraManager, const Renderer &_renderer, playerOptions &_playerOptions)
+void Utilities::setCamera(CameraSet &_cameraSet, const Renderer &_renderer, playerOptions &_playerOptions)
 {
     if (_playerOptions.resizeWindow)//|| _playerOptions.changeToFullScreen || _playerOptions.restoreWindow)
     {
-        _cameraManager.setShape(_renderer.getWindowWidth(), _renderer.getWindowHeight());
+        _cameraSet.setShape(_renderer.getWindowWidth(), _renderer.getWindowHeight());
         _playerOptions.resizeWindow = false;
     }
 
     if (_playerOptions.backCamera)
     {
-        if (!_cameraManager.isBackCameraActive())
-            _cameraManager.changeToBackCamera();
+        if (!_cameraSet.isBackCameraActive())
+            _cameraSet.changeToBackCamera();
     }
     else
     {
-        if (_cameraManager.isBackCameraActive())
-            _cameraManager.leaveBackCamera();
+        if (_cameraSet.isBackCameraActive())
+            _cameraSet.leaveBackCamera();
     }
 
-    if (_playerOptions.changeCameraPressed && _playerOptions.possibleChangeCamera && !_cameraManager.isBackCameraActive())
+    if (_playerOptions.changeCameraPressed && _playerOptions.possibleChangeCamera && !_cameraSet.isBackCameraActive())
     {
-        _cameraManager.nextCamera();
+        _cameraSet.nextCamera();
         _playerOptions.possibleChangeCamera = false;
     }
 

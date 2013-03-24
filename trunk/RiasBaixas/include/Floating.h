@@ -6,17 +6,18 @@
  * @brief Most basic movement where the force of friction is implemented to recover the initial position
  */
 #include <math.h>
-#include "Controller.h"
+#include "Behaviour.h"
 
 /**
  * @class Floating
  * @brief Most basic movement where the force of friction is implemented to recover the initial position
  */
-class Floating : public Controller
+class Floating : public Behaviour
 {
 
 public:
-    virtual void move();
+    virtual std::string getName() { return "Floating"; }
+    virtual void move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof);
 
 };
 

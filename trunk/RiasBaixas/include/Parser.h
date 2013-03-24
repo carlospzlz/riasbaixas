@@ -5,13 +5,10 @@
  * @file Parser.h
  * @brief this class parses a file and load the needed data for creating the world
  */
-#include "SourceManager.h"
-#include "ControllerManager.h"
-#include "ObjectManager.h"
+#include "SourceStore.h"
 #include "Object.h"
 #include "Sea.h"
-#include "SpeedBoat.h"
-#include "Controller.h"
+#include "Behaviour.h"
 #include "Floating.h"
 #include "Horizontal.h"
 #include "Diagonal.h"
@@ -28,16 +25,11 @@ public:
     /**
      * @brief load the basic sources for starting the game
      */
-    virtual bool loadBasicSources(SourceManager &_sourceManager){};
-    //void loadRadioConversation();
-    /**
-     * @brief load specific sources needed for a level
-     */
-    virtual bool loadLevelSources(int _level, SourceManager &_sourceManager){};
+    virtual bool loadSources(SourceStore &_sourceStore) = 0;
     /**
      * @brief load specific objects for one specific map
      */
-    virtual bool loadMap(int _map, ObjectManager &_objectManager, ControllerManager &_controllerManager, SourceManager &_sourceManager){};
+    virtual bool loadMap(int _map, Sea &_sea, std::vector<Object*> &_objects, SourceStore &_sourceStore) = 0;
 
 };
 

@@ -5,14 +5,14 @@
  * @file Vertical.h
  * @brief movement parallel to the player advance
  */
-#include "Controller.h"
+#include "Behaviour.h"
 
 
 /**
  * @class Vertical
  * @brief movement parallel to the player advance
  */
-class Vertical : public Controller
+class Vertical : public Behaviour
 {
 
 private:
@@ -23,7 +23,8 @@ private:
 
 public:
     Vertical();
-    virtual void move();
+    virtual std::string getName() { return "Vertical"; }
+    virtual void move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof);
 
 };
 

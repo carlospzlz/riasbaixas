@@ -6,7 +6,7 @@
  * @brief this class groups some useful functionalities used by the Game Manager
  */
 #include "PlayerControls.h"
-#include "CameraManager.h"
+#include "CameraSet.h"
 #include "Renderer.h"
 
 /**
@@ -42,7 +42,7 @@ public:
     /**
      * @brief sets the current camera according with the options of the player
      */
-    void setCamera(CameraManager &_cameraManager, const Renderer &_renderer, playerOptions &_playerOptions);
+    void setCamera(CameraSet &_cameraSet, const Renderer &_renderer, playerOptions &_playerOptions);
     /**
      * @brief sets the window according with the options of the player
      */

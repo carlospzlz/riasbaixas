@@ -7,15 +7,9 @@ Diagonal::Diagonal()
     m_quadrant = 1;
 }
 
-void Diagonal::move()
+void Diagonal::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof)
 {
-    ngl::Vec4 position = m_object->getPosition();
-    ngl::Vec4 rotation = m_object->getRotation();
-    float mass = m_object->getMass();
-    float maxSpeed = m_object->getMaxSpeed();
-    float maxCamber = m_object->getMaxCamber();
-    ngl::Vec4 velocity = m_object->getVelocity();
-    ngl::Vec4 angularVelocity;
+    ngl::Vec4 rotation = _transform.getRotation();
 
     m_angle = rotation.m_y;
     m_angle = m_angle % 360;
@@ -23,96 +17,96 @@ void Diagonal::move()
     //FIRST QUADRANT
     if (m_quadrant == 1)
     {
-        if (m_angle > 45-CONTROLLER_ANGULAR_VELOCITY && m_angle < 45+CONTROLLER_ANGULAR_VELOCITY)
-            angularVelocity.m_y = 0;
+        if (m_angle > 45-s_angularVelocity && m_angle < 45+s_angularVelocity)
+            _angularVelocity.m_y = 0;
         else if (m_angle > 45 && m_angle <= 135)
         {
-            angularVelocity.m_y = -CONTROLLER_ANGULAR_VELOCITY;
-            angularVelocity.m_x = CONTROLLER_ANGULAR_VELOCITY;
+            _angularVelocity.m_y = -s_angularVelocity;
+            _angularVelocity.m_x = s_angularVelocity;
         }
         else
         {
-            angularVelocity.m_y = CONTROLLER_ANGULAR_VELOCITY;
-            angularVelocity.m_x = -CONTROLLER_ANGULAR_VELOCITY;
+            _angularVelocity.m_y = s_angularVelocity;
+            _angularVelocity.m_x = -s_angularVelocity;
         }
-        velocity.m_x += m_acceleration.m_x;
-        velocity.m_z -= m_acceleration.m_z;
+        _velocity.m_x += m_acceleration.m_x;
+        _velocity.m_z -= m_acceleration.m_z;
     }
 
     //SECOND QUADRANT
     if (m_quadrant == 2)
     {
-        if (m_angle > 135-CONTROLLER_ANGULAR_VELOCITY && m_angle < 135+CONTROLLER_ANGULAR_VELOCITY)
-            angularVelocity.m_y = 0;
+        if (m_angle > 135-s_angularVelocity && m_angle < 135+s_angularVelocity)
+            _angularVelocity.m_y = 0;
         else if (m_angle > 135 && m_angle < 315)
         {
-            angularVelocity.m_y = -CONTROLLER_ANGULAR_VELOCITY;
-            angularVelocity.m_x = CONTROLLER_ANGULAR_VELOCITY;
+            _angularVelocity.m_y = -s_angularVelocity;
+            _angularVelocity.m_x = s_angularVelocity;
         }
         else
         {
-            angularVelocity.m_y = CONTROLLER_ANGULAR_VELOCITY;
-            angularVelocity.m_x = -CONTROLLER_ANGULAR_VELOCITY;
+            _angularVelocity.m_y = s_angularVelocity;
+            _angularVelocity.m_x = -s_angularVelocity;
         }
-        velocity.m_x -= m_acceleration.m_x;
-        velocity.m_z -= m_acceleration.m_z;
+        _velocity.m_x -= m_acceleration.m_x;
+        _velocity.m_z -= m_acceleration.m_z;
     }
 
     //THIRD QUADRANT
     if (m_quadrant == 3)
     {
-        if (m_angle > 225-CONTROLLER_ANGULAR_VELOCITY && m_angle < 225+CONTROLLER_ANGULAR_VELOCITY)
-            angularVelocity.m_y = 0;
+        if (m_angle > 225-s_angularVelocity && m_angle < 225+s_angularVelocity)
+            _angularVelocity.m_y = 0;
         else if (m_angle > 45 && m_angle < 225)
         {
-            angularVelocity.m_y = CONTROLLER_ANGULAR_VELOCITY;
-            angularVelocity.m_x = -CONTROLLER_ANGULAR_VELOCITY;
+            _angularVelocity.m_y = s_angularVelocity;
+            _angularVelocity.m_x = -s_angularVelocity;
         }
         else
         {
-            angularVelocity.m_y = -CONTROLLER_ANGULAR_VELOCITY;
-            angularVelocity.m_x = CONTROLLER_ANGULAR_VELOCITY;
+            _angularVelocity.m_y = -s_angularVelocity;
+            _angularVelocity.m_x = s_angularVelocity;
         }
-        velocity.m_x -= m_acceleration.m_x;
-        velocity.m_z += m_acceleration.m_z;
+        _velocity.m_x -= m_acceleration.m_x;
+        _velocity.m_z += m_acceleration.m_z;
     }
 
     //FORTH QUADRANT
     if (m_quadrant == 4)
     {
-        if (m_angle > 315-CONTROLLER_ANGULAR_VELOCITY && m_angle < 315+CONTROLLER_ANGULAR_VELOCITY)
-            angularVelocity.m_y = 0;
+        if (m_angle > 315-s_angularVelocity && m_angle < 315+s_angularVelocity)
+            _angularVelocity.m_y = 0;
         else if (m_angle > 135 && m_angle < 315)
         {
-            angularVelocity.m_y = CONTROLLER_ANGULAR_VELOCITY;
-            angularVelocity.m_x = -CONTROLLER_ANGULAR_VELOCITY;
+            _angularVelocity.m_y = s_angularVelocity;
+            _angularVelocity.m_x = -s_angularVelocity;
         }
         else
         {
-            angularVelocity.m_y = -CONTROLLER_ANGULAR_VELOCITY;
-            angularVelocity.m_x = CONTROLLER_ANGULAR_VELOCITY;
+            _angularVelocity.m_y = -s_angularVelocity;
+            _angularVelocity.m_x = s_angularVelocity;
         }
-        velocity.m_x += m_acceleration.m_x;
-        velocity.m_z += m_acceleration.m_z;
+        _velocity.m_x += m_acceleration.m_x;
+        _velocity.m_z += m_acceleration.m_z;
     }
 
     //CLAMPING TO MAXIMUM ROTATION IN X
-    if (rotation.m_x>CONTROLLER_CAMBER || rotation.m_x<-CONTROLLER_CAMBER )
-        angularVelocity.m_x = 0;
+    if (rotation.m_x>s_camber || rotation.m_x<-s_camber )
+        _angularVelocity.m_x = 0;
 
     //RECOVER CAMBER IN X
-    if (angularVelocity.m_y == 0)
+    if (_angularVelocity.m_y == 0)
     {
-        if (rotation.m_x<-CONTROLLER_ANGULAR_VELOCITY)
-               angularVelocity.m_x = CONTROLLER_ANGULAR_VELOCITY;
-        else if ( rotation.m_x>CONTROLLER_ANGULAR_VELOCITY)
-                angularVelocity.m_x = -CONTROLLER_ANGULAR_VELOCITY;
+        if (rotation.m_x < -s_angularVelocity)
+               _angularVelocity.m_x = s_angularVelocity;
+        else if ( rotation.m_x > s_angularVelocity)
+                _angularVelocity.m_x = -s_angularVelocity;
         else
-            angularVelocity.m_x = 0;
+            _angularVelocity.m_x = 0;
     }
 
     //COLLISIONS WITH SEA LIMITS (MODIFY THIS WHEN ADDING DEGREES FO FREEDOM)
-    if (!m_object->getDOF().right)
+    if (!_dof.right)
     {
         if (m_quadrant == 1)
             m_quadrant = 2;
@@ -120,7 +114,7 @@ void Diagonal::move()
             m_quadrant = 3;
     }
 
-    if (!m_object->getDOF().left)
+    if (!_dof.left)
     {
         if (m_quadrant == 2)
             m_quadrant = 1;
@@ -130,21 +124,18 @@ void Diagonal::move()
 
     //CLAMPING
 
-    velocity.m_z = std::max(velocity.m_z, (float)-CONTROLLER_SPEED);
-    velocity.m_z = std::min(velocity.m_z, (float)CONTROLLER_SPEED);
+    _velocity.m_z = std::max(_velocity.m_z, -s_regularSpeed);
+    _velocity.m_z = std::min(_velocity.m_z, s_regularSpeed);
 
-    velocity.m_x = std::max(velocity.m_x, (float)-CONTROLLER_SPEED);
-    velocity.m_x = std::min(velocity.m_x, (float)CONTROLLER_SPEED);
+    _velocity.m_x = std::max(_velocity.m_x, -s_regularSpeed);
+    _velocity.m_x = std::min(_velocity.m_x, s_regularSpeed);
 
     //FLOATING MOVEMENT IN Y
 
-    velocity.m_y = floatingVelocity();
+    _velocity.m_y = floatingVelocity();
 
     //std::cout << "DIAGONAL: { quadrant: " << m_quadrant << ", angle: " << m_angle << "}" << std::endl;
 
-    m_object->setVelocity(velocity);
-    m_object->setAngularVelocity(angularVelocity);
-
-    Controller::move();
-
+    _transform.addPosition(_velocity);
+    _transform.addRotation(_angularVelocity);
 }
