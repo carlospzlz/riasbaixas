@@ -20,14 +20,14 @@ protected:
     /**
      * @brief returns true if there is a collision between two objects
      */
-    virtual bool thereIsCollision(Object &_o1, Object &_o2) { }
+    virtual bool thereIsCollision(const Object &_o1, const Object &_o2) = 0;
 
 public:
     /**
      * @brief checks the collision between two objects; fixing the position,
      * updating the degrees of freedom and calling the collision event for each object
      */
-    virtual void checkCollision(Object *_o1, Object *_o2) { }
+    virtual void checkCollision(Object *_o1, Object *_o2) = 0;
 
 };
 

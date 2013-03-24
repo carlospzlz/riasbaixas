@@ -15,8 +15,6 @@
 
 #include "Parser.h"
 
-#define TXTPARSER_MAPS_PATH "maps/"
-
 /**
  * @class TXTParser
  * @brief specific Parser for .txt files
@@ -27,15 +25,16 @@ class TXTParser : public Parser
     typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
 private:
-    bool loadSea(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager);
-    bool loadMusselFarm(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager);
-    bool loadFisherBoat(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, ControllerManager &_controllerManager, SourceManager &_sourceManager);
-    bool loadController(tokenizer::iterator _currentParameter, ControllerManager &_controllerManager, Object *_object);
+    static const std::string s_mapPath;
+
+    bool loadSea(tokenizer::iterator _currentParameter, Sea &_sea, SourceStore &_sourceStore);
+    bool loadMusselFarm(tokenizer::iterator _currentParameter, std::vector<Object*> &_objects, SourceStore &_sourceStore);
+    bool loadFisherBoat(tokenizer::iterator _currentParameter, std::vector<Object*> &_objects, SourceStore &_sourceStore);
+    bool loadBehaviour(tokenizer::iterator _currentParameter, Behaviour *&_behaviour);
 
 public:
-    bool loadBasicSources(SourceManager &_souceManager);
-    bool loadLevelSources(int _level, SourceManager &_sourceManager);
-    bool loadMap(int _map, ObjectManager &_objectManager, ControllerManager &_controllerManager, SourceManager &_sourceManager);
+    bool loadSources(SourceStore &_sourceStore);
+    bool loadMap(int _map, Sea &_sea, std::vector<Object*> &_objects, SourceStore &_sourceStore);
 };
 
 #endif // TXTPARSER_H

@@ -14,37 +14,20 @@
 #include <ngl/ShaderLib.h>
 #include <ngl/VAOPrimitives.h>
 
+#include "Behaviour.h"
+
 /**
  * @enum objectType
  * @brief the specific type of an object in the context of the sea
  */
-enum  objectType
+enum objectType
 {
     ot_object,
     ot_musselFarm,
-    ot_ramp,
-    ot_stream,
     ot_rock,
     ot_speedBoat,
     ot_policeBoat,
-    ot_fisherBoat,
-    ot_dolphin,
-    ot_seagull
-};
-
-/**
- * @struct degreesOfFreedom
- * @brief specifies the directions an object can move towards in the 3D space,
- * this information is used by the AI module.
- */
-struct degreesOfFreedom
-{
-    bool forward;
-    bool backward;
-    bool left;
-    bool right;
-    bool up;
-    bool down;
+    ot_fisherBoat
 };
 
 /**
@@ -116,11 +99,11 @@ protected:
     /**
      * @brief state of jumping (used by AI)
      */
-    bool m_jumping;
-    /**
-     * @brief state of collided (use by the renderer)
-     */
     bool m_collided;
+    /**
+     * @brief specific behaviour of the object, it determines how the object moves
+     */
+    Behaviour *m_behaviour;
 
 public:
     /**
@@ -130,6 +113,7 @@ public:
     //not needed copy constructor
     //setters
     void activate() { m_active = true; }
+    void setBehaviour(Behaviour *b);
     void setPosition(ngl::Vec4 _pos);
     //void setPreviousPos(ngl::Vec3 _prevPos) { m_previousPos = _prevPos; }
     void setRotation(ngl::Vec4 _rot) { m_transform.setRotation(_rot); }
@@ -144,11 +128,11 @@ public:
     void setMesh(ngl::Obj *_mesh);
     void setPrimName(std::string _prim) { m_primName = _prim; }
     void setDamage(int _dam) { m_damage = _dam; }
-    void setJumping(bool _jump) { m_jumping = _jump; }
     void setCollided(bool _collided) {m_collided = _collided; }
 
     //getters
     bool isActive() const { return m_active; }
+    void update();
     ngl::Transformation getTransform() { return m_transform; }
     ngl::Vec4 getPosition() const { return m_transform.getPosition(); }
     ngl::Vec4 getPreviousPos() const { return m_previousTransform.getPosition(); }
@@ -161,7 +145,6 @@ public:
     std::string getPrimName() const { return m_primName; }
     ngl::Vec4 getVelocity() const { return m_velocity; }
     ngl::Vec4 getAngularVelocity() const { return m_angularVelocity; }
-    bool isJumping() const { return m_jumping; }
     float getMaxSpeed() const { return m_maxSpeed; }
     float getMaxCamber() const { return m_maxCamber; }
     bool hasMesh() const { return m_mesh; }

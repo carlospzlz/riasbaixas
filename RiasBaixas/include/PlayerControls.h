@@ -6,7 +6,7 @@
  * @brief implements the movement of an object according with the user input
  */
 
-#include "Controller.h"
+#include "Behaviour.h"
 
 #define PLAYERCONTROLS_HIGHSPEED 0.25
 #define PLAYERCONTROLS_HIGHSPEED_X 0.2
@@ -19,9 +19,17 @@
  * @class PlayerControls
  * @brief implements the movement of an object according with the user input
  */
-class PlayerControls : public Controller
+class PlayerControls : public Behaviour
 {
 private:
+
+    const static float s_highSpeedZ;
+    const static float s_highSpeedX;
+    const static float s_emersionHigh;
+    const static float s_lateralStreamForce;
+    const static float s_amplitudeBouncing;
+    const static float s_frecuencyBouncing;
+
     /**
      * @brief the movement goes towards the left
      */
@@ -65,10 +73,11 @@ private:
 
 public:
     PlayerControls();
+    virtual std::string getName() { return "PlayerControls"; }
     void setLeft(bool _pressed) { m_left = _pressed; }
     void setRight(bool _pressed) { m_right = _pressed; }
     void setSpeedUp(bool _pressed) { m_speedUp = _pressed; }
-    virtual void move();
+    virtual void move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof);
 };
 
 #endif // PLAYERCONTROLS_H

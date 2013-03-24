@@ -1,21 +1,21 @@
 #include "TXTParser.h"
 
-bool TXTParser::loadBasicSources(SourceManager &_souceManager)
-{
+const std::string TXTParser::s_mapPath = "maps/";
 
+bool TXTParser::loadSources(SourceStore &_sourceStore)
+{
+    _sourceStore.addMesh("speedboat", new ngl::Obj("models/speedboat.obj","textures/speedboat.jpg"));
+    _sourceStore.addMesh("sea", new ngl::Obj("models/sea.obj","textures/sea.png"));
+    _sourceStore.addMesh("musselFarm", new ngl::Obj("models/musselFarm.obj","textures/musselFarm.jpg"));
+    _sourceStore.addMesh("fisherBoat", new ngl::Obj("models/fisherBoat.obj","textures/fisherBoat.jpg"));
 }
 
-bool TXTParser::loadLevelSources(int _level, SourceManager &_sourceManager)
-{
-
-}
-
-bool TXTParser::loadMap(int _map, ObjectManager &_objectManager, ControllerManager &_controllerManager, SourceManager &_sourceManager)
+bool TXTParser::loadMap(int _map, Sea &_sea, std::vector<Object*> &_objects, SourceStore &_sourceStore)
 {
 
     std::ifstream mapFile;
     std::ostringstream path;
-    path << TXTPARSER_MAPS_PATH << "map" << _map;
+    path << s_mapPath << "map" << _map;
 
     std::cout << "Loading map " << path.str() << " ..." << std::endl;
     mapFile.open(path.str().c_str(),std::ifstream::in);
@@ -41,21 +41,21 @@ bool TXTParser::loadMap(int _map, ObjectManager &_objectManager, ControllerManag
 
             if (*currentToken == "Sea")
             {
-                if (loadSea(currentToken, _objectManager, _sourceManager))
+                if (loadSea(currentToken, _sea, _sourceStore))
                     std::cout <<"TXTParser: in line " << lineNumber << ": Sea loaded" << std::endl;
                 else
                     std::cout << "TXTParser: in line " << lineNumber << ": EXCEPTION: when loading Sea" << std::endl;
             }
             else if (*currentToken == "MusselFarm")
             {
-                if (loadMusselFarm(currentToken, _objectManager, _sourceManager))
+                if (loadMusselFarm(currentToken, _objects, _sourceStore))
                     std::cout <<"TXTParser: in line " << lineNumber << ": MusselFarm loaded" << std::endl;
                 else
                     std::cout << "TXTParser: in line " << lineNumber << ": EXCEPTION: when loading MusselFarm" << std::endl;
             }
             else if (*currentToken == "FisherBoat")
             {
-                if (loadFisherBoat(currentToken, _objectManager, _controllerManager, _sourceManager))
+                if (loadFisherBoat(currentToken, _objects, _sourceStore))
                     std::cout <<"TXTParser: in line " << lineNumber << ": FisherBoat loaded" << std::endl;
                 else
                     std::cout << "TXTParser: in line " << lineNumber << ": EXCEPTION: when loading FisherBoat" << std::endl;
@@ -69,16 +69,14 @@ bool TXTParser::loadMap(int _map, ObjectManager &_objectManager, ControllerManag
     return true;
 }
 
-bool TXTParser::loadSea(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager)
+bool TXTParser::loadSea(tokenizer::iterator _currentParameter, Sea &_sea, SourceStore &_sourceStore)
 {
    try
    {
         float depth = boost::lexical_cast<float>(*++_currentParameter);
 
-        Sea* sea = new Sea();
-        sea->setDepth(depth);
-        sea->setMesh(_sourceManager.getMesh("sea"));
-        _objectManager.setSea(sea);
+        _sea.setDepth(depth);
+        _sea.setMesh(_sourceStore.getMesh("sea"));
     }
     catch (...)
     {
@@ -87,7 +85,7 @@ bool TXTParser::loadSea(tokenizer::iterator _currentParameter, ObjectManager &_o
     return true;
 }
 
-bool TXTParser::loadMusselFarm(tokenizer::iterator _currentParameter, ObjectManager &_objectManager, SourceManager &_sourceManager)
+bool TXTParser::loadMusselFarm(tokenizer::iterator _currentParameter, std::vector<Object*> &_objects, SourceStore &_sourceStore)
 {
     try
     {
@@ -97,10 +95,10 @@ bool TXTParser::loadMusselFarm(tokenizer::iterator _currentParameter, ObjectMana
 
         Object *musselFarm = new Object();
         musselFarm->setType(ot_musselFarm);
-        musselFarm->setMesh(_sourceManager.getMesh("musselFarm"));
+        musselFarm->setMesh(_sourceStore.getMesh("musselFarm"));
         musselFarm->setMass(0);
         musselFarm->setPosition(ngl::Vec4(x,y,z,1));
-        _objectManager.addObject(musselFarm);
+        _objects.push_back(musselFarm);
     }
     catch (...)
     {
@@ -109,8 +107,7 @@ bool TXTParser::loadMusselFarm(tokenizer::iterator _currentParameter, ObjectMana
     return true;
 }
 
-bool TXTParser::loadFisherBoat(tokenizer::iterator _currentParameter, ObjectManager &_objectManager,
-                               ControllerManager &_controllerManager, SourceManager &_sourceManager)
+bool TXTParser::loadFisherBoat(tokenizer::iterator _currentParameter, std::vector<Object*> &_objects, SourceStore &_sourceStore)
 {
     try
     {
@@ -119,15 +116,18 @@ bool TXTParser::loadFisherBoat(tokenizer::iterator _currentParameter, ObjectMana
         float z = boost::lexical_cast<float>(*++_currentParameter);
 
         Object *fisherBoat = new Object();
-        fisherBoat->setMesh(_sourceManager.getMesh("fisherBoat"));
+        fisherBoat->setMesh(_sourceStore.getMesh("fisherBoat"));
         fisherBoat->setPosition(ngl::Vec4(x,y,z,1));
         fisherBoat->setType(ot_fisherBoat);
         fisherBoat->setPrimName("teapot");
 
-        if (!loadController(_currentParameter,_controllerManager,fisherBoat))
+        Behaviour *behaviour;
+        if (!loadBehaviour(_currentParameter, behaviour))
             return false;
 
-        _objectManager.addObject(fisherBoat);
+        fisherBoat->setBehaviour(behaviour);
+        _objects.push_back(fisherBoat);
+        //fisherBoat->info();
     }
     catch (...)
     {
@@ -136,34 +136,31 @@ bool TXTParser::loadFisherBoat(tokenizer::iterator _currentParameter, ObjectMana
     return true;
 }
 
-bool TXTParser::loadController(tokenizer::iterator _currentParameter, ControllerManager &_controllerManager, Object *_object)
+bool TXTParser::loadBehaviour(tokenizer::iterator _currentParameter, Behaviour *&_behaviour)
 {
     try
     {
-        std::string controllerName = boost::lexical_cast<std::string>(*++_currentParameter);
-        Controller *controller;
+        std::string behaviourName = boost::lexical_cast<std::string>(*++_currentParameter);
 
-        if (controllerName == "Floating")
+        if (behaviourName == "Floating")
         {
-            controller = new Floating();
-            _object->setRotation(ngl::Vec4(0,rand()%360,0,1));
+            _behaviour = new Floating();
+            //_object->setRotation(ngl::Vec4(0,rand()%360,0,1));
         }
-        else if (controllerName == "Horizontal")
+        else if (behaviourName == "Horizontal")
         {
-            controller = new Horizontal();
+            _behaviour = new Horizontal();
         }
-        else if (controllerName == "Vertical")
+        else if (behaviourName == "Vertical")
         {
-            controller = new Vertical();
-            _object->setRotation(ngl::Vec4(0,-90,0));
+            _behaviour = new Vertical();
+            //_object->setRotation(ngl::Vec4(0,-90,0));
         }
-            else if (controllerName == "Diagonal")
+            else if (behaviourName == "Diagonal")
         {
-        controller = new Diagonal();
+            _behaviour = new Diagonal();
         }
 
-        controller->setControlledObject(_object);
-        _controllerManager.addController(controller);
     }
     catch (...)
     {

@@ -5,13 +5,13 @@
  * @file Horizontal.h
  * @brief movement of a crossing boat from side to side on the sea
  */
-#include "Controller.h"
+#include "Behaviour.h"
 
 /**
  * @class Horizontal
  * @brief represents the movement of a crossing boat on the sea
  */
-class Horizontal : public Controller
+class Horizontal : public Behaviour
 {
 
 private:
@@ -22,7 +22,8 @@ private:
 
 public:
     Horizontal();
-    virtual void move();
+    virtual std::string getName() { return "Horizontal"; }
+    virtual void move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof);
 
 };
 

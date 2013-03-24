@@ -5,13 +5,13 @@
  * @file Diagonal.h
  * @brief diagonal movement on the sea
  */
-#include "Controller.h"
+#include "Behaviour.h"
 
 /**
  * @class Diagonal
  * @brief Behaviour of diagonal movement on the sea
  */
-class Diagonal : public Controller
+class Diagonal : public Behaviour
 {
 
 private:
@@ -27,6 +27,7 @@ private:
 
 public:
     Diagonal();
-    virtual void move();
+    virtual std::string getName() { return "Diagonal"; }
+    virtual void move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof);
 };
 #endif // DIAGONAL_H

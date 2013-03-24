@@ -13,45 +13,39 @@ HEADERS += \
     include/Renderer.h \
     include/SpeedBoat.h \
     include/Sea.h \
-    include/Controller.h \
     include/Floating.h \
-    include/Stream.h \
-    include/Ramp.h \
     include/PlayerControls.h \
-    include/CameraManager.h \
     include/Object.h \
-    include/SourceManager.h \
-    include/ObjectManager.h \
     include/Parser.h \
     include/Diagonal.h \
     include/PoliceBoat.h \
     include/Horizontal.h \
     include/Vertical.h \
-    include/ControllerManager.h \
     include/TXTParser.h \
     include/PhysicsEngine.h \
     include/BSpherePE.h \
-    include/Utilities.h
+    include/Utilities.h \
+    include/CameraSet.h \
+    include/Behaviour.h \
+    include/SourceStore.h
 
 SOURCES += \
     src/SpeedBoat.cpp \
     src/Renderer.cpp \
-    src/GameManager.cpp \
     src/Sea.cpp \
-    src/Controller.cpp \
     src/Floating.cpp \
     src/PlayerControls.cpp \
-    src/CameraManager.cpp \
     src/Object.cpp \
-    src/SourceManager.cpp \
-    src/ObjectManager.cpp \
     src/Diagonal.cpp \
     src/Horizontal.cpp \
     src/Vertical.cpp \
-    src/ControllerManager.cpp \
     src/TXTParser.cpp \
     src/BSpherePE.cpp \
-    src/Utilities.cpp
+    src/Utilities.cpp \
+    src/Game.cpp \
+    src/CameraSet.cpp \
+    src/Behaviour.cpp \
+    src/SourceStore.cpp
 
 
 ###################

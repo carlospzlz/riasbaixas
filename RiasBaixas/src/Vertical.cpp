@@ -5,31 +5,28 @@ Vertical::Vertical()
     m_goingForward = false;
 }
 
-void Vertical::move()
+void Vertical::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof)
 {
-    ngl::Vec4 velocity = m_object->getVelocity();
 
     if (m_goingForward)
-        velocity.m_z -= CONTROLLER_MOTOR_FORCE;
+        _velocity.m_z -= s_motorForce;
     else
-        velocity.m_z += CONTROLLER_MOTOR_FORCE;
+        _velocity.m_z += s_motorForce;
 
-    velocity.m_z = std::max(velocity.m_z, (float)-CONTROLLER_SPEED);
-    velocity.m_z = std::min(velocity.m_z, (float)CONTROLLER_SPEED);
+    _velocity.m_z = std::max(_velocity.m_z, -s_regularSpeed);
+    _velocity.m_z = std::min(_velocity.m_z, s_regularSpeed);
 
     //Friction force in Z
-    if (velocity.m_x < -CONTROLLER_FRICTION_FORCE)
-        velocity.m_x += CONTROLLER_FRICTION_FORCE;
-    else if (velocity.m_x > CONTROLLER_FRICTION_FORCE)
-        velocity.m_x -= CONTROLLER_FRICTION_FORCE;
+    if (_velocity.m_x < -s_frictionForce)
+        _velocity.m_x += s_frictionForce;
+    else if (_velocity.m_x > s_frictionForce)
+        _velocity.m_x -= s_frictionForce;
     else
-        velocity.m_x = 0;
+        _velocity.m_x = 0;
 
     //Floating in Y
-    velocity.m_y = floatingVelocity();
+    _velocity.m_y = floatingVelocity();
 
-    m_object->setVelocity(velocity);
-
-    Controller::move();
+    _transform.addPosition(_velocity);
 
 }

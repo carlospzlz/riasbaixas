@@ -127,10 +127,10 @@ void Renderer::initGLContext()
     prim->createSphere("bSphere",1.0,10);
 
     //LOADING FONT TO RENDER TEXT
-    loadFont("gameFont");
+    //loadFont("gameFont");
 
     //LOAD TEST TEXTURES
-    loadTexture("gameFont/A.jpg", m_lena);
+    loadTexture("images/lena.jpg", m_lena);
     prim->createTrianglePlane("plane",1,1,1,1,ngl::Vec3(0,1,0));
 
 }
@@ -293,16 +293,17 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
         //transform.setPosition(0,0,_cam.getEye().m_z-10);
         //transform.setRotation(90,0,0);
         //transform.setScale(5,5,5);
-        //loadMVPToShader(transform,_cam);
+        loadMVPToShader(transform,_cam);
         //renderText("hello World",m_windowWidth/2,m_windowHeight/2);
-        renderImage(1,1,m_lena);
-        ngl::Transformation t;
-        t.reset();
-        t.setPosition(0,0,_cam.getEye().m_z-10);
-        t.setRotation(90,0,0);
+        //renderImage(1,1,m_lena);
+        //ngl::Transformation t;
+        //t.reset();
+        //t.setPosition(0,0,_cam.getEye().m_z-10);
+        //t.setRotation(90,0,0);
 
-        loadMatricesToShader(t,_cam);
-        primitives->draw("plane");
+        //loadMatricesToShader(t,_cam);
+        //primitives->draw("plane");
+        primitives->draw("troll");
         //testText();
         //renderText("hello world!",0,0);
         //renderText("ABCD",0,0);
@@ -311,6 +312,35 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
     SDL_GL_SwapWindow(m_window);
 
 }
+
+/*void Renderer::renderRadioConversation(RadioConversation *_rc, ngl::Camera &_cam)
+{
+    if (!_rc)
+    {
+        std::cout << "Printing radio conversation..." << std::endl;
+        ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
+        ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+        ngl::Transformation t;
+
+        (*shader)["TextureShader"]->use();
+        //shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
+
+        t.setPosition(0,3,_cam.getEye().m_z-5);
+        t.setRotation(45,0,0);
+        loadMVPToShader(t,_cam);
+        glBindTexture(GL_TEXTURE_2D, m_lena);
+        prim->draw("plane");
+
+        t.setPosition(1,3,_cam.getEye().m_z-5);
+        loadMVPToShader(t,_cam);
+        glBindTexture(GL_TEXTURE_2D, m_lena);
+        prim->draw("plane");
+
+
+        SDL_GL_SwapWindow(m_window);
+
+    }
+}*/
 
 inline void Renderer::loadMatricesToShader(ngl::Transformation &_transform, ngl::Camera &_cam)
 {
