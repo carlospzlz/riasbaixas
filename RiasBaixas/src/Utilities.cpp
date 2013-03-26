@@ -25,7 +25,7 @@ void Utilities::readPlayerInput(PlayerControls &_playerControls, playerOptions &
                 if (_isfullScreen)
                     _playerOptions.restoreWindow = true;
                 else
-                    _playerOptions.running = false;
+                    _playerOptions.changeState = true;
                 }
                 break;
 

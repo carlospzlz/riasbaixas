@@ -27,12 +27,28 @@ GameState *GamePlay::run(Renderer &_renderer)
     myObjects.push_back(mySpeedBoat);
 
     //LOADING THE NEMESIS: THE POLICEBOAT
-    PoliceBoat* myPoliceBoat = new PoliceBoat();
-    myPoliceBoat->setPosition(ngl::Vec4(-4,0.3,-375));
-    myPoliceBoat->setBehaviour(new Floating());
-    myPoliceBoat->setMesh(mySourceStore.getMesh("policeboat"));
-    myPoliceBoat->setSpeedBoat(mySpeedBoat);
-    myObjects.push_back(myPoliceBoat);
+    PoliceBoat* myPoliceBoat1 = new PoliceBoat();
+    myPoliceBoat1->setPosition(ngl::Vec4(-4,0.3,-375));
+    myPoliceBoat1->setBehaviour(new Floating());
+    myPoliceBoat1->setMesh(mySourceStore.getMesh("policeboat"));
+    myPoliceBoat1->setSpeedBoat(mySpeedBoat);
+    myObjects.push_back(myPoliceBoat1);
+
+    //LOADING TWO MORE POLICEBOATS
+    PoliceBoat* myPoliceBoat2 = new PoliceBoat();
+    myPoliceBoat2->setPosition(ngl::Vec4(6,0.3,-825));
+    myPoliceBoat2->setBehaviour(new Floating());
+    myPoliceBoat2->setMesh(mySourceStore.getMesh("policeboat"));
+    myPoliceBoat2->setSpeedBoat(mySpeedBoat);
+    myObjects.push_back(myPoliceBoat2);
+
+    PoliceBoat* myPoliceBoat3 = new PoliceBoat();
+    myPoliceBoat3->setPosition(ngl::Vec4(-6,0.3,-950));
+    myPoliceBoat3->setBehaviour(new Floating());
+    myPoliceBoat3->setMesh(mySourceStore.getMesh("policeboat"));
+    myPoliceBoat3->setSpeedBoat(mySpeedBoat);
+    myObjects.push_back(myPoliceBoat3);
+
 
     //LOADING AND LINKING CAMERAS
     myCameraSet.loadCameras(_renderer.getWindowWidth(),_renderer.getWindowHeight());
@@ -45,10 +61,10 @@ GameState *GamePlay::run(Renderer &_renderer)
     Uint32 startingTick;
     int frameCounter = 0;
     Uint32 lastStartingSecond = SDL_GetTicks();
-    int currentFPS;
+    int currentFPS = 0;
 
     //GAME LOOP
-    while (myPlayerOptions.running)
+    while (myPlayerOptions.running && !myPlayerOptions.changeState)
     {
         startingTick = SDL_GetTicks();
 
@@ -81,8 +97,10 @@ GameState *GamePlay::run(Renderer &_renderer)
 
     releaseMemory(myObjects);
 
-    _renderer.fadeOut();
+    if (!myPlayerOptions.running)
+        return NULL;
 
+    _renderer.fadeOut();
     return (new GameMenu());
 }
 
