@@ -13,13 +13,6 @@
 #include <ngl/Transformation.h>
 #include "Sea.h"
 
-#define CONTROLLER_FRICTION_FORCE 0.001
-#define CONTROLLER_SPEED 0.1
-#define CONTROLLER_MOTOR_FORCE 0.005
-#define CONTROLLER_FLOATING_AMPLITUDE 0.008
-#define CONTROLLER_FLOATING_FRECUENCY M_PI/40
-#define CONTROLLER_ANGULAR_VELOCITY 2
-#define CONTROLLER_CAMBER 30
 
 /**
  * @struct degreesOfFreedom
@@ -46,8 +39,8 @@ class Behaviour
 
 private:
 
-    const static float s_floatingAmplitude;
-    const static float s_floatingFrequency;
+    float m_floatingAmplitude;
+    float m_floatingFrequency;
 
 
     /**
@@ -77,20 +70,16 @@ private:
 
 protected:
 
-    const static float s_frictionForce;
-    const static float s_regularSpeed;
-    const static float s_motorForce;
-    const static float s_angularVelocity;
-    const static float s_camber;
+    float m_frictionForce;
+    float m_regularSpeed;
+    float m_motorForce;
+    float m_angularVelocity;
+    float m_maxCamber;
 
     /**
      * @brief acceleration calculate from a = F*m when the controlled object is set
      */
     ngl::Vec4 m_acceleration;
-    /**
-     * @brief acceleration calculate from a = F*m when the controlled object is set
-     */
-    ngl::Vec4 m_camber;
     /**
      * @brief calculate the floating velocity in Y
      */
@@ -107,6 +96,15 @@ public:
      * @brief method which sets the acceleration according with the object this behaviour belongs to
      */
     void setAcceleration(float _mass);
+
+    void setFloatingAmplitude(float _fa) { m_floatingAmplitude = _fa; }
+    void setFloatingFrequency(float _ff) { m_floatingFrequency = _ff; }
+    void setFrictionForce(float _ff) { m_frictionForce = _ff; }
+    void setRegularSpeed(float _rs) { m_regularSpeed = _rs; }
+    void setMotorForce(float _mf) { m_motorForce = _mf; }
+    void setAngularVelocity(float _av) {m_angularVelocity = _av; }
+    void setMaxCamber(float _mc) { m_maxCamber = _mc; }
+
     /**
      * @brief method which moves the object and where the AI takes place
      */

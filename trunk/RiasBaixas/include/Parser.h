@@ -13,6 +13,7 @@
 #include "Horizontal.h"
 #include "Diagonal.h"
 #include "Vertical.h"
+#include "PlayerControls.h"
 
 /**
  * @class Parser
@@ -20,6 +21,10 @@
  */
 class Parser
 {
+
+protected:
+    const static std::string s_mapsPath;
+    const static std::string s_behaviourParametersPath;
 
 public:
     /**
@@ -30,6 +35,11 @@ public:
      * @brief load specific objects for one specific map
      */
     virtual bool loadMap(int _map, Sea &_sea, std::vector<Object*> &_objects, SourceStore &_sourceStore) = 0;
+
+    /**
+     * @brief load parameters of the specific behaviour PlayerControls
+     */
+    virtual bool loadPlayerControlsParameters(PlayerControls *_playerControls) = 0;
 
 };
 

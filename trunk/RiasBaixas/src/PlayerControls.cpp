@@ -1,12 +1,12 @@
 #include <PlayerControls.h>
 
 
-const float PlayerControls::s_highSpeedZ = 0.6;
-const float PlayerControls::s_highSpeedX = 0.2;
-const float PlayerControls::s_emersionHigh = 0.2;
-const float PlayerControls::s_lateralStreamForce = 0.03;
-const float PlayerControls::s_amplitudeBouncing = 0.008;
-const float PlayerControls::s_frecuencyBouncing = M_PI/60;
+//const float PlayerControls::m_highSpeedZ = 0.6;
+//const float PlayerControls::s_highSpeedX = 0.2;
+//const float PlayerControls::s_emersionHigh = 0.2;
+//const float PlayerControls::s_lateralStreamForce = 0.03;
+//const float PlayerControls::s_amplitudeBouncing = 0.008;
+//const float PlayerControls::s_frecuencyBouncing = M_PI/60;
 
 PlayerControls::PlayerControls()
 {
@@ -26,10 +26,9 @@ void PlayerControls::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity,
 
     float maxSpeed;
     if (m_speedUp)
-        maxSpeed = s_highSpeedZ;
+        maxSpeed = m_highSpeedZ;
     else
-        maxSpeed = s_regularSpeed;
-
+        maxSpeed = m_regularSpeed;
 
     ngl::Vec4 position = _transform.getPosition();
     ngl::Vec4 rotation = _transform.getRotation();
@@ -39,22 +38,22 @@ void PlayerControls::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity,
     {
         //comber left
          _velocity.m_x += -m_acceleration.m_x;
-         _angularVelocity.m_y = s_angularVelocity;
-         _angularVelocity.m_x = -s_angularVelocity;
+         _angularVelocity.m_y = m_angularVelocity;
+         _angularVelocity.m_x = -m_angularVelocity;
         }
 
     if (m_right && !m_left)
     {
         //comber right
         _velocity.m_x += m_acceleration.m_x;
-        _angularVelocity.m_y = -s_angularVelocity;
-        _angularVelocity.m_x = s_angularVelocity;
+        _angularVelocity.m_y = -m_angularVelocity;
+        _angularVelocity.m_x = m_angularVelocity;
     }
 
 
-    if (rotation.m_x > s_camber || rotation.m_x < -s_camber)
+    if (rotation.m_x > m_maxCamber || rotation.m_x < -m_maxCamber)
         _angularVelocity.m_x = 0;
-    if (rotation.m_y > 90+ s_camber || (rotation.m_y < 90 -s_camber))
+    if (rotation.m_y > 90+ m_maxCamber || (rotation.m_y < 90 -m_maxCamber))
         _angularVelocity.m_y = 0;
 
 
@@ -73,32 +72,32 @@ void PlayerControls::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity,
 
          //recover comber in Y
          if (rotation.m_y < 90)
-             _angularVelocity.m_y = s_angularVelocity;
+             _angularVelocity.m_y = m_angularVelocity;
          else if (rotation.m_y > 90)
-             _angularVelocity.m_y = -s_angularVelocity;
+             _angularVelocity.m_y = -m_angularVelocity;
          else
              _angularVelocity.m_y = 0;
 
          //recover comber in X
          if (rotation.m_x > 0)
-             _angularVelocity.m_x = -s_angularVelocity;
+             _angularVelocity.m_x = -m_angularVelocity;
          else if (rotation.m_x < 0)
-             _angularVelocity.m_x = s_angularVelocity;
+             _angularVelocity.m_x = m_angularVelocity;
          else
              _angularVelocity.m_x = 0;
     }
 
     //campling velocity in x
-    _velocity.m_x = std::min(_velocity.m_x, s_highSpeedX);
-    _velocity.m_x = std::max(_velocity.m_x, -s_highSpeedX);
+    _velocity.m_x = std::min(_velocity.m_x, m_highSpeedX);
+    _velocity.m_x = std::max(_velocity.m_x, -m_highSpeedX);
 
     //DECIDE IF LATERAL STREAM FORCES OR THE BOAT STOP IN DRY
     //if ( (_transform.getPosition().m_x<-SEA_WIDTH/2.0 && m_left) || (_transform.getPosition().m_x>SEA_WIDTH/2.0 && m_right) || (m_left && m_right))
     //    _vel.m_x = 0;
     if ( position.m_x < -SEA_WIDTH/2.0 )
-       _velocity.m_x += s_lateralStreamForce;
+       _velocity.m_x += m_lateralStreamForce;
     if ( position.m_x > SEA_WIDTH/2.0 )
-       _velocity.m_x -= s_lateralStreamForce;
+       _velocity.m_x -= m_lateralStreamForce;
 
 
     //MOVING IN Y
@@ -116,8 +115,8 @@ void PlayerControls::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity,
     if (m_emerging)
     {
         _velocity.m_y += m_acceleration.m_y;
-        _velocity.m_y = std::min(_velocity.m_y, s_regularSpeed);
-        if (position.m_y > s_emersionHigh)
+        _velocity.m_y = std::min(_velocity.m_y, m_regularSpeed);
+        if (position.m_y > m_emersionHeight)
         {
             m_emerging = false;
             m_bouncing = true;
@@ -133,7 +132,7 @@ void PlayerControls::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity,
 
     if (m_bouncing)
     {
-        _velocity.m_y = s_amplitudeBouncing*std::sin(s_frecuencyBouncing*m_ticksBouncing);
+        _velocity.m_y = m_bouncingAmplitude*std::sin(m_bouncingFrequency*m_ticksBouncing);
          ++m_ticksBouncing;
         if (!m_speedUp)
         {
@@ -144,8 +143,8 @@ void PlayerControls::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity,
 
     if (m_immersing)
     {
-       _velocity.m_y -= s_frictionForce;
-       _velocity.m_y = std::max(_velocity.m_y, -s_regularSpeed);
+       _velocity.m_y -= m_frictionForce;
+       _velocity.m_y = std::max(_velocity.m_y, -m_regularSpeed);
        if (position.m_y<SEA_FLOATING_HIGH)
        {
            m_immersing = false;
@@ -158,7 +157,7 @@ void PlayerControls::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity,
     //MOVING IN Z
 
     //accelerating
-    if (m_speedUp || _velocity.m_z < s_regularSpeed)
+    if (m_speedUp || _velocity.m_z < m_regularSpeed)
         _velocity.m_z -= m_acceleration.m_z;
     else
         _velocity.m_z += m_acceleration.m_z;

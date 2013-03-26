@@ -25,16 +25,16 @@ class TXTParser : public Parser
     typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
 private:
-    static const std::string s_mapPath;
-
     bool loadSea(tokenizer::iterator _currentParameter, Sea &_sea, SourceStore &_sourceStore);
     bool loadMusselFarm(tokenizer::iterator _currentParameter, std::vector<Object*> &_objects, SourceStore &_sourceStore);
     bool loadFisherBoat(tokenizer::iterator _currentParameter, std::vector<Object*> &_objects, SourceStore &_sourceStore);
-    bool loadBehaviour(tokenizer::iterator _currentParameter, Behaviour *&_behaviour);
+    bool loadBehaviour(tokenizer::iterator _currentParameter, Behaviour *&_behaviour, Object *_object);
+    bool loadBehaviourParameters(Behaviour *_behaviour);
 
 public:
     bool loadSources(SourceStore &_sourceStore);
     bool loadMap(int _map, Sea &_sea, std::vector<Object*> &_objects, SourceStore &_sourceStore);
+    bool loadPlayerControlsParameters(PlayerControls *_playerControls);
 };
 
 #endif // TXTPARSER_H

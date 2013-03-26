@@ -17,17 +17,17 @@ void Diagonal::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::
     //FIRST QUADRANT
     if (m_quadrant == 1)
     {
-        if (m_angle > 45-s_angularVelocity && m_angle < 45+s_angularVelocity)
+        if (m_angle > 45-m_angularVelocity && m_angle < 45+m_angularVelocity)
             _angularVelocity.m_y = 0;
         else if (m_angle > 45 && m_angle <= 135)
         {
-            _angularVelocity.m_y = -s_angularVelocity;
-            _angularVelocity.m_x = s_angularVelocity;
+            _angularVelocity.m_y = -m_angularVelocity;
+            _angularVelocity.m_x = m_angularVelocity;
         }
         else
         {
-            _angularVelocity.m_y = s_angularVelocity;
-            _angularVelocity.m_x = -s_angularVelocity;
+            _angularVelocity.m_y = m_angularVelocity;
+            _angularVelocity.m_x = -m_angularVelocity;
         }
         _velocity.m_x += m_acceleration.m_x;
         _velocity.m_z -= m_acceleration.m_z;
@@ -36,17 +36,17 @@ void Diagonal::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::
     //SECOND QUADRANT
     if (m_quadrant == 2)
     {
-        if (m_angle > 135-s_angularVelocity && m_angle < 135+s_angularVelocity)
+        if (m_angle > 135-m_angularVelocity && m_angle < 135+m_angularVelocity)
             _angularVelocity.m_y = 0;
         else if (m_angle > 135 && m_angle < 315)
         {
-            _angularVelocity.m_y = -s_angularVelocity;
-            _angularVelocity.m_x = s_angularVelocity;
+            _angularVelocity.m_y = -m_angularVelocity;
+            _angularVelocity.m_x = m_angularVelocity;
         }
         else
         {
-            _angularVelocity.m_y = s_angularVelocity;
-            _angularVelocity.m_x = -s_angularVelocity;
+            _angularVelocity.m_y = m_angularVelocity;
+            _angularVelocity.m_x = -m_angularVelocity;
         }
         _velocity.m_x -= m_acceleration.m_x;
         _velocity.m_z -= m_acceleration.m_z;
@@ -55,17 +55,17 @@ void Diagonal::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::
     //THIRD QUADRANT
     if (m_quadrant == 3)
     {
-        if (m_angle > 225-s_angularVelocity && m_angle < 225+s_angularVelocity)
+        if (m_angle > 225-m_angularVelocity && m_angle < 225+m_angularVelocity)
             _angularVelocity.m_y = 0;
         else if (m_angle > 45 && m_angle < 225)
         {
-            _angularVelocity.m_y = s_angularVelocity;
-            _angularVelocity.m_x = -s_angularVelocity;
+            _angularVelocity.m_y = m_angularVelocity;
+            _angularVelocity.m_x = -m_angularVelocity;
         }
         else
         {
-            _angularVelocity.m_y = -s_angularVelocity;
-            _angularVelocity.m_x = s_angularVelocity;
+            _angularVelocity.m_y = -m_angularVelocity;
+            _angularVelocity.m_x = m_angularVelocity;
         }
         _velocity.m_x -= m_acceleration.m_x;
         _velocity.m_z += m_acceleration.m_z;
@@ -74,33 +74,33 @@ void Diagonal::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::
     //FORTH QUADRANT
     if (m_quadrant == 4)
     {
-        if (m_angle > 315-s_angularVelocity && m_angle < 315+s_angularVelocity)
+        if (m_angle > 315-m_angularVelocity && m_angle < 315+m_angularVelocity)
             _angularVelocity.m_y = 0;
         else if (m_angle > 135 && m_angle < 315)
         {
-            _angularVelocity.m_y = s_angularVelocity;
-            _angularVelocity.m_x = -s_angularVelocity;
+            _angularVelocity.m_y = m_angularVelocity;
+            _angularVelocity.m_x = -m_angularVelocity;
         }
         else
         {
-            _angularVelocity.m_y = -s_angularVelocity;
-            _angularVelocity.m_x = s_angularVelocity;
+            _angularVelocity.m_y = -m_angularVelocity;
+            _angularVelocity.m_x = m_angularVelocity;
         }
         _velocity.m_x += m_acceleration.m_x;
         _velocity.m_z += m_acceleration.m_z;
     }
 
     //CLAMPING TO MAXIMUM ROTATION IN X
-    if (rotation.m_x>s_camber || rotation.m_x<-s_camber )
+    if (rotation.m_x>m_maxCamber || rotation.m_x<-m_maxCamber )
         _angularVelocity.m_x = 0;
 
     //RECOVER CAMBER IN X
     if (_angularVelocity.m_y == 0)
     {
-        if (rotation.m_x < -s_angularVelocity)
-               _angularVelocity.m_x = s_angularVelocity;
-        else if ( rotation.m_x > s_angularVelocity)
-                _angularVelocity.m_x = -s_angularVelocity;
+        if (rotation.m_x < -m_angularVelocity)
+               _angularVelocity.m_x = m_angularVelocity;
+        else if ( rotation.m_x > m_angularVelocity)
+                _angularVelocity.m_x = -m_angularVelocity;
         else
             _angularVelocity.m_x = 0;
     }
@@ -124,11 +124,11 @@ void Diagonal::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::
 
     //CLAMPING
 
-    _velocity.m_z = std::max(_velocity.m_z, -s_regularSpeed);
-    _velocity.m_z = std::min(_velocity.m_z, s_regularSpeed);
+    _velocity.m_z = std::max(_velocity.m_z, -m_regularSpeed);
+    _velocity.m_z = std::min(_velocity.m_z, m_regularSpeed);
 
-    _velocity.m_x = std::max(_velocity.m_x, -s_regularSpeed);
-    _velocity.m_x = std::min(_velocity.m_x, s_regularSpeed);
+    _velocity.m_x = std::max(_velocity.m_x, -m_regularSpeed);
+    _velocity.m_x = std::min(_velocity.m_x, m_regularSpeed);
 
     //FLOATING MOVEMENT IN Y
 

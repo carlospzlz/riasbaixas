@@ -4,24 +4,24 @@ Sea 1000
 //MusselFarm musselFarm -8 0 0
 
 MusselFarm 0 0 -110
-MusselFarm 4 0 -110
+MusselFarm 8 0 -110
 MusselFarm 0 0 -120
-MusselFarm 4 0 -120
+MusselFarm 8 0 -120
 MusselFarm 0 0 -130
-MusselFarm 4 0 -130
+MusselFarm 8 0 -130
 MusselFarm 0 0 -140
-MusselFarm 4 0 -140
+MusselFarm 8 0 -140
 
 FisherBoat 0 0 -150 Horizontal
 
 MusselFarm 0 0 -160
-MusselFarm 4 0 -160
+MusselFarm 8 0 -160
 MusselFarm 0 0 -170
-MusselFarm 4 0 -170
+MusselFarm 8 0 -170
 MusselFarm 0 0 -180
-MusselFarm 4 0 -180
+MusselFarm 8 0 -180
 MusselFarm 0 0 -190
-MusselFarm 4 0 -190
+MusselFarm 8 0 -190
 
 MusselFarm -8 0 -300
 MusselFarm -7 0 -310
@@ -40,6 +40,8 @@ MusselFarm 6 0 -350
 MusselFarm 7 0 -360
 MusselFarm 8 0 -370
 
+MusselFarm 4 0 -380
+MuseelFarm 6 0 -380
 
 MusselFarm 8 0 -400
 MusselFarm 7 0 -410

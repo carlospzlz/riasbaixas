@@ -23,12 +23,12 @@ class PlayerControls : public Behaviour
 {
 private:
 
-    const static float s_highSpeedZ;
-    const static float s_highSpeedX;
-    const static float s_emersionHigh;
-    const static float s_lateralStreamForce;
-    const static float s_amplitudeBouncing;
-    const static float s_frecuencyBouncing;
+    float m_highSpeedZ;
+    float m_highSpeedX;
+    float m_emersionHeight;
+    float m_lateralStreamForce;
+    float m_bouncingAmplitude;
+    float m_bouncingFrequency;
 
     /**
      * @brief the movement goes towards the left
@@ -77,6 +77,15 @@ public:
     void setLeft(bool _pressed) { m_left = _pressed; }
     void setRight(bool _pressed) { m_right = _pressed; }
     void setSpeedUp(bool _pressed) { m_speedUp = _pressed; }
+
+    //initialized from file
+    void setHighSpeedZ(float _hsz) { m_highSpeedZ = _hsz; }
+    void setHighSpeedX(float _hsx) { m_highSpeedX = _hsx; }
+    void setEmersionHeight(float _eh) { m_emersionHeight = _eh; }
+    void setLateralStreamForce(float _lsf) { m_lateralStreamForce = _lsf; }
+    void setBouncingFrequency(float _bf) { m_bouncingFrequency = _bf; }
+    void setBouncingAmplitude(float _ba) { m_bouncingAmplitude = _ba; }
+
     virtual void move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof);
 };
 

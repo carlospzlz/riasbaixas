@@ -13,8 +13,8 @@ void Horizontal::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl
     else
         _velocity.m_x -= m_acceleration.m_x;
 
-    _velocity.m_x = std::max(_velocity.m_x, -s_regularSpeed);
-    _velocity.m_x = std::min(_velocity.m_x, s_regularSpeed);
+    _velocity.m_x = std::max(_velocity.m_x, -m_regularSpeed);
+    _velocity.m_x = std::min(_velocity.m_x, m_regularSpeed);
 
     if (!_dof.right)
         m_goingRight = false;
@@ -22,10 +22,10 @@ void Horizontal::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl
         m_goingRight = true;
 
     //Friction force in Z
-    if (_velocity.m_z < -s_frictionForce)
-        _velocity.m_z += s_frictionForce;
-    else if (_velocity.m_z > s_frictionForce)
-        _velocity.m_z -= s_frictionForce;
+    if (_velocity.m_z < -m_frictionForce)
+        _velocity.m_z += m_frictionForce;
+    else if (_velocity.m_z > m_frictionForce)
+        _velocity.m_z -= m_frictionForce;
     else
         _velocity.m_z = 0;
 

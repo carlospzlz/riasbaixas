@@ -132,7 +132,7 @@ public:
 
     //getters
     bool isActive() const { return m_active; }
-    void update();
+    virtual void update();
     ngl::Transformation getTransform() { return m_transform; }
     ngl::Vec4 getPosition() const { return m_transform.getPosition(); }
     ngl::Vec4 getPreviousPos() const { return m_previousTransform.getPosition(); }

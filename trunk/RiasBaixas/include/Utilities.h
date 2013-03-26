@@ -17,7 +17,7 @@
 struct playerOptions
 {
     bool running = true;
-    int debugMode = 1;
+    int debugMode = 0;
     bool possibleChangeCamera = true;
     bool changeCameraPressed = false;
     bool backCamera = false;
@@ -25,6 +25,7 @@ struct playerOptions
     bool resizeWindow = false;
     bool changeToFullScreen = false;
     bool restoreWindow = false;
+    bool enter = false;
 };
 
 /**
@@ -51,6 +52,8 @@ public:
      * @brief regulates the frames per second rate of the game play
      */
     void regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_lastStartingSecond, int &_fps, int max_fps);
+    void menu(Renderer &_render, playerOptions &_playerOptions);
+    void story(Renderer &_render, playerOptions &_playerOptions) {}
 };
 
 #endif // UTILITIES_H

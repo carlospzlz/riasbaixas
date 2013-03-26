@@ -76,6 +76,10 @@ void Utilities::readPlayerInput(PlayerControls &_playerControls, playerOptions &
                     _playerOptions.restoreWindow = true;
                 break;
 
+                case SDLK_RETURN:
+                _playerOptions.enter = true;
+                break;
+
            }
             break;
 
@@ -103,6 +107,10 @@ void Utilities::readPlayerInput(PlayerControls &_playerControls, playerOptions &
                 _playerOptions.changeCameraPressed = false;
                 _playerOptions.possibleChangeCamera = true;
                 }
+                break;
+
+                case SDLK_RETURN:
+                _playerOptions.enter = false;
                 break;
             }
             break;
@@ -175,5 +183,37 @@ void Utilities::regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_
     //Adjust frames per second
     if (1000/max_fps>(SDL_GetTicks()-_startingTick))
         SDL_Delay(1000/max_fps-(SDL_GetTicks()-_startingTick));
+
+}
+
+void Utilities::menu(Renderer &_render, playerOptions &_playerOptions)
+{
+        SDL_Event myEvent;
+        bool go = false;
+        GLuint textureID;
+
+        _render.loadTexture("images/riasBaixasCover.jpg", textureID);
+
+        while (!go && _playerOptions.running)
+        {
+            setWindow(_render, _playerOptions);
+            _render.renderFrame(textureID);
+            while (SDL_PollEvent(&myEvent))
+            {
+                switch(myEvent.type)
+                {
+                    case SDL_QUIT:
+                    _playerOptions.running=false;
+                    break;
+
+                    case SDL_KEYDOWN:
+                    go=(myEvent.key.keysym.sym==SDLK_RETURN);
+                    _playerOptions.running=(myEvent.key.keysym.sym!=SDLK_ESCAPE);
+                    break;
+                }
+            }
+        }
+
+        _render.fadeOut();
 
 }

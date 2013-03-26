@@ -16,6 +16,7 @@ class Floating : public Behaviour
 {
 
 public:
+    Floating() { }
     virtual std::string getName() { return "Floating"; }
     virtual void move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof);
 

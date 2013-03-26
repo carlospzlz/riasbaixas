@@ -6,7 +6,7 @@
 
 SourceStore::~SourceStore()
 {
-    std::cout << "SourceStore: Deleting meshes..." << std::endl;
+    std::cout << "SourceStore: deleting meshes ..." << std::endl;
     std::map<std::string,ngl::Obj*>::iterator lastMesh = m_meshes.end();
     for (std::map<std::string,ngl::Obj*>::iterator currentMesh = m_meshes.begin(); currentMesh!=lastMesh; ++currentMesh)
     {
