@@ -29,11 +29,11 @@ private:
     bool loadMusselFarm(tokenizer::iterator _currentParameter, std::vector<Object*> &_objects, SourceStore &_sourceStore);
     bool loadFisherBoat(tokenizer::iterator _currentParameter, std::vector<Object*> &_objects, SourceStore &_sourceStore);
     bool loadBehaviour(tokenizer::iterator _currentParameter, Behaviour *&_behaviour, Object *_object);
-    bool loadBehaviourParameters(Behaviour *_behaviour);
 
 public:
     bool loadSources(SourceStore &_sourceStore);
     bool loadMap(int _map, Sea &_sea, std::vector<Object*> &_objects, SourceStore &_sourceStore);
+    bool loadBehaviourParameters(Behaviour *_behaviour);
     bool loadPlayerControlsParameters(PlayerControls *_playerControls);
 };
 

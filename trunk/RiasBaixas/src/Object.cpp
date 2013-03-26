@@ -33,7 +33,7 @@ Object::Object()
 void Object::setBehaviour(Behaviour *b)
 {
     m_behaviour = b;
-    b->setAcceleration(m_mass);
+    m_behaviour->setAcceleration(m_mass);
 }
 
 void Object::setPosition(ngl::Vec4 _pos)
@@ -57,6 +57,7 @@ void Object::setMesh(ngl::Obj* _obj)
 void Object::info()
 {
     std::cout << "Object info of " << this << " (type "<< m_type << ")" << std::endl;
+    std::cout << "Mass -> " << m_mass << std::endl;
     std::cout << "Position -> " << m_transform.getPosition() << std::endl;
     std::cout << "PreviousPos -> " << m_previousTransform.getPosition() << std::endl;
     std::cout << "Rotation -> " << m_transform.getRotation() << std::endl;

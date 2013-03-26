@@ -587,21 +587,6 @@ bool Renderer::loadFont(std::string _fontFile)
     return true;
 }
 
-int Renderer::nearestPowerOfTwo(int _number)
-{
-    int pow2 = _number>0 ? _number-1 : 0;
-
-    _number |= _number >> 1;
-    _number |= _number >> 2;
-    _number |= _number >> 4;
-    _number |= _number >> 8;
-    _number |= _number >> 16;
-    ++_number;
-
-    return _number;
-}
-
-
 void Renderer::renderText(std::string _text, float _x, float _y)
 {
     std::cout << "rendering " << _text << std::endl;
