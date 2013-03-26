@@ -35,7 +35,10 @@ public:
      * @brief load specific objects for one specific map
      */
     virtual bool loadMap(int _map, Sea &_sea, std::vector<Object*> &_objects, SourceStore &_sourceStore) = 0;
-
+    /**
+     * @brief load parameters of a general Behaviour
+     */
+    virtual bool loadBehaviourParameters(Behaviour *_behaviour) = 0;
     /**
      * @brief load parameters of the specific behaviour PlayerControls
      */

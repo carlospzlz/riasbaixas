@@ -30,4 +30,6 @@ void Floating::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::
     _transform.addPosition(_velocity);
     _transform.addRotation(_angularVelocity);
 
+    std::cout << "HEREEE" << m_acceleration.m_z << std::endl;
+
 }

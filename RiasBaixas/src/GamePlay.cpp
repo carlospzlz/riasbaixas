@@ -29,7 +29,9 @@ GameState *GamePlay::run(Renderer &_renderer)
     //LOADING THE NEMESIS: THE POLICEBOAT
     PoliceBoat* myPoliceBoat1 = new PoliceBoat();
     myPoliceBoat1->setPosition(ngl::Vec4(-4,0.3,-375));
-    myPoliceBoat1->setBehaviour(new Floating());
+    Behaviour* myFloating1 = new Floating();
+    myParser->loadBehaviourParameters(myFloating1);
+    myPoliceBoat1->setBehaviour(myFloating1);
     myPoliceBoat1->setMesh(mySourceStore.getMesh("policeboat"));
     myPoliceBoat1->setSpeedBoat(mySpeedBoat);
     myObjects.push_back(myPoliceBoat1);
@@ -37,14 +39,18 @@ GameState *GamePlay::run(Renderer &_renderer)
     //LOADING TWO MORE POLICEBOATS
     PoliceBoat* myPoliceBoat2 = new PoliceBoat();
     myPoliceBoat2->setPosition(ngl::Vec4(6,0.3,-825));
-    myPoliceBoat2->setBehaviour(new Floating());
+    Behaviour* myFloating2 = new Floating();
+    myParser->loadBehaviourParameters(myFloating2);
+    myPoliceBoat2->setBehaviour(myFloating2);
     myPoliceBoat2->setMesh(mySourceStore.getMesh("policeboat"));
     myPoliceBoat2->setSpeedBoat(mySpeedBoat);
     myObjects.push_back(myPoliceBoat2);
 
     PoliceBoat* myPoliceBoat3 = new PoliceBoat();
     myPoliceBoat3->setPosition(ngl::Vec4(-6,0.3,-950));
-    myPoliceBoat3->setBehaviour(new Floating());
+    Behaviour* myFloating3 = new Floating();
+    myParser->loadBehaviourParameters(myFloating3);
+    myPoliceBoat3->setBehaviour(myFloating3);
     myPoliceBoat3->setMesh(mySourceStore.getMesh("policeboat"));
     myPoliceBoat3->setSpeedBoat(mySpeedBoat);
     myObjects.push_back(myPoliceBoat3);
@@ -79,7 +85,7 @@ GameState *GamePlay::run(Renderer &_renderer)
             updateObjects(myObjects);
             checkCollisions(myObjects, mySea, myPhysicsEngine);
             //mySpeedBoat->info();
-            //myPoliceBoat->info();
+            myPoliceBoat1->info();
 
             myCameraSet.updateCameras();
 
