@@ -17,6 +17,7 @@
 struct playerOptions
 {
     bool running = true;
+    bool changeState = false;
     int debugMode = 0;
     bool possibleChangeCamera = true;
     bool changeCameraPressed = false;

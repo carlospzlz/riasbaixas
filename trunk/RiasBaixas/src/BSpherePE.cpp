@@ -158,8 +158,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             else
             //Both are dynamic objects
             {
-                _o1->setVelocity(factor*(velocity1+velocity2));
-                _o2->setVelocity(factor*(velocity2+velocity1));
+                //_o1->setVelocity(factor*(velocity1+velocity2));
+                //_o2->setVelocity(factor*(velocity2+velocity1));
                 if (collision.left)
                 {
                     _o1->getDOF().left = false;
@@ -197,8 +197,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             else
             //Both are dynamic objects
             {
-                _o1->setVelocity(factor*(velocity1+velocity2));
-                _o2->setVelocity(factor*(velocity2+velocity1));
+                //_o1->setVelocity(factor*(velocity1+velocity2));
+                //_o2->setVelocity(factor*(velocity2+velocity1));
                 if (collision.forward)
                 {
                     _o1->getDOF().forward = false;
@@ -236,8 +236,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             else
             //Both are dynamic objects
             {
-                _o1->setVelocity(factor*(velocity1+velocity2));
-                _o2->setVelocity(factor*(velocity2+velocity1));
+                //_o1->setVelocity(factor*(velocity1+velocity2));
+                //_o2->setVelocity(factor*(velocity2+velocity1));
                 if (collision.up)
                 {
                     _o1->getDOF().up = false;
