@@ -30,6 +30,12 @@ Object::Object()
 
 }
 
+Object::~Object()
+{
+    if (m_behaviour)
+        delete m_behaviour;
+}
+
 void Object::setBehaviour(Behaviour *b)
 {
     m_behaviour = b;
@@ -92,6 +98,8 @@ std::string Object::getType()
         return "MusselFarm";
     else if (m_type==ot_fisherBoat)
         return "FisherBoat";
+    else if(m_type==ot_policeBoat)
+        return "PoliceBoat";
     else
         return "other";
 
@@ -106,6 +114,7 @@ void Object::checkActive(float _currentZ, float _far)
 
 void Object::collisionEvent(Object &_o)
 {
+    (void)_o;
     //std::cout << "Object: Warning: Undefined collisionEvent method for this object" << std::endl;
 }
 

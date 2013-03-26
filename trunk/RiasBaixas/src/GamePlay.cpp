@@ -13,6 +13,8 @@ GameState *GamePlay::run(Renderer &_renderer)
     playerOptions myPlayerOptions;
     Utilities myUtilities;
 
+    myUtilities.initPlayerOptions(myPlayerOptions);
+
     //LOADING SOURCES AND MAP
     Parser *myParser = new TXTParser();
     myParser->loadSources(mySourceStore);
@@ -28,6 +30,7 @@ GameState *GamePlay::run(Renderer &_renderer)
 
     //LOADING THE NEMESIS: THE POLICEBOAT
     PoliceBoat* myPoliceBoat1 = new PoliceBoat();
+    myPoliceBoat1->setType(ot_policeBoat);
     myPoliceBoat1->setPosition(ngl::Vec4(-4,0.3,-375));
     Behaviour* myFloating1 = new Floating();
     myParser->loadBehaviourParameters(myFloating1);
@@ -38,6 +41,7 @@ GameState *GamePlay::run(Renderer &_renderer)
 
     //LOADING TWO MORE POLICEBOATS
     PoliceBoat* myPoliceBoat2 = new PoliceBoat();
+    myPoliceBoat2->setType(ot_policeBoat);
     myPoliceBoat2->setPosition(ngl::Vec4(6,0.3,-825));
     Behaviour* myFloating2 = new Floating();
     myParser->loadBehaviourParameters(myFloating2);
@@ -47,6 +51,7 @@ GameState *GamePlay::run(Renderer &_renderer)
     myObjects.push_back(myPoliceBoat2);
 
     PoliceBoat* myPoliceBoat3 = new PoliceBoat();
+    myPoliceBoat3->setType(ot_policeBoat);
     myPoliceBoat3->setPosition(ngl::Vec4(-6,0.3,-950));
     Behaviour* myFloating3 = new Floating();
     myParser->loadBehaviourParameters(myFloating3);
@@ -85,7 +90,7 @@ GameState *GamePlay::run(Renderer &_renderer)
             updateObjects(myObjects);
             checkCollisions(myObjects, mySea, myPhysicsEngine);
             //mySpeedBoat->info();
-            myPoliceBoat1->info();
+            //myPoliceBoat1->info();
 
             myCameraSet.updateCameras();
 

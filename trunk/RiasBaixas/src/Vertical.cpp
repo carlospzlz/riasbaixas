@@ -7,6 +7,10 @@ Vertical::Vertical()
 
 void Vertical::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof)
 {
+    //Unused variables
+    (void)_angularVelocity;
+    (void)_dof;
+
 
     if (m_goingForward)
         _velocity.m_z -= m_motorForce;

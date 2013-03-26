@@ -11,6 +11,8 @@ GameState *GameStory::run(Renderer &_renderer)
     bool go = false;
     GLuint textureID;
 
+    myUtilities.initPlayerOptions(myPlayerOptions);
+
     _renderer.loadTexture("images/riasBaixasStory.jpg", textureID);
 
     while (!(go=myPlayerOptions.enter || myPlayerOptions.changeState) && myPlayerOptions.running)

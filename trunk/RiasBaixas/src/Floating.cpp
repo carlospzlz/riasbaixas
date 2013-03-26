@@ -4,8 +4,8 @@
 void Floating::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof)
 {
 
-    //ngl::Vec4 velocity = m_object->getVelocity();
-    //velocity.m_y = floatingVelocity();
+    //Unused variables for floating
+    (void)_dof;
 
     _velocity.m_y = floatingVelocity();
 

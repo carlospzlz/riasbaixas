@@ -7,6 +7,8 @@ Horizontal::Horizontal()
 
 void Horizontal::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity, ngl::Vec4 &_angularVelocity, degreesOfFreedom &_dof)
 {
+    //Unused variables
+    (void)_angularVelocity;
 
     if (m_goingRight)
         _velocity.m_x += m_acceleration.m_x;

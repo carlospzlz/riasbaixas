@@ -8,6 +8,8 @@ bool TXTParser::loadSources(SourceStore &_sourceStore)
     _sourceStore.addMesh("sea", new ngl::Obj("models/sea.obj","textures/tiledSea.png"));
     _sourceStore.addMesh("musselFarm", new ngl::Obj("models/musselFarm.obj","textures/musselFarm.jpg"));
     _sourceStore.addMesh("fisherBoat", new ngl::Obj("models/fisherBoat.obj","textures/fisherBoat.jpg"));
+
+    return true;
 }
 
 bool TXTParser::loadMap(int _map, Sea &_sea, std::vector<Object*> &_objects, SourceStore &_sourceStore)

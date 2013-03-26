@@ -82,14 +82,14 @@ void CameraSet::changeToBackCamera()
 
 void CameraSet::leaveBackCamera()
 {
-    assert(m_indexCurrentCamera>=0 && m_indexCurrentCamera<m_camerasCircularQueue.size());
+    assert(m_indexCurrentCamera>=0 && m_indexCurrentCamera<(int)m_camerasCircularQueue.size());
     m_currentCamera = m_camerasCircularQueue[m_indexCurrentCamera];
 }
 
 void CameraSet::nextCamera()
 {
-    assert(m_indexCurrentCamera>=0 && m_indexCurrentCamera<m_camerasCircularQueue.size());
-    if (++m_indexCurrentCamera==m_camerasCircularQueue.size())
+    assert(m_indexCurrentCamera>=0 && m_indexCurrentCamera<(int)m_camerasCircularQueue.size());
+    if (++m_indexCurrentCamera==(int)m_camerasCircularQueue.size())
             m_indexCurrentCamera = 0;
     m_currentCamera = m_camerasCircularQueue[m_indexCurrentCamera];
 }

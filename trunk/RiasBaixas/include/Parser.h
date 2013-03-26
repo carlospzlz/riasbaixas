@@ -27,6 +27,8 @@ protected:
     const static std::string s_behaviourParametersPath;
 
 public:
+    Parser() { }
+    virtual ~Parser() { }
     /**
      * @brief load the basic sources for starting the game
      */

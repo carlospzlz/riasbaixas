@@ -14,6 +14,6 @@ SpeedBoat::SpeedBoat()
 
 void SpeedBoat::collisionEvent(Object& _o)
 {
-    _o;
+    std::cout << "Speedboat collided with " << _o.getType() << std::endl;
     //reduce amount of load
 }

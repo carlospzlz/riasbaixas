@@ -23,7 +23,6 @@ private:
 
 public:
     PoliceBoat();
-    ~PoliceBoat() { }
 
     void setSpeedBoat( Object *_sb) { m_speedboat = _sb; }
     virtual void update();

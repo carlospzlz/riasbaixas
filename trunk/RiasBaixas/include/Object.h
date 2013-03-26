@@ -110,6 +110,7 @@ public:
      * @brief constructor of the object which sets all the attibutes to default values
      */
     Object();
+    virtual ~Object();
     //not needed copy constructor
     //setters
     void activate() { m_active = true; }

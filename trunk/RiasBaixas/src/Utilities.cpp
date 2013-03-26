@@ -61,10 +61,6 @@ void Utilities::readPlayerInput(PlayerControls &_playerControls, playerOptions &
                 _playerOptions.debugMode = 2;
                 break;
 
-                case SDLK_3:
-                _playerOptions.debugMode = 3;
-                break;
-
                 case SDLK_PAUSE:
                 _playerOptions.pause = !_playerOptions.pause;
                 break;
@@ -181,39 +177,24 @@ void Utilities::regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_
         ++_frameCounter;
 
     //Adjust frames per second
-    if (1000/max_fps>(SDL_GetTicks()-_startingTick))
+    if (1000/max_fps>(int)(SDL_GetTicks()-_startingTick))
         SDL_Delay(1000/max_fps-(SDL_GetTicks()-_startingTick));
 
 }
 
-void Utilities::menu(Renderer &_render, playerOptions &_playerOptions)
+void Utilities::initPlayerOptions(playerOptions &_playerOptions)
 {
-        SDL_Event myEvent;
-        bool go = false;
-        GLuint textureID;
 
-        _render.loadTexture("images/riasBaixasCover.jpg", textureID);
-
-        while (!go && _playerOptions.running)
-        {
-            setWindow(_render, _playerOptions);
-            _render.renderFrame(textureID);
-            while (SDL_PollEvent(&myEvent))
-            {
-                switch(myEvent.type)
-                {
-                    case SDL_QUIT:
-                    _playerOptions.running=false;
-                    break;
-
-                    case SDL_KEYDOWN:
-                    go=(myEvent.key.keysym.sym==SDLK_RETURN);
-                    _playerOptions.running=(myEvent.key.keysym.sym!=SDLK_ESCAPE);
-                    break;
-                }
-            }
-        }
-
-        _render.fadeOut();
+     _playerOptions.running = true;
+     _playerOptions.changeState = false;
+     _playerOptions.debugMode = 0;
+     _playerOptions.possibleChangeCamera = true;
+     _playerOptions.changeCameraPressed = false;
+     _playerOptions.backCamera = false;
+     _playerOptions.pause = false;
+     _playerOptions.resizeWindow = false;
+     _playerOptions.changeToFullScreen = false;
+     _playerOptions.restoreWindow = false;
+     _playerOptions.enter = false;
 
 }

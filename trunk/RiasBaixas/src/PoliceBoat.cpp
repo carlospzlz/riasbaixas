@@ -12,6 +12,7 @@ PoliceBoat::PoliceBoat()
 
 void PoliceBoat::collisionEvent(Object& _o)
 {
+    (void)_o;
     //reduce amount of load
 }
 

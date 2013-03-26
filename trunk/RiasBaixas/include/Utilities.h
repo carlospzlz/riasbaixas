@@ -16,17 +16,17 @@
  */
 struct playerOptions
 {
-    bool running = true;
-    bool changeState = false;
-    int debugMode = 0;
-    bool possibleChangeCamera = true;
-    bool changeCameraPressed = false;
-    bool backCamera = false;
-    bool pause = false;
-    bool resizeWindow = false;
-    bool changeToFullScreen = false;
-    bool restoreWindow = false;
-    bool enter = false;
+    bool running;
+    bool changeState;
+    int debugMode;
+    bool possibleChangeCamera;
+    bool changeCameraPressed;
+    bool backCamera;
+    bool pause;
+    bool resizeWindow;
+    bool changeToFullScreen;
+    bool restoreWindow;
+    bool enter;
 };
 
 /**
@@ -53,8 +53,10 @@ public:
      * @brief regulates the frames per second rate of the game play
      */
     void regulateFPS(Uint32 &_startingTick, int &_frameCounter, Uint32 &_lastStartingSecond, int &_fps, int max_fps);
-    void menu(Renderer &_render, playerOptions &_playerOptions);
-    void story(Renderer &_render, playerOptions &_playerOptions) {}
+    /**
+     * @brief initializes the values of the fields of a playerOptions struct
+     */
+    void initPlayerOptions(playerOptions &_playerOptions);
 };
 
 #endif // UTILITIES_H
