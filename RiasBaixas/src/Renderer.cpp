@@ -130,8 +130,12 @@ void Renderer::initGLContext()
     //loadFont("gameFont");
 
     //LOAD TEST TEXTURES
-    loadTexture("images/lena.jpg", m_lena);
+    loadTexture("images/riasBaixasCover.jpg", m_lena);
     prim->createTrianglePlane("plane",1,1,1,1,ngl::Vec3(0,1,0));
+
+    //For rendering still images such as the menu
+    m_stillImagesCamera = ngl::Camera(ngl::Vec3(0,1,0),ngl::Vec3(0,0,0),ngl::Vec3(0,0,-1),ngl::PERSPECTIVE);
+    m_stillImagesCamera.setShape(60, m_windowWidth/(float)m_windowHeight, 0.05, 30, ngl::PERSPECTIVE);
 
 }
 
@@ -162,10 +166,11 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
 void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam, int _debugMode)
 {
 
-    std::cout << "RENDERING..." << std::endl;
+    //std::cout << "RENDERING..." << std::endl;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+    //glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     ngl::ShaderLib *shader=ngl::ShaderLib::instance();
     ngl::VAOPrimitives *primitives=ngl::VAOPrimitives::instance();
@@ -180,7 +185,7 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
     {
         (*shader)["TextureShader"]->use();
 
-        shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
+        //shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
         //iv=_cam.getViewMatrix();
         //iv.transpose();
         //m_light->setTransform(iv);
@@ -302,7 +307,7 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
         //t.setRotation(90,0,0);
 
         //loadMatricesToShader(t,_cam);
-        //primitives->draw("plane");
+        primitives->draw("plane");
         primitives->draw("troll");
         //testText();
         //renderText("hello world!",0,0);
@@ -311,6 +316,83 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
 
     SDL_GL_SwapWindow(m_window);
 
+}
+
+void Renderer::loadTexture(std::string _path, GLuint &_texture)
+{
+    //SDL_Surface *surface = SDL_LoadBMP(_path.c_str());
+    SDL_Surface *surface = IMG_Load(_path.c_str());
+
+    glGenTextures(1, &_texture);
+    glBindTexture(GL_TEXTURE_2D,_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, (surface->w), (surface->h),
+                 0, GL_RGB, GL_UNSIGNED_BYTE, surface->pixels);
+
+    //THIS WAS THE BLOODY LINE NEEDED, J. MACEY FIXED IT
+    glGenerateMipmap(GL_TEXTURE_2D);
+    //THIS DOES NOT COMPILE AT HOME.. FFFFFFUUU.....
+
+
+    //std::cout << "number of colours: " << (int) lena->format->BytesPerPixel << std::endl;
+
+    SDL_FreeSurface(surface);
+
+}
+
+void Renderer::renderFrame(GLuint _texture)
+{
+    //std::cout << "Rendering frame..." << std::endl;
+
+    //Canvas
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+    ngl::VAOPrimitives *primitives=ngl::VAOPrimitives::instance();
+
+    (*shader)["TextureShader"]->use();
+    ngl::Transformation transform;
+    transform.setScale(2.5,2.5,2.5);
+    loadMVPToShader(transform,m_stillImagesCamera);
+    //shader->setShaderParam3f("viewerPos",cam.getEye().m_x,cam.getEye().m_y,cam.getEye().m_z);
+
+    glBindTexture(GL_TEXTURE_2D,_texture);
+    //glActiveTexture(0);
+    primitives->draw("plane");
+
+    SDL_GL_SwapWindow(m_window);
+}
+
+void Renderer::fadeOut()
+{
+    ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+    ngl::VAOPrimitives *primitives=ngl::VAOPrimitives::instance();
+
+    ngl::Camera cam = ngl::Camera(ngl::Vec3(0,1,0),ngl::Vec3(0,0,0),ngl::Vec3(0,0,-1),ngl::PERSPECTIVE);
+    cam.setShape(60, m_windowWidth/(float)m_windowHeight, 0.05, 30, ngl::PERSPECTIVE);
+
+    (*shader)["nglColourShader"]->use();
+    ngl::Transformation transform;
+    transform.setScale(20,1,20);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    for(float i=0; i<1; i+=0.01)
+    {
+        //std::cout << "LOOP!: " << i << std::endl;
+        shader->setShaderParam4f("Colour",0,0,0,0.05);
+        transform.setPosition(0,i/100.0,0);
+        loadMVPToShader(transform,cam);
+        primitives->draw("plane");
+
+        SDL_GL_SwapWindow(m_window);
+        usleep(20000);
+    }
+
+    glDisable(GL_BLEND);
 }
 
 /*void Renderer::renderRadioConversation(RadioConversation *_rc, ngl::Camera &_cam)
@@ -592,47 +674,24 @@ void Renderer::testText()
     glEnable(GL_DEPTH_TEST);
 }
 
-void Renderer::loadTexture(std::string _path, GLuint &_texture)
-{
-    //SDL_Surface *surface = SDL_LoadBMP(_path.c_str());
-    SDL_Surface *surface = IMG_Load(_path.c_str());
-
-    glGenTextures(1, &_texture);
-    glBindTexture(GL_TEXTURE_2D,_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, (surface->w), (surface->h),
-                 0, GL_BGR, GL_UNSIGNED_BYTE, surface->pixels);
-
-    //THIS WAS THE BLOODY LINE NEEDED, J. MACEY FIXED IT
-    glGenerateMipmap(GL_TEXTURE_2D);
-    //THIS DOES NOT COMPILE AT HOME.. FFFFFFUUU.....
-
-
-    //std::cout << "number of colours: " << (int) lena->format->BytesPerPixel << std::endl;
-
-    SDL_FreeSurface(surface);
-
-}
-
-void Renderer::renderImage(float _width, float _height, GLuint _texture)
-{
+//void Renderer::renderImage(float _width, float _height, GLuint _texture)
+//{
 
     // billboard
-    ngl::Real s0 = 0.0;
-    ngl::Real t0 = 0.0;
-    ngl::Real s1 =1; //_width * 1.0 / nearestPowerOfTwo(_width);
-    ngl::Real t1 =1; // _height * 1.0 / nearestPowerOfTwo(_height);
+//    ngl::Real s0 = 0.0;
+//    ngl::Real t0 = 0.0;
+//    ngl::Real s1 =1; //_width * 1.0 / nearestPowerOfTwo(_width);
+//    ngl::Real t1 =1; // _height * 1.0 / nearestPowerOfTwo(_height);
 
-    textVertData billboardData[6];
+//    textVertData billboardData[6];
 
     //first triangle
-    billboardData[0].x=0;
-    billboardData[0].y=0;
-    billboardData[0].u=0;
-    billboardData[0].v=0;
-
-    billboardData[1].x=_width;
+//    billboardData[0].x=0;
+//    billboardData[0].y=0;
+//    billboardData[0].u=0;
+//    billboardData[0].v=0;
+//
+/*    billboardData[1].x=_width;
     billboardData[1].y=0;
     billboardData[1].u=s1;
     billboardData[1].v=0;
@@ -656,41 +715,41 @@ void Renderer::renderImage(float _width, float _height, GLuint _texture)
     billboardData[5].x=_width;
     billboardData[5].y=_height;
     billboardData[5].u=s1;
-    billboardData[5].v=t1;
+    billboardData[5].v=t1;*/
 
     //CREATING THE VAO
 
-    ngl::VertexArrayObject *vao = ngl::VertexArrayObject::createVOA(GL_TRIANGLES);
+  /*  ngl::VertexArrayObject *vao = ngl::VertexArrayObject::createVOA(GL_TRIANGLES);
     vao->bind();
     vao->setData(6*sizeof(textVertData),billboardData[0].x);
     vao->setVertexAttributePointer(0,2,GL_FLOAT,sizeof(textVertData),2);
-    vao->setNumIndices(6);
+    vao->setNumIndices(6);*/
 
 
     //DRAWING VAO
     //glActiveTexture(0);
-    ngl::ShaderLib *shader= ngl::ShaderLib::instance();
+   /* ngl::ShaderLib *shader= ngl::ShaderLib::instance();
     (*shader)["TextureShader"]->use();
     shader->setShaderParam1f("xpos",0);
-    shader->setShaderParam1f("ypos",0);
+    shader->setShaderParam1f("ypos",0);*/
     //glEnable(GL_BLEND);
     //glDisable(GL_DEPTH_TEST);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D, _texture);
-    vao->bind();;
-    vao->draw();
+    //glBindTexture(GL_TEXTURE_2D, _texture);
+    //vao->bind();;
+    //vao->draw();
     //vao->unbind();
     //glDisable(GL_BLEND);
     //glEnable(GL_DEPTH_TEST);
-    vao->unbind();
-    ngl::VAOPrimitives *primitives=ngl::VAOPrimitives::instance();
+    //vao->unbind();
+    //ngl::VAOPrimitives *primitives=ngl::VAOPrimitives::instance();
 
 
-    std::cout << "Image rendered" <<std::endl;
+    //std::cout << "Image rendered" <<std::endl;
 
     //std::cin.ignore();
 
-}
+//}
 
 void Renderer::SDLErrorExit(std::string msg)
 {

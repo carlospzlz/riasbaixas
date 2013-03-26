@@ -1,25 +1,25 @@
 #include <Behaviour.h>
 
 
-const float Behaviour::s_floatingAmplitude = 0.008;
-const float Behaviour::s_floatingFrequency = M_PI/40;
+//const float Behaviour::s_floatingAmplitude = 0.008;
+//const float Behaviour::s_floatingFrequency = M_PI/40;
 
-const float Behaviour::s_frictionForce = 0.001;
-const float Behaviour::s_regularSpeed = 0.1;
-const float Behaviour::s_motorForce = 0.005;
-const float Behaviour::s_angularVelocity = 2;
-const float Behaviour::s_camber = 30;
+//const float Behaviour::s_frictionForce = 0.001;
+//const float Behaviour::s_regularSpeed = 0.1;
+//const float Behaviour::s_motorForce = 0.005;
+//const float Behaviour::s_angularVelocity = 2;
+//const float Behaviour::s_camber = 30;
 
 Behaviour::Behaviour()
 {
     m_acceleration = ngl::Vec4(0,0,0,0);
-    m_ticksFloating = rand() % (int) M_PI/s_floatingFrequency;
+    m_ticksFloating = rand() % 100;//rand();// % (int) M_PI/m_floatingFrequency;
 }
 
 void Behaviour::setAcceleration(float _mass)
 {
     assert(_mass!=0);
-    m_acceleration = ngl::Vec4(s_motorForce/_mass,s_motorForce/_mass,s_motorForce/_mass,1);
+    m_acceleration = ngl::Vec4(m_motorForce/_mass,m_motorForce/_mass,m_motorForce/_mass,1);
 }
 
 //void Controller::setControlledObject(Object *_obj)
@@ -46,7 +46,7 @@ void Behaviour::setAcceleration(float _mass)
 
 float Behaviour::floatingVelocity()
 {
-    float yVel = s_floatingAmplitude*-std::cos(s_floatingFrequency*m_ticksFloating);
+    float yVel = m_floatingAmplitude*-std::cos(m_floatingFrequency*m_ticksFloating);
     ++m_ticksFloating;
     return yVel;
 }

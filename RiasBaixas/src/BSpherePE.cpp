@@ -49,7 +49,7 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
         //             collision.backward << collision.backward << collision.forward << "}" << std::endl;
 
         //FIX POSITIONS
-
+        /******* FIRST APPROACH*************
         if (collision.left || collision.right)
         {
             if (_o1->getMass()!=0)
@@ -88,20 +88,59 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
                 position1.m_y = _o1->getPreviousPos().m_y;
                 _o2->setPosition(position2);
             }
+        }******************************************/
+
+        //FIX POSITIONS
+        /******* SECOND APPROACH*************
+        if (collision.left)
+        {
+            if ((_o1->getMass()!=0) && (position1.m_x<_o1->getPreviousPos().m_x))
+                //fix
+                _o1->setPosition(position1);
+            if ((_o2->getMass()!=0) && (position2.m_x>_o2->getPreviousPos().m_x))
+                //fix
+                _o2->setPosition(position2);
         }
+        else if (collision.right)
+        {
+            if ((_o1->getMass()!=0) && (position1.m_x>_o1->getPreviousPos().m_x))
+                //fix
+                _o1->setPosition(position1);
+            if ((_o2->getMass()!=0) && (position2.m_x<_o2->getPreviousPos().m_x))
+                //fix
+                _o2->setPosition(position2);
+        }
+        else if (collision.forward)
+        {
+            if ((_o1->getMass()!=0) && (position1.m_z<_o2->getPreviousPos().m_z))
+                _o1->setPosition(position1);
+            if ((_o2->getMass()!=0) && (position2.m_z>_o2->getPreviousPos().m_z))
+                _o2->setPosition(position2);
+        }
+        else if (collision.backward)
+        {
+            if ((_o1->getMass()!=0) && (position1.m_z>_o2->getPreviousPos().m_z))
+                _o1->setPosition(position1);
+            if ((_o2->getMass()!=0) && (position2.m_z<_o2->getPreviousPos().m_z))
+                _o2->setPosition(position2);
+        }
+        ******************************************/
+
 
 
         //UPDATE VELOCITIES AND DEGREES OF FREEDOM OF BOTH OBJECTS
+        //DO NOT TOUCH THE VELOCITY!!
         ngl::Vec4 velocity1 = _o1->getVelocity();
         ngl::Vec4 velocity2 = _o2->getVelocity();
+        float factor = 0.5;
 
         if (collision.left || collision.right)
         {
             // X AXIS
             if (_o1->getMass()==0)
             {
-                velocity2.m_x = 0;
-                _o2->setVelocity(velocity2);
+                //velocity2.m_x = 0;
+                //_o2->setVelocity(velocity2);
                 if (collision.left)
                     _o2->getDOF().right = false;
                 else
@@ -109,8 +148,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             }
             else if (_o2->getMass()==0)
             {
-                velocity1.m_x = 0;
-                _o1->setVelocity(velocity1);
+                //velocity1.m_x = 0;
+                //_o1->setVelocity(velocity1);
                 if (collision.left)
                     _o1->getDOF().left = false;
                 else
@@ -119,8 +158,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             else
             //Both are dynamic objects
             {
-                _o1->setVelocity(velocity1+velocity2);
-                _o2->setVelocity(velocity2+velocity1);
+                _o1->setVelocity(factor*(velocity1+velocity2));
+                _o2->setVelocity(factor*(velocity2+velocity1));
                 if (collision.left)
                 {
                     _o1->getDOF().left = false;
@@ -139,8 +178,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             //Z AXIS
             if (_o1->getMass()==0)
             {
-                velocity2.m_z = 0;
-                _o2->setVelocity(velocity2);
+                //velocity2.m_z = 0;
+                //_o2->setVelocity(velocity2);
                 if (collision.backward)
                     _o2->getDOF().forward = false;
                 else
@@ -148,8 +187,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             }
             else if (_o2->getMass()==0)
             {
-                velocity1.m_z = 0;
-                _o1->setVelocity(velocity1);
+                //velocity1.m_z = 0;
+                //_o1->setVelocity(velocity1);
                 if (collision.backward)
                     _o1->getDOF().backward = false;
                 else
@@ -158,8 +197,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             else
             //Both are dynamic objects
             {
-                _o1->setVelocity(velocity1+velocity2);
-                _o2->setVelocity(velocity2+velocity1);
+                _o1->setVelocity(factor*(velocity1+velocity2));
+                _o2->setVelocity(factor*(velocity2+velocity1));
                 if (collision.forward)
                 {
                     _o1->getDOF().forward = false;
@@ -178,8 +217,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             //Y AXIS
             if (_o1->getMass()==0)
             {
-                velocity2.m_y = 0;
-                _o2->setVelocity(velocity2);
+                //velocity2.m_y = 0;
+                //_o2->setVelocity(velocity2);
                 if (collision.up)
                     _o2->getDOF().down = false;
                 else
@@ -187,8 +226,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             }
             else if (_o2->getMass()==0)
             {
-                velocity1.m_y = 0;
-                _o1->setVelocity(velocity1);
+                //velocity1.m_y = 0;
+                //_o1->setVelocity(velocity1);
                 if (collision.up)
                     _o1->getDOF().up = false;
                 else
@@ -197,8 +236,8 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
             else
             //Both are dynamic objects
             {
-                _o1->setVelocity(velocity1+velocity2);
-                _o2->setVelocity(velocity2+velocity1);
+                _o1->setVelocity(factor*(velocity1+velocity2));
+                _o2->setVelocity(factor*(velocity2+velocity1));
                 if (collision.up)
                 {
                     _o1->getDOF().up = false;
@@ -212,6 +251,28 @@ void BSpherePE::checkCollision(Object *_o1, Object *_o2)
                 }
             }
         }
+
+        //FIX POSITIONS
+        //THIRD APPROACH
+
+        if ((!_o1->getDOF().left) && (_o1->getPosition().m_x<_o1->getPreviousPos().m_x))
+            _o1->setPosition(ngl::Vec3(_o1->getPreviousPos().m_x, _o1->getPosition().m_y, _o1->getPosition().m_z));
+        if ((!_o1->getDOF().right) && (_o1->getPosition().m_x>_o1->getPreviousPos().m_x))
+            _o1->setPosition(ngl::Vec3(_o1->getPreviousPos().m_x, _o1->getPosition().m_y, _o1->getPosition().m_z));
+        if ((!_o1->getDOF().forward) && (_o1->getPosition().m_z<_o1->getPreviousPos().m_z))
+            _o1->setPosition(ngl::Vec3(_o1->getPosition().m_x, _o1->getPosition().m_y, _o1->getPreviousPos().m_z));
+        if ((!_o1->getDOF().backward) && (_o1->getPosition().m_z>_o1->getPreviousPos().m_z))
+            _o1->setPosition(ngl::Vec3(_o1->getPosition().m_x, _o1->getPosition().m_y, _o1->getPreviousPos().m_z));
+
+
+        if ((!_o2->getDOF().left) && (_o2->getPosition().m_x<_o2->getPreviousPos().m_x))
+            _o2->setPosition(ngl::Vec3(_o2->getPreviousPos().m_x, _o2->getPosition().m_y, _o2->getPosition().m_z));
+        if ((!_o2->getDOF().right) && (_o2->getPosition().m_x>_o2->getPreviousPos().m_x))
+            _o2->setPosition(ngl::Vec3(_o2->getPreviousPos().m_x, _o2->getPosition().m_y, _o2->getPosition().m_z));
+        if ((!_o2->getDOF().forward) && (_o2->getPosition().m_z<_o2->getPreviousPos().m_z))
+            _o2->setPosition(ngl::Vec3(_o2->getPosition().m_x, _o2->getPosition().m_y, _o2->getPreviousPos().m_z));
+        if ((!_o2->getDOF().backward) && (_o2->getPosition().m_z>_o2->getPreviousPos().m_z))
+            _o2->setPosition(ngl::Vec3(_o2->getPosition().m_x, _o2->getPosition().m_y, _o2->getPreviousPos().m_z));
 
         _o1->collisionEvent(*_o2);
         _o2->collisionEvent(*_o1);

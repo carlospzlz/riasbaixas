@@ -84,6 +84,8 @@ private:
     std::map<char, GLuint> m_fontCharTexture;
     ngl::VertexArrayObject *m_billboard;
 
+    ngl::Camera m_stillImagesCamera;
+
     /**
      * @brief space inbetween lines for the font
      */
@@ -120,7 +122,6 @@ private:
      * @brief render text on the screen (in construction)
      */
     void testText();
-    void loadTexture(std::string _path, GLuint &_texture);
     /**
      * @brief render a plane image 2D on the screen (in construction)
      */
@@ -131,7 +132,7 @@ private:
     void SDLErrorExit(std::string msg);
 
 public:
-    Renderer() { };
+    Renderer() { }
     /**
      * @brief initilize the graphic context, create the shaders and everything needed for the rendering
      */
@@ -160,6 +161,12 @@ public:
      * the option of any debug mode (1 for primitive mode and 2 for collision mode)
      */
     void render(const Sea &_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam, int _debugMode);
+
+    void loadTexture(std::string _path, GLuint &_texture);
+
+    void renderFrame(GLuint _texture);
+
+    void fadeOut();
 
 };
 

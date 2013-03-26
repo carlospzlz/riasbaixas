@@ -27,7 +27,13 @@ HEADERS += \
     include/Utilities.h \
     include/CameraSet.h \
     include/Behaviour.h \
-    include/SourceStore.h
+    include/SourceStore.h \
+    include/GameState.h \
+    include/Game.h \
+    include/GamePlay.h \
+    include/GameMenu.h \
+    include/GameStory.h \
+    include/Predator.h
 
 SOURCES += \
     src/SpeedBoat.cpp \
@@ -42,10 +48,16 @@ SOURCES += \
     src/TXTParser.cpp \
     src/BSpherePE.cpp \
     src/Utilities.cpp \
-    src/Game.cpp \
     src/CameraSet.cpp \
     src/Behaviour.cpp \
-    src/SourceStore.cpp
+    src/SourceStore.cpp \
+    src/GamePlay.cpp \
+    src/Game.cpp \
+    src/GameMenu.cpp \
+    src/GameStory.cpp \
+    src/Parser.cpp \
+    src/PoliceBoat.cpp \
+    src/Predator.cpp
 
 
 ###################

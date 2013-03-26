@@ -13,7 +13,7 @@ CameraSet::CameraSet()
 
 CameraSet::~CameraSet()
 {
-    std::cout << "CameraSet: Deleting cameras..." << std::endl;
+    std::cout << "CameraSet: deleting cameras ..." << std::endl;
     std::vector<ngl::Camera*>::iterator lastCamera = m_camerasCircularQueue.end();
     for (std::vector<ngl::Camera*>::iterator currentCamera=m_camerasCircularQueue.begin(); currentCamera!=lastCamera;++currentCamera)
     {
