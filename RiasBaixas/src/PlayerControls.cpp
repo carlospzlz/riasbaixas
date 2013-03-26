@@ -24,6 +24,11 @@ void PlayerControls::move(ngl::Transformation &_transform, ngl::Vec4 &_velocity,
 
     //m_acceleration = ngl::Vec4(CONTROLLER_MOTOR_FORCE/m_object->getMass(),CONTROLLER_MOTOR_FORCE/m_object->getMass(),CONTROLLER_MOTOR_FORCE/m_object->m_getMass(),1);
 
+    //Unused variables for PlayerControls
+    //There is no AI that takes decisions, this is controlled from outside
+    (void)_dof;
+
+
     float maxSpeed;
     if (m_speedUp)
         maxSpeed = m_highSpeedZ;

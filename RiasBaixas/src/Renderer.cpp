@@ -23,14 +23,14 @@ void Renderer::initGLContext()
     SDL_GetWindowSize(m_window,&m_windowWidth,&m_windowHeight);
 
     //CREATING OPENGL CONTEXT
-    /*
+
     #ifdef  DARWIN
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     #endif
-    */
+
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,4);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
@@ -126,9 +126,6 @@ void Renderer::initGLContext()
     //PRIMITIVE TO DRAW BOUNDING BOX
     prim->createSphere("bSphere",1.0,10);
 
-    //LOADING FONT TO RENDER TEXT
-    //loadFont("gameFont");
-
     //LOAD TEST TEXTURES
     loadTexture("images/riasBaixasCover.jpg", m_lena);
     prim->createTrianglePlane("plane",1,1,1,1,ngl::Vec3(0,1,0));
@@ -169,7 +166,6 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
     //std::cout << "RENDERING..." << std::endl;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     ngl::ShaderLib *shader=ngl::ShaderLib::instance();
@@ -214,17 +210,20 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
     }
     else if (_debugMode==1)
     {
+        (*shader)["nglColourShader"]->use();
+        shader->setShaderParam4f("Colour",1,1,1,1);
+
+        loadMVPToShader(transform,_cam);
+        primitives->draw(_sea.getPrimName());
+
         (*shader)["Phong"]->use();
 
-        shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
+        //shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
         iv=_cam.getViewMatrix();
         iv.transpose();
         m_light->setTransform(iv);
         m_light->loadToShader("light");
         material.loadToShader("material");
-
-        loadMatricesToShader(transform,_cam);
-        primitives->draw(_sea.getPrimName());
 
         for(std::vector<Object*>::const_iterator currentObject = _objects.begin(); currentObject!=endObject; ++currentObject)
         {
@@ -289,30 +288,7 @@ void Renderer::render(const Sea &_sea, const std::vector<Object*> &_objects, ngl
                 drawVector((*currentObject)->getPosition(),(*currentObject)->getVelocity(),_cam);
         }
     }
-    // DEBUG MODE FOR SOME TESTS
-    else if (_debugMode==3)
-    {
-        (*shader)["TextureShader"]->use();
-        shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
 
-        //transform.setPosition(0,0,_cam.getEye().m_z-10);
-        //transform.setRotation(90,0,0);
-        //transform.setScale(5,5,5);
-        loadMVPToShader(transform,_cam);
-        //renderText("hello World",m_windowWidth/2,m_windowHeight/2);
-        //renderImage(1,1,m_lena);
-        //ngl::Transformation t;
-        //t.reset();
-        //t.setPosition(0,0,_cam.getEye().m_z-10);
-        //t.setRotation(90,0,0);
-
-        //loadMatricesToShader(t,_cam);
-        primitives->draw("plane");
-        primitives->draw("troll");
-        //testText();
-        //renderText("hello world!",0,0);
-        //renderText("ABCD",0,0);
-    }
 
     SDL_GL_SwapWindow(m_window);
 
@@ -330,10 +306,8 @@ void Renderer::loadTexture(std::string _path, GLuint &_texture)
     glTexImage2D(GL_TEXTURE_2D, 0, 3, (surface->w), (surface->h),
                  0, GL_RGB, GL_UNSIGNED_BYTE, surface->pixels);
 
-    //THIS WAS THE BLOODY LINE NEEDED, J. MACEY FIXED IT
+    //DO NOT FORGET TO GENERATE MIPMAPS!!!!
     glGenerateMipmap(GL_TEXTURE_2D);
-    //THIS DOES NOT COMPILE AT HOME.. FFFFFFUUU.....
-
 
     //std::cout << "number of colours: " << (int) lena->format->BytesPerPixel << std::endl;
 
@@ -356,7 +330,6 @@ void Renderer::renderFrame(GLuint _texture)
     ngl::Transformation transform;
     transform.setScale(2.5,2.5,2.5);
     loadMVPToShader(transform,m_stillImagesCamera);
-    //shader->setShaderParam3f("viewerPos",cam.getEye().m_x,cam.getEye().m_y,cam.getEye().m_z);
 
     glBindTexture(GL_TEXTURE_2D,_texture);
     //glActiveTexture(0);
@@ -395,34 +368,14 @@ void Renderer::fadeOut()
     glDisable(GL_BLEND);
 }
 
-/*void Renderer::renderRadioConversation(RadioConversation *_rc, ngl::Camera &_cam)
+inline void Renderer::loadMVPToShader(ngl::Transformation &_transform, ngl::Camera &_cam)
 {
-    if (!_rc)
-    {
-        std::cout << "Printing radio conversation..." << std::endl;
-        ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-        ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-        ngl::Transformation t;
+    ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+    ngl::Mat4 MVP;
 
-        (*shader)["TextureShader"]->use();
-        //shader->setShaderParam3f("viewerPos",_cam.getEye().m_x,_cam.getEye().m_y,_cam.getEye().m_z);
-
-        t.setPosition(0,3,_cam.getEye().m_z-5);
-        t.setRotation(45,0,0);
-        loadMVPToShader(t,_cam);
-        glBindTexture(GL_TEXTURE_2D, m_lena);
-        prim->draw("plane");
-
-        t.setPosition(1,3,_cam.getEye().m_z-5);
-        loadMVPToShader(t,_cam);
-        glBindTexture(GL_TEXTURE_2D, m_lena);
-        prim->draw("plane");
-
-
-        SDL_GL_SwapWindow(m_window);
-
-    }
-}*/
+    MVP = _transform.getMatrix()*_cam.getVPMatrix();
+    shader->setShaderParamFromMat4("MVP",MVP);
+}
 
 inline void Renderer::loadMatricesToShader(ngl::Transformation &_transform, ngl::Camera &_cam)
 {
@@ -497,244 +450,6 @@ void Renderer::drawVector(ngl::Vec4 _position, ngl::Vec4 _vector, ngl::Camera _c
     primitivesInstance->draw("vectorSense");
 
 }
-
-inline void Renderer::loadMVPToShader(ngl::Transformation &_transform, ngl::Camera &_cam)
-{
-    ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-    ngl::Mat4 MVP;
-
-    MVP = _transform.getMatrix()*_cam.getVPMatrix();
-    shader->setShaderParamFromMat4("MVP",MVP);
-}
-
-bool Renderer::loadFont(std::string _fontFile)
-{
-
-    //Loading textures
-    std::vector<char> fontChar;
-    fontChar.push_back('A');
-    fontChar.push_back('B');
-    fontChar.push_back('C');
-    fontChar.push_back('D');
-
-    SDL_Surface *surface;
-    std::stringstream ss;
-    std::string s;
-
-    std::vector<char>::iterator endChar = fontChar.end();
-    for(std::vector<char>::iterator currentChar = fontChar.begin(); currentChar < endChar; ++currentChar)
-    {
-        ss << _fontFile << "/" << *currentChar << ".jpg";
-        s = ss.str();
-        ss.str("");
-
-        std::cout << s << std::endl;
-
-        surface = IMG_Load(s.c_str());
-
-        glGenTextures(1, &(m_fontCharTexture[*currentChar]));
-        glBindTexture( GL_TEXTURE_2D, m_fontCharTexture[*currentChar]);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D( GL_TEXTURE_2D, 0, 3, 16, 25, 0, GL_RGB, GL_UNSIGNED_BYTE, surface->pixels );
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-
-    //Creating the only billboard
-
-    textVertData billboardData[6];
-
-    //first triangle
-    billboardData[0].x=0;
-    billboardData[0].y=0;
-    billboardData[0].u=0;
-    billboardData[0].v=0;
-
-    billboardData[1].x=64;
-    billboardData[1].y=0;
-    billboardData[1].u=64;
-    billboardData[1].v=0;
-
-    billboardData[2].x=0;
-    billboardData[2].y=64;
-    billboardData[2].u=0;
-    billboardData[2].v=64;
-
-    //second triangle
-    billboardData[3].x=0;
-    billboardData[3].y=64;
-    billboardData[3].u=0;
-    billboardData[3].v=64;
-
-    billboardData[4].x=64;
-    billboardData[4].y=0;
-    billboardData[4].u=64;
-    billboardData[4].v=0;
-
-    billboardData[5].x=64;
-    billboardData[5].y=64;
-    billboardData[5].u=0;
-    billboardData[5].v=0;
-
-    //CREATING THE VAO
-    m_billboard = ngl::VertexArrayObject::createVOA(GL_TRIANGLES);
-    m_billboard->bind();
-    m_billboard->setData(6*sizeof(textVertData),billboardData[0].x);
-    m_billboard->setVertexAttributePointer(0,2,GL_FLOAT,sizeof(textVertData),2);
-    m_billboard->setNumIndices(6);
-    m_billboard->unbind();
-
-    return true;
-}
-
-void Renderer::renderText(std::string _text, float _x, float _y)
-{
-    std::cout << "rendering " << _text << std::endl;
-
-    glActiveTexture(0);
-    ngl::ShaderLib *shader = ngl::ShaderLib::instance();
-    //(*shader)["TextureShader"]->use();
-    //shader->setRegisteredUniform3f("Colour",1,1,1);
-    //shader->setRegisteredUniform1f("ScaleX",2.0/720);
-    //shader->setRegisteredUniform1f("ScaleY",-2.0/720);
-    //shader->setShaderParam1f("ypos",_y);
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC1_ALPHA);
-
-    int nChar = _text.length();
-    for(int i = 0; i<nChar; ++i)
-    {
-        shader->setShaderParam1f("xpos",_x);
-        std::cout << _text[i] << " " << m_fontCharTexture[_text[i]] << " IN RENDERING TEXT LOOP" << std::endl;
-        //glBindTexture(GL_TEXTURE_2D, m_fontCharTexture[_text[i]]);
-        glBindTexture(GL_TEXTURE_2D, m_lena);
-        glEnable(GL_BLEND);
-        glDisable(GL_DEPTH_TEST);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        m_billboard->bind();
-        m_billboard->draw();
-        m_billboard->unbind();
-        _x += 64;
-
-        //std::cin.ignore();
-
-    }
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
-}
-
-void Renderer::testText()
-{
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC1_ALPHA);
-
-    std::cout << "testing alphabet: " << m_font.size() << std::endl;
-
-    fontChar fc = m_font['B'];
-    glBindTexture(GL_TEXTURE, fc.textureID);
-    fc.billboard->bind();
-    fc.billboard->draw();
-
-   /* fc = m_font['B'];
-    glBindTexture(GL_TEXTURE, fc.textureID);
-    fc.billboard->bind();
-    fc.billboard->draw();
-
-    fc = m_font['C'];
-    glBindTexture(GL_TEXTURE, fc.textureID);
-    fc.billboard->bind();
-    fc.billboard->draw();
-
-    fc = m_font['D'];
-    glBindTexture(GL_TEXTURE, fc.textureID);
-    fc.billboard->bind();
-    fc.billboard->draw();*/
-
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
-}
-
-//void Renderer::renderImage(float _width, float _height, GLuint _texture)
-//{
-
-    // billboard
-//    ngl::Real s0 = 0.0;
-//    ngl::Real t0 = 0.0;
-//    ngl::Real s1 =1; //_width * 1.0 / nearestPowerOfTwo(_width);
-//    ngl::Real t1 =1; // _height * 1.0 / nearestPowerOfTwo(_height);
-
-//    textVertData billboardData[6];
-
-    //first triangle
-//    billboardData[0].x=0;
-//    billboardData[0].y=0;
-//    billboardData[0].u=0;
-//    billboardData[0].v=0;
-//
-/*    billboardData[1].x=_width;
-    billboardData[1].y=0;
-    billboardData[1].u=s1;
-    billboardData[1].v=0;
-
-    billboardData[2].x=0;
-    billboardData[2].y=_height;
-    billboardData[2].u=0;
-    billboardData[2].v=t1;
-
-    //second triangle
-    billboardData[3].x=0;
-    billboardData[3].y=_height;
-    billboardData[3].u=0;
-    billboardData[3].v=t1;
-
-    billboardData[4].x=_width;
-    billboardData[4].y=0;
-    billboardData[4].u=s1;
-    billboardData[4].v=0;
-
-    billboardData[5].x=_width;
-    billboardData[5].y=_height;
-    billboardData[5].u=s1;
-    billboardData[5].v=t1;*/
-
-    //CREATING THE VAO
-
-  /*  ngl::VertexArrayObject *vao = ngl::VertexArrayObject::createVOA(GL_TRIANGLES);
-    vao->bind();
-    vao->setData(6*sizeof(textVertData),billboardData[0].x);
-    vao->setVertexAttributePointer(0,2,GL_FLOAT,sizeof(textVertData),2);
-    vao->setNumIndices(6);*/
-
-
-    //DRAWING VAO
-    //glActiveTexture(0);
-   /* ngl::ShaderLib *shader= ngl::ShaderLib::instance();
-    (*shader)["TextureShader"]->use();
-    shader->setShaderParam1f("xpos",0);
-    shader->setShaderParam1f("ypos",0);*/
-    //glEnable(GL_BLEND);
-    //glDisable(GL_DEPTH_TEST);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glBindTexture(GL_TEXTURE_2D, _texture);
-    //vao->bind();;
-    //vao->draw();
-    //vao->unbind();
-    //glDisable(GL_BLEND);
-    //glEnable(GL_DEPTH_TEST);
-    //vao->unbind();
-    //ngl::VAOPrimitives *primitives=ngl::VAOPrimitives::instance();
-
-
-    //std::cout << "Image rendered" <<std::endl;
-
-    //std::cin.ignore();
-
-//}
 
 void Renderer::SDLErrorExit(std::string msg)
 {

@@ -10,6 +10,8 @@ GameState *GameMenu::run(Renderer &_renderer)
     bool go = false;
     GLuint textureID;
 
+    myUtilities.initPlayerOptions(myPlayerOptions);
+
     _renderer.loadTexture("images/riasBaixasCover.jpg", textureID);
 
     while (!(go=myPlayerOptions.enter) && myPlayerOptions.running && !myPlayerOptions.changeState)

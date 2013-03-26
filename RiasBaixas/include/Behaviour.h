@@ -91,6 +91,7 @@ protected:
 
 public:
     Behaviour();
+    virtual ~Behaviour() { }
     virtual std::string getName() = 0;
     /**
      * @brief method which sets the acceleration according with the object this behaviour belongs to

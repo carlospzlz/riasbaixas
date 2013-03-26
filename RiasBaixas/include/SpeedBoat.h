@@ -26,7 +26,6 @@ private:
 
 public:
     SpeedBoat();
-    ~SpeedBoat();
     void setLoad(int _l) { m_load = _l; }
     int getLoad() { return m_load; }
 
