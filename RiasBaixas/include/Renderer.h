@@ -74,34 +74,13 @@ private:
      */
     ngl::Light *m_light;
     /**
-     * @brief font used to render text on the screen
+     * @brief camera used for the rendering of still images
      */
-    std::map<char,fontChar> m_font;
-    /**
-     * @brief reusable billboards where to attach the textures of each glyph
-     * the font
-     */
-    std::map<char, GLuint> m_fontCharTexture;
-    ngl::VertexArrayObject *m_billboard;
-
     ngl::Camera m_stillImagesCamera;
-
-    /**
-     * @brief space inbetween lines for the font
-     */
-    int m_fontLineSkip;
     /**
      * @brief texture for used for tests
      */
     GLuint m_lena;
-    /**
-     * @brief load a specific font in ttf format
-     */
-    bool loadFont(std::string _fontFile);
-    /**
-     * @brief calculates the nearest power of two greater than a number
-     */
-    int nearestPowerOfTwo(int _number);
     /**
      * @brief draws the components of a vector on the screen
      */
@@ -114,14 +93,6 @@ private:
      * @brief load just the Model View Projection matrix to the current active shader
      */
     inline void loadMVPToShader(ngl::Transformation &_t, ngl::Camera &_cam);
-    /**
-     * @brief load all the matrices to the current active shader
-     */
-    void renderText(std::string _text, float _x, float _y);
-    /**
-     * @brief render text on the screen (in construction)
-     */
-    void testText();
     /**
      * @brief render a plane image 2D on the screen (in construction)
      */
@@ -161,11 +132,17 @@ public:
      * the option of any debug mode (1 for primitive mode and 2 for collision mode)
      */
     void render(const Sea &_sea, const std::vector<Object*> &_objects, ngl::Camera &_cam, int _debugMode);
-
+    /**
+     * @brief load texture to memory
+     */
     void loadTexture(std::string _path, GLuint &_texture);
-
+    /**
+     * @brief render a texture on a patch as a still image
+     */
     void renderFrame(GLuint _texture);
-
+    /**
+     * @brief ganerated effect of fade out
+     */
     void fadeOut();
 
 };
