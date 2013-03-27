@@ -57,9 +57,15 @@ private:
     void calculateCollisionProjection(collisionProjection &_projection, float _x1, float _y1, float _x2, float _y2);
 
 protected:
+    /**
+    * @brief check if a collision takes place
+    */
     bool thereIsCollision(const Object &_o1, const Object &_o2);
 
 public:
+    /**
+    * @brief perform all the computations involved in a collision process such as fixing positions and updating degrees of freedom
+    */
     void checkCollision(Object *_o1, Object *_o2);
 
 };

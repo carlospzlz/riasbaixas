@@ -69,10 +69,6 @@ protected:
      */
     float m_maxSpeed;
     /**
-     * @brief maximum camber that the obejct can reach (linked to the context of boats)
-     */
-    float m_maxCamber;
-    /**
      * @brief to which directions the object can move
      */
     degreesOfFreedom m_degreesOfFreedom;
@@ -147,7 +143,6 @@ public:
     ngl::Vec4 getVelocity() const { return m_velocity; }
     ngl::Vec4 getAngularVelocity() const { return m_angularVelocity; }
     float getMaxSpeed() const { return m_maxSpeed; }
-    float getMaxCamber() const { return m_maxCamber; }
     bool hasMesh() const { return m_mesh; }
     float getBSRadius() const { return m_bSRadius; }
     bool isCollided() const { return m_collided; }

@@ -39,43 +39,41 @@ class Behaviour
 
 private:
 
+    /**
+     * @brief amplitude of the floating movement
+     */
     float m_floatingAmplitude;
+    /**
+     * @brief frecuency of the floating movement
+     */
     float m_floatingFrequency;
-
-
     /**
      * @brief ticks for the floating behaviour in Y
      */
     int m_ticksFloating;
-    /**
-     * @brief friction force which makes the object break
-     */
-    //float m_frictionForce;
-    /**
-     * @brief speed (added in each iteration to the velocity)
-     */
-    //float m_speed;
-    /**
-     * @brief amplitude of the floating movement
-     */
-    //float m_floatingAmplitude;
-    /**
-     * @brief frecuency of the floating movement
-     */
-    //float m_floatingFrecuency;
-    /**
-     * @brief velocity of the rotation
-     */
-    //float m_angularVelocity;
 
 protected:
 
+    /**
+     * @brief friction force which makes the object break
+     */
     float m_frictionForce;
+    /**
+     * @brief regular speed used for not agressive motions
+     */
     float m_regularSpeed;
+    /**
+     * @brief the force applied by the motor in order to calculate the acceleration
+     */
     float m_motorForce;
+    /**
+     * @brief velocity of the rotation
+     */
     float m_angularVelocity;
+    /**
+     * @brief maximum camber that the obejct can reach
+     */
     float m_maxCamber;
-
     /**
      * @brief acceleration calculate from a = F*m when the controlled object is set
      */
@@ -94,18 +92,37 @@ public:
     virtual ~Behaviour() { }
     virtual std::string getName() = 0;
     /**
-     * @brief method which sets the acceleration according with the object this behaviour belongs to
+     * @brief method which sets the acceleration according with the object mass this behaviour belongs to
      */
     void setAcceleration(float _mass);
-
+    /**
+     * @brief set the amplitude of the floating movement
+     */
     void setFloatingAmplitude(float _fa) { m_floatingAmplitude = _fa; }
+    /**
+     * @brief set the frequency of the floating movement
+     */
     void setFloatingFrequency(float _ff) { m_floatingFrequency = _ff; }
+    /**
+     * @brief set the friction force
+     */
     void setFrictionForce(float _ff) { m_frictionForce = _ff; }
+    /**
+     * @brief set the regular speed
+     */
     void setRegularSpeed(float _rs) { m_regularSpeed = _rs; }
+    /**
+     * @brief set the motor force
+     */
     void setMotorForce(float _mf) { m_motorForce = _mf; }
+    /**
+     * @brief set the angular velocity
+     */
     void setAngularVelocity(float _av) {m_angularVelocity = _av; }
+    /**
+     * @brief set the max camber
+     */
     void setMaxCamber(float _mc) { m_maxCamber = _mc; }
-
     /**
      * @brief method which moves the object and where the AI takes place
      */
