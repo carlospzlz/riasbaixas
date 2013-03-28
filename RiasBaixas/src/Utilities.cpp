@@ -16,6 +16,7 @@ void Utilities::readPlayerInput(PlayerControls &_playerControls, playerOptions &
 
             case SDL_WINDOWEVENT:
             _playerOptions.resizeWindow = true;
+            break;
 
             case SDL_KEYDOWN:
             switch (event.key.keysym.sym)
