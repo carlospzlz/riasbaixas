@@ -131,7 +131,7 @@ void Renderer::initGLContext()
     prim->createTrianglePlane("plane",1,1,1,1,ngl::Vec3(0,1,0));
 
     //For rendering still images such as the menu
-    m_stillImagesCamera = ngl::Camera(ngl::Vec3(0,1,0),ngl::Vec3(0,0,0),ngl::Vec3(0,0,-1),ngl::PERSPECTIVE);
+    m_stillImagesCamera = ngl::Camera(ngl::Vec3(0,1.3,0),ngl::Vec3(0,0,0),ngl::Vec3(0,0,-1),ngl::PERSPECTIVE);
     m_stillImagesCamera.setShape(60, m_windowWidth/(float)m_windowHeight, 0.05, 30, ngl::PERSPECTIVE);
 
 }

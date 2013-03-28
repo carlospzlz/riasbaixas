@@ -59,10 +59,6 @@ private:
      */
     bool m_immersing;
     /**
-     * @brief the controller is in state jumping
-     */
-    bool m_jumping;
-    /**
      * @brief ticks to track state of bouncing
      */
     int m_ticksBouncing;
